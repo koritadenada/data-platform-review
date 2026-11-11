@@ -16,7 +16,7 @@
   <aside class="side">
     <div class="side-inner">
       <div class="side-label">On this page</div>
-      <ol class="toc"><li><a href="#1-dbt-practices-at-your-scale-313-models-58-jobs">1. dbt practices at your scale (313 models, 58 jobs)</a></li><li class="sub"><a href="#incremental-strategies">Incremental strategies</a></li><li class="sub"><a href="#keeping-dbt-test-cheap">Keeping dbt test cheap</a></li><li class="sub"><a href="#adapter-pinning">Adapter pinning</a></li></ol>
+      <ol class="toc"><li><a href="#1-dbt-practices-at-your-scale-313-models-58-jobs">1. dbt practices at your scale (313 models, 58 jobs)</a></li><li class="sub"><a href="#incremental-strategies">Incremental strategies</a></li><li class="sub"><a href="#keeping-dbt-test-cheap">Keeping dbt test cheap</a></li><li class="sub"><a href="#adapter-pinning">Adapter pinning</a></li><li><a href="#2-dbt-on-databricks-reference-docs">2. dbt on Databricks: reference docs</a></li></ol>
     </div>
   </aside>
   <main class="doc">
@@ -118,6 +118,45 @@
 <p>Do minor upgrades through a release PR, with a dev bundle run first.</p>
 </li>
 </ul>
+<h2 id="2-dbt-on-databricks-reference-docs">2. dbt on Databricks: reference docs</h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Source</th>
+<th>What it covers</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="https://learn.microsoft.com/en-us/azure/databricks/partners/prep/dbt" target="_blank" rel="noopener">dbt on Azure Databricks</a> (Azure docs)</td>
+<td>Setting up dbt Core with Databricks</td>
+</tr>
+<tr>
+<td><a href="https://learn.microsoft.com/en-us/azure/databricks/jobs/tasks/dbt" target="_blank" rel="noopener">dbt task in Lakeflow Jobs</a> (Azure docs)</td>
+<td>Where the CLI and the SQL run, and version pinning</td>
+</tr>
+<tr>
+<td><a href="https://docs.getdbt.com/guides/optimize-dbt-models-on-databricks" target="_blank" rel="noopener">Optimize dbt models on Databricks</a> (dbt guide)</td>
+<td>Performance and cost: materializations, warehouses, clustering</td>
+</tr>
+<tr>
+<td><a href="https://docs.getdbt.com/guides/productionize-your-dbt-databricks-project" target="_blank" rel="noopener">Productionize your dbt Databricks project</a> (dbt guide)</td>
+<td>Environments, CI/CD, jobs</td>
+</tr>
+<tr>
+<td><a href="https://docs.getdbt.com/best-practices/dbt-unity-catalog-best-practices" target="_blank" rel="noopener">dbt and Unity Catalog best practices</a> (dbt docs)</td>
+<td>Catalog and schema layout, and permissions for dbt</td>
+</tr>
+<tr>
+<td><a href="https://docs.getdbt.com/reference/resource-configs/databricks-configs" target="_blank" rel="noopener">dbt-databricks configs</a> (dbt docs)</td>
+<td>Incremental strategies, liquid clustering, query tags</td>
+</tr>
+<tr>
+<td><a href="https://www.databricks.com/blog/2022/12/15/best-practices-super-powering-your-dbt-project-databricks.html" target="_blank" rel="noopener">Best Practices for dbt on Databricks</a> (Databricks blog, Dec 2022)</td>
+<td>Monitoring with dbt_artifacts, loading with COPY INTO, post-hook table optimization, project checks with dbt_project_evaluator, SQL linting with SQLFluff</td>
+</tr>
+</tbody>
+</table></div>
   </main>
 </div>
 </body>
