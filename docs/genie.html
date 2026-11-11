@@ -1,0 +1,231 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Genie guide</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body class="page">
+<header class="top">
+  <a class="brand" href="index.html"><svg class="mark" viewBox="0 0 24 24" role="img" aria-label="Databricks"><path fill="#FF3621" d="M.95 14.184L12 20.403l9.919-5.55v2.21L12 22.662l-10.484-5.96-.565.308v.77L12 24l11.05-6.218v-4.317l-.515-.309L12 19.118l-9.867-5.653v-2.21L12 16.805l11.05-6.218V6.32l-.565-.308L12 11.974 2.647 6.681 12 1.388l7.76 4.368.668-.411v-.566L12 0 .95 6.27v.72L12 13.207l9.919-5.55v2.26L12 15.52 1.516 9.56l-.565.308Z"/></svg>Data platform review</a>
+  <nav class="tabs"><a href="platform-review.html" class="">Platform review</a><a href="warehouse-dbt.html" class="">dbt practices</a><a href="resources.html" class="">Resources</a><a href="genie.html" class="on">Genie</a></nav>
+</header>
+<div class="layout">
+  <aside class="side">
+    <div class="side-inner">
+      <div class="side-label">On this page</div>
+      <ol class="toc"><li><a href="#1-the-genie-flavours">1. The Genie flavours</a></li><li><a href="#2-the-semantic-layer-behind-genie">2. The semantic layer behind Genie</a></li><li class="sub"><a href="#2a-metric-views">2a. Metric views</a></li><li class="sub"><a href="#2b-domains">2b. Domains</a></li><li class="sub"><a href="#2c-pages">2c. Pages</a></li><li class="sub"><a href="#2d-wikis">2d. Wikis</a></li><li class="sub"><a href="#2e-synonyms">2e. Synonyms</a></li><li class="sub"><a href="#2f-certification-and-deprecation">2f. Certification and deprecation</a></li><li><a href="#3-best-practices-for-genie-agents">3. Best practices for Genie Agents</a></li><li><a href="#4-what-this-means-for-your-setup">4. What this means for your setup</a></li></ol>
+    </div>
+  </aside>
+  <main class="doc">
+    <div class="kicker">Guide</div>
+    <h1>Genie guide</h1>
+    
+<h2 id="1-the-genie-flavours">1. The Genie flavours</h2>
+<p><strong>For business users</strong></p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Flavour</th>
+<th>What it is</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="https://learn.microsoft.com/en-us/azure/databricks/genie-agents/concepts" target="_blank" rel="noopener">Genie Agents</a> (formerly Genie Spaces)</td>
+<td>A curated, domain-specific chat over a set of tables and metric views that you configure: users ask questions, Genie writes the SQL and returns results and charts</td>
+</tr>
+<tr>
+<td><a href="https://learn.microsoft.com/en-us/azure/databricks/genie-one/" target="_blank" rel="noopener">Genie One</a> (formerly Databricks One)</td>
+<td>The simplified UI for business users, one entry point for dashboards, Genie Agents and apps, plus workspace-wide questions that Genie routes to the right data</td>
+</tr>
+<tr>
+<td><a href="https://learn.microsoft.com/en-us/azure/databricks/dashboards/genie-spaces" target="_blank" rel="noopener">Ask Genie on dashboards</a></td>
+<td>An <strong>Ask Genie</strong> button on a published AI/BI dashboard, backed by a Genie Agent over the dashboard's datasets</td>
+</tr>
+<tr>
+<td><a href="https://learn.microsoft.com/en-us/azure/databricks/integrations/msft-teams" target="_blank" rel="noopener">Genie in Microsoft Teams</a></td>
+<td>Ask Genie from a Teams DM, channel or group chat (<code>@Databricks Genie</code>), answered by Genie One or by a Genie Agent pinned to the chat; also works from Microsoft 365 Copilot</td>
+</tr>
+<tr>
+<td><a href="https://learn.microsoft.com/en-us/azure/databricks/genie-one/genie-slack" target="_blank" rel="noopener">Genie in Slack</a></td>
+<td>Ask Genie from a Slack DM, channel or group DM (<code>@Genie</code>), answered by Genie One or by a Genie Agent pinned to the channel</td>
+</tr>
+</tbody>
+</table></div>
+<blockquote>
+<p>"Genie One is the simplified Azure Databricks UI for business users, a single entry point for interacting with data and AI without navigating technical concepts like compute, queries, models, or notebooks." (<a href="https://learn.microsoft.com/en-us/azure/databricks/genie-one/" target="_blank" rel="noopener">Genie One</a>)</p>
+</blockquote>
+<p><strong>For developers and agents</strong></p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Flavour</th>
+<th>What it is</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="https://learn.microsoft.com/en-us/azure/databricks/genie-code/" target="_blank" rel="noopener">Genie Code</a></td>
+<td>The AI coding and data assistant for engineers in the workspace (notebooks, SQL editor, pipelines)</td>
+</tr>
+<tr>
+<td><a href="https://learn.microsoft.com/en-us/azure/databricks/genie-agents/conversation-api" target="_blank" rel="noopener">Conversation API</a></td>
+<td>REST API to ask a specific Genie Agent questions from your own apps and chatbots</td>
+</tr>
+<tr>
+<td><a href="https://learn.microsoft.com/en-us/azure/databricks/agents/mcp-tools/genie-agent" target="_blank" rel="noopener">Genie Agent MCP server</a></td>
+<td>Managed MCP server that lets an AI agent query one Genie Agent in natural language</td>
+</tr>
+<tr>
+<td><a href="https://learn.microsoft.com/en-us/azure/databricks/agents/mcp-tools/genie-mcp" target="_blank" rel="noopener">Genie One MCP server</a></td>
+<td>Managed MCP server (<code>system.ai.genie_one_mcp</code>) that exposes Genie One, workspace-wide, to MCP clients such as Claude or Cursor</td>
+</tr>
+<tr>
+<td><a href="https://learn.microsoft.com/en-us/azure/databricks/genie-one/api" target="_blank" rel="noopener">Genie One API</a></td>
+<td>HTTP API to ask Genie One questions from your own backend and stream the answers</td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>How to choose:</strong> use a <strong>Genie Agent</strong> for each domain that needs curated, accurate answers (for example UA performance or finance). Put those agents in front of business users through <strong>Genie One</strong>, Teams or Slack. Use the <strong>Conversation API</strong> or <strong>Genie Agent MCP</strong> when your own tools or AI agents need answers from a specific agent. Use <strong>Genie One MCP</strong> when an agent should search across everything the user can access.</p>
+<h2 id="2-the-semantic-layer-behind-genie">2. The semantic layer behind Genie</h2>
+<p>Genie answers from the business context you give it. In Azure Databricks that context is <strong>Unity Catalog semantics</strong>:</p>
+<blockquote>
+<p>"Unity Catalog semantics is a collection of tools to help you define standard business metrics, terms, and organizational structures on top of your catalog data." (<a href="https://learn.microsoft.com/en-us/azure/databricks/uc-semantics/" target="_blank" rel="noopener">Unity Catalog semantics</a>)</p>
+</blockquote>
+<p>Together these components form the modeled knowledge in the <a href="https://learn.microsoft.com/en-us/azure/databricks/genie/genie-ontology/" target="_blank" rel="noopener">Genie Ontology</a>. Genie One and Genie Code also learn context automatically from your dashboards, queries and Genie Agents. When the two conflict, what you model wins:</p>
+<blockquote>
+<p>"Genie treats modeled knowledge as more authoritative than learned knowledge, so it takes precedence when the two conflict." (<a href="https://learn.microsoft.com/en-us/azure/databricks/genie/genie-ontology/" target="_blank" rel="noopener">Genie Ontology</a>)</p>
+</blockquote>
+<h3 id="2a-metric-views">2a. Metric views</h3>
+<p>Governed, reusable definitions of your KPIs (ROAS, CAC, LTV, rebill rate), defined once and used by Genie, dashboards and Tableau alike. Genie Agents can use metric views directly as data sources (<a href="https://learn.microsoft.com/en-us/azure/databricks/uc-semantics/metric-views/" target="_blank" rel="noopener">Metric views</a>).</p>
+<blockquote>
+<p>"Metric views are particularly effective for Genie Agents because they pre-define metrics, dimensions, and aggregations." (<a href="https://learn.microsoft.com/en-us/azure/databricks/genie-agents/best-practices" target="_blank" rel="noopener">Best practices</a>)</p>
+</blockquote>
+<h3 id="2b-domains">2b. Domains</h3>
+<p>A business-aligned grouping of data assets (for example UA/Marketing, Finance, Product, Payments, HR), shown on the Discover page. Domains are built on governed tags, which you already use for ABAC.</p>
+<blockquote>
+<p>"To add an asset to a domain, add the corresponding governed tag to the asset." (<a href="https://learn.microsoft.com/en-us/azure/databricks/uc-semantics/domains" target="_blank" rel="noopener">Domains</a>)</p>
+</blockquote>
+<p>Tagging a catalog or schema puts everything in it into the domain. Domains can be managed as code with the Terraform <code>databricks_domain</code> resource.</p>
+<h3 id="2c-pages">2c. Pages</h3>
+<p>Pages are in Beta. A Page is a governed definition of one business term, owned and published within a domain.</p>
+<blockquote>
+<p>"A <em>Page</em> is a governed, authoritative definition of a business concept, such as a critical term, entity, or acronym." (<a href="https://learn.microsoft.com/en-us/azure/databricks/uc-semantics/pages" target="_blank" rel="noopener">Pages</a>)</p>
+</blockquote>
+<p>Genie One uses the Page's definition and cites the Page in its answer. Good candidates for you are terms like pLTV, rebill, trial conversion or "UA cohort". Page content is stored at account level and may be replicated globally, so keep PII and sensitive data out of Pages.</p>
+<h3 id="2d-wikis">2d. Wikis</h3>
+<p>Wikis are in Beta. A wiki documents one table: what it means, how to use it, known caveats. A Page defines a concept that spans many assets.</p>
+<blockquote>
+<p>"A <em>wiki</em> lets your team document a table's meaning, intended use, and sources, then collaborate on that information." (<a href="https://learn.microsoft.com/en-us/azure/databricks/uc-semantics/wikis" target="_blank" rel="noopener">Wikis</a>)</p>
+</blockquote>
+<p>A good fit for the gold tables behind the UA report and the subscription One Big Table.</p>
+<h3 id="2e-synonyms">2e. Synonyms</h3>
+<p>Synonyms let users ask in their own words. You can set them in three places:</p>
+<ul>
+<li>
+<p><strong>Metric views:</strong> <code>synonyms</code> on fields and measures (YAML 1.1, up to 10 each), for example <code>['revenue', 'total sales']</code>.</p>
+<blockquote>
+<p>"Alternative names for AI and BI tools to discover the field." (<a href="https://learn.microsoft.com/en-us/azure/databricks/uc-semantics/metric-views/yaml-reference" target="_blank" rel="noopener">Metric view YAML reference</a>)</p>
+</blockquote>
+</li>
+<li>
+<p><strong>Pages:</strong> each Page has a synonyms field for alternative names of the concept (<a href="https://learn.microsoft.com/en-us/azure/databricks/uc-semantics/pages" target="_blank" rel="noopener">Pages</a>).</p>
+</li>
+<li>
+<p><strong>Genie Agents:</strong> column synonyms that apply to one agent only.</p>
+<blockquote>
+<p>"This metadata is scoped to your Genie Agent and does not overwrite metadata stored in Unity Catalog." (<a href="https://learn.microsoft.com/en-us/azure/databricks/genie-agents/best-practices" target="_blank" rel="noopener">Best practices</a>)</p>
+</blockquote>
+</li>
+</ul>
+<p>Put shared synonyms in the metric views, so every agent and tool gets them.</p>
+<h3 id="2f-certification-and-deprecation">2f. Certification and deprecation</h3>
+<p>A system tag (<code>system.certification_status</code>) that marks assets as <code>certified</code> or <code>deprecated</code>. It applies to catalogs, schemas, tables, views, dashboards, Genie Agents and more.</p>
+<blockquote>
+<p>"This helps Genie One improve its answers by prioritizing the assets your organization vouches for." (<a href="https://learn.microsoft.com/en-us/azure/databricks/data-governance/unity-catalog/certify-deprecate-data" target="_blank" rel="noopener">Certify or deprecate data</a>)</p>
+</blockquote>
+<p>Certify the gold tables and metric views your contracts cover, and deprecate legacy tables so Genie stops using them.</p>
+<h2 id="3-best-practices-for-genie-agents">3. Best practices for Genie Agents</h2>
+<p><strong>Keep each agent focused</strong></p>
+<blockquote>
+<p>"Stay focused: Include only the tables necessary to answer the questions you want the agent to handle. Aim for five or fewer tables." (<a href="https://learn.microsoft.com/en-us/azure/databricks/genie-agents/best-practices" target="_blank" rel="noopener">Best practices</a>)</p>
+<p>"An agent should answer questions for a particular topic and audience, not general questions across various domains." (<a href="https://learn.microsoft.com/en-us/azure/databricks/genie-agents/best-practices" target="_blank" rel="noopener">same page</a>)</p>
+</blockquote>
+<p><strong>Invest in metadata first</strong></p>
+<blockquote>
+<p>"Quality table and column descriptions in Unity Catalog are critical for Genie accuracy." (<a href="https://learn.microsoft.com/en-us/azure/databricks/genie-agents/best-practices" target="_blank" rel="noopener">Best practices</a>)</p>
+</blockquote>
+<p>Define primary and foreign keys in Unity Catalog too; Genie uses them when it writes SQL (<a href="https://learn.microsoft.com/en-us/azure/databricks/genie-agents/concepts" target="_blank" rel="noopener">Concepts</a>).</p>
+<p><strong>Teach with SQL, not with prose</strong></p>
+<blockquote>
+<p>"Defining business logic as SQL expressions produces more consistent results than text instructions, because Genie applies the logic exactly as written rather than interpreting it from natural language." (<a href="https://learn.microsoft.com/en-us/azure/databricks/genie-agents/tune-quality" target="_blank" rel="noopener">Tune quality</a>)</p>
+<p>"Use text instructions only as a last resort when SQL expressions and examples cannot address the need." (<a href="https://learn.microsoft.com/en-us/azure/databricks/genie-agents/best-practices" target="_blank" rel="noopener">Best practices</a>)</p>
+</blockquote>
+<ul>
+<li>Add tested <strong>example SQL queries</strong>, parameterized where useful, for the questions users ask most.</li>
+<li>Define <strong>join relationships</strong> explicitly when keys alone aren't enough.</li>
+<li>Keep text instructions short and specific. The docs note that agents "perform best with a limited, focused set of instructions".</li>
+</ul>
+<p><strong>Measure before you roll out</strong></p>
+<blockquote>
+<p>"Benchmarks allow you to create a set of test questions that you can run to assess Genie's overall response accuracy." (<a href="https://learn.microsoft.com/en-us/azure/databricks/genie-agents/monitor" target="_blank" rel="noopener">Monitor</a>)</p>
+</blockquote>
+<ul>
+<li>Build a benchmark set from real business questions, with two to four phrasings of each.</li>
+<li>Rerun it after every change to tables, metric views or instructions.</li>
+<li>After launch, review the <strong>Monitor</strong> tab and user feedback. Feedback alone doesn't change the agent's behavior; someone has to act on it.</li>
+</ul>
+<p><strong>Govern through Unity Catalog</strong></p>
+<blockquote>
+<p>"Row filters and column masks defined in Unity Catalog are enforced per user automatically, regardless of how the Genie Agent is shared." (<a href="https://learn.microsoft.com/en-us/azure/databricks/genie-agents/set-up" target="_blank" rel="noopener">Set up</a>)</p>
+</blockquote>
+<ul>
+<li>Users need <code>SELECT</code> on every object in the agent, and <code>EXECUTE</code> on any SQL functions used as trusted assets.</li>
+<li>
+<p>Entity matching is not available on tables with row filters or column masks:</p>
+<blockquote>
+<p>"Genie prevents you from enabling entity matching on tables with row filters or column masks." (<a href="https://learn.microsoft.com/en-us/azure/databricks/genie-agents/tune-quality" target="_blank" rel="noopener">Tune quality</a>)</p>
+</blockquote>
+</li>
+</ul>
+<p><strong>Compute and cost</strong></p>
+<ul>
+<li>Use a serverless SQL warehouse. A pro or serverless warehouse is required, and serverless is recommended for performance (<a href="https://learn.microsoft.com/en-us/azure/databricks/genie-agents/set-up" target="_blank" rel="noopener">Set up</a>).</li>
+<li>
+<p>The Genie queries run on that warehouse and are billed as SQL. Genie itself is currently free for users:</p>
+<blockquote>
+<p>"Genie One and Genie Agents usage by users is free through January 31, 2027. Service principals are excluded from the promotion, and their usage is billed." (<a href="https://learn.microsoft.com/en-us/azure/databricks/genie/" target="_blank" rel="noopener">Genie</a>)</p>
+</blockquote>
+</li>
+</ul>
+<p><strong>Manage agents as code</strong></p>
+<p>Define Genie Agents in Declarative Automation Bundles so they're versioned and deployed through CI, like the rest of your platform (<a href="https://learn.microsoft.com/en-us/azure/databricks/genie-agents/best-practices" target="_blank" rel="noopener">Best practices</a>).</p>
+<h2 id="4-what-this-means-for-your-setup">4. What this means for your setup</h2>
+<ul>
+<li>
+<p><strong>Check your MCP endpoints now.</strong> If anything still calls the old Genie MCP endpoint, move it before the end of the month:</p>
+<blockquote>
+<p>"The Beta endpoint, <code>https://&lt;workspace-hostname&gt;/api/2.0/mcp/genie</code>, is deprecated and reaches end of life on November 30, 2026. After that date, requests to the Beta endpoint fail." (<a href="https://learn.microsoft.com/en-us/azure/databricks/agents/mcp-tools/genie-mcp" target="_blank" rel="noopener">Genie One MCP</a>)</p>
+</blockquote>
+<p>Your MCP gateway calls the Conversation API, which is not affected.
+- <strong>Call Genie as the end user, not as a service principal.</strong> Two reasons: your BU and app row filters then apply per user, and only user usage falls under the free promotion. Service principal usage is billed.
+- <strong>Build the agents on your metric views.</strong> Use the semantic-layer metric views (including the bridged multi-fact ones) as the agents' data, so Genie and Tableau share one definition of each KPI.
+- <strong>Set up the semantic layer alongside the Data Hub pilot:</strong> a domain per business area (reusing your governed tags), Pages for the key terms, and certification on the gold tables and metric views.
+- <strong>If you roll Genie out in Slack or Teams, make channel replies private.</strong> Each answer runs with the asking user's permissions, but a public reply is shown to the whole channel:</p>
+<blockquote>
+<p>"When message visibility is public, a Genie response is visible to everyone in the channel or group DM, including members who do not have access to the underlying data." (<a href="https://learn.microsoft.com/en-us/azure/databricks/genie-one/genie-slack" target="_blank" rel="noopener">Genie in Slack</a>)</p>
+</blockquote>
+<p>With your BU and app row filters, set responses to private, or turn off <strong>Allow public messages in collaboration platforms</strong> in the workspace security settings. Pin a Genie Agent to a channel when a team should always get answers from the same agent.
+- <strong>For the Data Hub pilot,</strong> start with one or two focused agents (for example UA performance and subscriptions) and a benchmark set from each pilot team, then publish them in Genie One. Add agents gradually:</p>
+<blockquote>
+<p>"Workspaces with many Genie Agents might experience reduced routing accuracy." (<a href="https://learn.microsoft.com/en-us/azure/databricks/genie-one/chat" target="_blank" rel="noopener">Genie One chat</a>)</p>
+</blockquote>
+</li>
+</ul>
+  </main>
+</div>
+</body>
+</html>

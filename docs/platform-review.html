@@ -9,69 +9,117 @@
 </head>
 <body class="page">
 <header class="top">
-  <a class="brand" href="index.html"><span class="mark"></span>Data platform review</a>
-  <nav class="tabs"><a href="platform-review.html" class="on">Platform review</a><a href="warehouse-dbt.html" class="">Warehouses and dbt</a><a href="resources.html" class="">Resources</a></nav>
+  <a class="brand" href="index.html"><svg class="mark" viewBox="0 0 24 24" role="img" aria-label="Databricks"><path fill="#FF3621" d="M.95 14.184L12 20.403l9.919-5.55v2.21L12 22.662l-10.484-5.96-.565.308v.77L12 24l11.05-6.218v-4.317l-.515-.309L12 19.118l-9.867-5.653v-2.21L12 16.805l11.05-6.218V6.32l-.565-.308L12 11.974 2.647 6.681 12 1.388l7.76 4.368.668-.411v-.566L12 0 .95 6.27v.72L12 13.207l9.919-5.55v2.26L12 15.52 1.516 9.56l-.565.308Z"/></svg>Data platform review</a>
+  <nav class="tabs"><a href="platform-review.html" class="on">Platform review</a><a href="warehouse-dbt.html" class="">dbt practices</a><a href="resources.html" class="">Resources</a><a href="genie.html" class="">Genie</a></nav>
 </header>
 <div class="layout">
   <aside class="side">
     <div class="side-inner">
       <div class="side-label">On this page</div>
-      <ol class="toc"><li><a href="#1-sql-warehouse-sprawl-and-idle-cost">1. SQL warehouse sprawl and idle cost</a></li><li><a href="#2-classic-vs-serverless-for-short-hourly-single-node-jobs">2. Classic vs serverless for short, hourly, single-node jobs</a></li><li><a href="#3-single-workspace-for-dev-and-prod">3. Single workspace for dev and prod</a></li><li><a href="#4-self-managed-oss-on-aks-about-12-of-spend">4. Self-managed OSS on AKS (about 12% of spend)</a></li><li class="sub"><a href="#4a-connector-coverage-for-your-sources">4a. Connector coverage for your sources</a></li><li><a href="#5-semantic-layer-multi-fact-metric-views-tableau-and-genie">5. Semantic layer: multi-fact metric views, Tableau and Genie</a></li><li><a href="#6-abac-nested-policy-errors-and-pii-masking">6. ABAC: nested-policy errors and PII masking</a></li><li><a href="#7-ml-from-notebooks-to-a-production-path-pltv">7. ML: from notebooks to a production path (pLTV)</a></li><li><a href="#8-custom-observability-what-native-monitoring-can-replace">8. Custom observability: what native monitoring can replace</a></li><li><a href="#proposed-next-steps">Proposed next steps</a></li></ol>
+      <ol class="toc"><li><a href="#1-sql-warehouses">1. SQL warehouses</a></li><li class="sub"><a href="#1a-consolidation-and-idle-cost">1a. Consolidation and idle cost</a></li><li class="sub"><a href="#1b-size-up-or-scale-out">1b. Size up or scale out?</a></li><li class="sub"><a href="#1c-cost-attribution">1c. Cost attribution</a></li><li><a href="#2-serverless-jobs-dbus-from-the-dbt-tasks">2. Serverless Jobs DBUs from the dbt tasks</a></li><li><a href="#3-single-workspace-for-dev-and-prod">3. Single workspace for dev and prod</a></li><li><a href="#4-self-managed-oss-on-aks-about-12-of-spend">4. Self-managed OSS on AKS (about 12% of spend)</a></li><li class="sub"><a href="#4a-zerobus-ingest-push-ingestion-without-kafka">4a. Zerobus Ingest: push ingestion without Kafka</a></li><li><a href="#5-semantic-layer-multi-fact-metric-views-tableau-and-genie">5. Semantic layer: multi-fact metric views, Tableau and Genie</a></li><li><a href="#6-abac-nested-policy-errors-and-pii-masking">6. ABAC: nested-policy errors and PII masking</a></li><li><a href="#7-ml-from-notebooks-to-a-production-path-pltv">7. ML: from notebooks to a production path (pLTV)</a></li><li><a href="#8-custom-observability-what-native-monitoring-can-replace">8. Custom observability: what native monitoring can replace</a></li><li><a href="#proposed-next-steps">Proposed next steps</a></li></ol>
     </div>
   </aside>
   <main class="doc">
     <div class="kicker">Recommendations</div>
     <h1>Data platform review: answers to the open questions</h1>
     
-<p>Prepared by Databricks in response to your data platform architecture overview (state as of 27 Oct 2026), section 15 "Known pain points". All quotes are from the Azure Databricks documentation on learn.microsoft.com. Preview status is given as the documentation states it.</p>
 <p>Overall: the platform is in good shape (code-managed bundle, contracts in CI, Terraform-owned grants, UC throughout). Most of the points below are configuration and consolidation, not re-architecture.</p>
-<h2 id="1-sql-warehouse-sprawl-and-idle-cost">1. SQL warehouse sprawl and idle cost</h2>
-<p><strong>Recommendation:</strong> you've already consolidated from 16 warehouses to 3 core ones (with a 12% monthly cost reduction, together with the instance pool changes). Keep that shape, one warehouse per workload class, and let serverless scaling absorb the overlaps. The one class worth keeping separate is the P0 automation (the bot feeds), so it never queues behind ETL; see the class table on the <a href="warehouse-dbt.html">companion page</a>.</p>
+<h2 id="1-sql-warehouses">1. SQL warehouses</h2>
+<h3 id="1a-consolidation-and-idle-cost">1a. Consolidation and idle cost</h3>
+<p><strong>Recommendation:</strong> you've already consolidated from 16 warehouses to 3 core ones (with a 12% monthly cost reduction, together with the instance pool changes). Keep that shape, one warehouse per workload class, and let serverless scaling absorb the overlaps. The one class worth keeping separate is the P0 automation (the bot feeds), so it never queues behind ETL. Sharing a warehouse pools capacity and replaces several idle tails with one, which is where most of the savings come from.</p>
+<p><strong>How serverless is billed:</strong> DBUs are billed per second. You pay for the time the warehouse runs (× its size × the number of running clusters), not per query. Serverless SQL is $0.91/DBU in West Europe, including compute (<a href="https://www.databricks.com/product/pricing/databricks-sql" target="_blank" rel="noopener">pricing</a>).</p>
+<blockquote>
+<p>"Idle SQL warehouses continue to accumulate DBU and cloud instance charges until they are stopped." (<a href="https://learn.microsoft.com/en-us/azure/databricks/compute/sql-warehouse/create" target="_blank" rel="noopener">Create a SQL warehouse</a>)</p>
+</blockquote>
+<p>That idle tail is why auto-stop matters. A bot querying every 15 minutes keeps a warehouse with a 10-minute auto-stop up about 70% of the time, but only about 10% with a 1-minute auto-stop. Restarting takes "typically between 2 and 6 seconds" (<a href="https://learn.microsoft.com/en-us/azure/databricks/compute/sql-warehouse/warehouse-types" target="_blank" rel="noopener">Warehouse types</a>).</p>
+<p><strong>What to change:</strong></p>
 <ul>
 <li>
-<p>Raise max clusters on the dbt and BI warehouses instead of adding warehouses. The dbt warehouse is close to using all 3 of its clusters, and a higher maximum also fixes the dbt queueing when hourly and daily runs overlap.</p>
-<blockquote>
-<p>"Start with a single larger warehouse and let serverless features manage concurrency and performance. It is usually more efficient to size down if necessary than to start small and scale up." (<a href="https://learn.microsoft.com/en-us/azure/databricks/compute/sql-warehouse/warehouse-behavior" target="_blank" rel="noopener">Warehouse behavior</a>)</p>
-<p>"For workloads with many concurrent queries, configure a sufficient maximum number of clusters to handle peak loads." (<a href="https://learn.microsoft.com/en-us/azure/databricks/compute/sql-warehouse/warehouse-behavior" target="_blank" rel="noopener">same page</a>)</p>
-</blockquote>
-</li>
-<li>
-<p>Set auto-stop to 1 minute through the API (Terraform) on the low-traffic warehouses.</p>
+<p><strong>Set auto-stop to 1 minute</strong> through the API (Terraform) on the low-traffic warehouses.</p>
 <blockquote>
 <p>"The minimum is 5 minutes when you use the UI. Note that you can create a serverless SQL warehouse using the SQL warehouses API, in which case you can set the Auto Stop value as low as 1 minute." (<a href="https://learn.microsoft.com/en-us/azure/databricks/compute/sql-warehouse/create" target="_blank" rel="noopener">Create a SQL warehouse</a>)</p>
 </blockquote>
 </li>
 <li>
-<p>Take the payment-webhook single-row INSERTs off SQL warehouses. n8n can post to Zerobus Ingest over REST, which writes straight into Delta and is billed as serverless ingest, so it doesn't keep a warehouse awake.</p>
+<p><strong>Take the payment-webhook single-row INSERTs off SQL warehouses.</strong> n8n can post to Zerobus Ingest over REST, which writes straight into Delta and is billed as serverless ingest, so it doesn't keep a warehouse awake (<a href="#4a-zerobus-ingest-push-ingestion-without-kafka">details in 4a</a>).</p>
 <blockquote>
 <p>"Zerobus Ingest is a push-based streaming API that writes data straight into Unity Catalog Delta tables at high scale, with no message bus to run." (<a href="https://learn.microsoft.com/en-us/azure/databricks/ingestion/zerobus-overview" target="_blank" rel="noopener">Zerobus Ingest overview</a>)</p>
 </blockquote>
 </li>
 <li>
-<p>Find the bots in <code>system.query.history</code> (by client application or user). Then batch them onto a schedule or point them at the BI warehouse.</p>
+<p><strong>Find the bots</strong> in <code>system.query.history</code> (by client application or user). Then batch them onto a schedule or point them at the BI warehouse.</p>
 </li>
+<li><strong>Measure before and after:</strong> group <code>system.billing.usage</code> by <code>usage_metadata.warehouse_id</code> and hour.</li>
 </ul>
-<h2 id="2-classic-vs-serverless-for-short-hourly-single-node-jobs">2. Classic vs serverless for short, hourly, single-node jobs</h2>
-<p><strong>Recommendation:</strong> there is no fixed break-even. Run a two-week A/B on 5 to 10 representative jobs and compare total cost. For classic jobs, total cost means the DBUs plus the Azure VM and disk cost of the pools, which is your 17% line item.</p>
-<ul>
-<li>
-<p>Serverless removes pool idle VMs and cold-start management. Choose the mode per job: <strong>performance optimized</strong> for SLA-critical jobs (for example the P0 bot feeds), <strong>standard</strong> where startup latency doesn't matter.</p>
+<h3 id="1b-size-up-or-scale-out">1b. Size up or scale out?</h3>
 <blockquote>
-<p>"This mode uses less compute to reduce costs, making it suitable for workloads that can tolerate slightly higher startup latency of 4 to 6 minutes, depending on compute availability and optimized scheduling." (<a href="https://learn.microsoft.com/en-us/azure/databricks/jobs/run-serverless-jobs" target="_blank" rel="noopener">Run jobs on serverless</a>)</p>
-<p>"If your workload supports serverless compute, Databricks recommends using serverless compute instead of pools to take advantage of always-on, scalable compute." (<a href="https://learn.microsoft.com/en-us/azure/databricks/compute/pool-best-practices" target="_blank" rel="noopener">Pool best practices</a>)</p>
+<p>"If queries are spilling to disk, increase the cluster size. [...] For workloads with many concurrent queries, configure a sufficient maximum number of clusters to handle peak loads." (<a href="https://learn.microsoft.com/en-us/azure/databricks/compute/sql-warehouse/warehouse-behavior" target="_blank" rel="noopener">Warehouse behavior</a>)</p>
 </blockquote>
-</li>
-<li>
-<p>Measure with <code>system.billing.usage</code> joined to <code>system.lakeflow.job_task_run_timeline</code>. Sample queries, including one by performance mode, are on <a href="https://learn.microsoft.com/en-us/azure/databricks/admin/system-tables/serverless-billing" target="_blank" rel="noopener">Monitor serverless cost</a>.</p>
-</li>
-<li>
-<p>To get under 5% unattributed spend: use serverless usage policies for notebooks, jobs and Genie, warehouse tags for SQL, and account budgets for alerts.</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Signal</th>
+<th>Action</th>
+<th>Typical case for you</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Peak Queued Queries consistently above 0</td>
+<td>Raise max clusters</td>
+<td>Hourly and full-refresh dbt runs overlapping; Tableau at the top of the hour</td>
+</tr>
+<tr>
+<td>Bytes spilled to disk in the query profile</td>
+<td>Size up</td>
+<td>Full-refresh models on the subscription OBT</td>
+</tr>
+</tbody>
+</table></div>
+<p>Extra clusters run only during the burst, while a bigger size costs more for the whole time the warehouse runs, so scaling out is usually the cheaper fix for your bursts. The dbt warehouse is close to using all 3 of its clusters, so raise its maximum first.</p>
+<h3 id="1c-cost-attribution">1c. Cost attribution</h3>
+<p><strong>To get under 5% unattributed spend:</strong> use serverless usage policies for notebooks, jobs and Genie, warehouse tags for SQL, and account budgets for alerts.</p>
 <blockquote>
 <p>"Serverless usage policies consist of tags that are applied to any serverless compute activity incurred by a user assigned to the policy." (Public Preview, <a href="https://learn.microsoft.com/en-us/azure/databricks/admin/usage/budget-policies" target="_blank" rel="noopener">Usage policies</a>)</p>
 <p>"Budgets enable you to monitor usage across your account." (<a href="https://learn.microsoft.com/en-us/azure/databricks/admin/account-settings/budgets" target="_blank" rel="noopener">Budgets</a>)</p>
 </blockquote>
+<p><strong>Inside a shared warehouse:</strong> billing rows carry the warehouse ID, so a warehouse is your billed unit. To split a shared warehouse's cost by team or model, use query tags. dbt-databricks 1.11+ sets them automatically (you're on 1.12).</p>
+<blockquote>
+<p>"Query tags are custom key-value pairs you apply to SQL workloads so you can group, filter, and track costs on Databricks SQL warehouses [...]" (<a href="https://learn.microsoft.com/en-us/azure/databricks/sql/user/queries/query-tags" target="_blank" rel="noopener">Query tags</a>)</p>
+<p>"Tags appear in the <code>system.query.history</code> table and on the Query History page of the Azure Databricks UI." (<a href="https://learn.microsoft.com/en-us/azure/databricks/sql/user/queries/query-tags" target="_blank" rel="noopener">same page</a>)</p>
+</blockquote>
+<p>Query tags give you an estimated split. They don't appear in <code>system.billing.usage</code>; they land in the <code>query_tags</code> column of the <a href="https://learn.microsoft.com/en-us/azure/databricks/admin/system-tables/query-history" target="_blank" rel="noopener">query history system table</a>.</p>
+<p><strong>How to set them per tool</strong> (<a href="https://learn.microsoft.com/en-us/azure/databricks/sql/user/queries/query-tags" target="_blank" rel="noopener">overview</a>, <a href="https://learn.microsoft.com/en-us/azure/databricks/sql/language-manual/sql-ref-syntax-aux-conf-mgmt-set-query-tags" target="_blank" rel="noopener">SET QUERY_TAGS syntax</a>):</p>
+<p><strong>dbt:</strong> dbt-databricks 1.11+ adds <code>@@dbt_model_name</code> and other tags automatically, and you can add your own per project or per model (<a href="https://learn.microsoft.com/en-us/azure/databricks/sql/user/queries/query-tags#dbt" target="_blank" rel="noopener">dbt</a>).</p>
+<p><strong>Tableau:</strong> set tags through <a href="https://learn.microsoft.com/en-us/azure/databricks/sql/user/queries/query-tags#tableau" target="_blank" rel="noopener">Initial SQL</a>. Test it on one workbook first:</p>
+<pre><code class="language-sql">SET QUERY_TAGS['tool'] = 'tableau', QUERY_TAGS['workbook'] = [WorkbookName], QUERY_TAGS['user'] = [TableauServerUser];
+</code></pre>
+<p>The Tableau parameters you can use are listed in <a href="https://help.tableau.com/current/pro/desktop/en-us/connect_basic_initialsql.htm#parameters-in-an-initial-sql-statement" target="_blank" rel="noopener">Initial SQL parameters</a>.</p>
+<p><strong>CI builds:</strong> set <code>query_tags</code> on the CI target in <code>profiles.yml</code>, for example:</p>
+<pre><code class="language-yaml">query_tags: '{&quot;env&quot;: &quot;ci&quot;, &quot;pr&quot;: &quot;{{ env_var(''PR_NUMBER'', ''none'') }}&quot;}'
+</code></pre>
+<p>For CI scripts that use the <a href="https://learn.microsoft.com/en-us/azure/databricks/sql/user/queries/query-tags#python" target="_blank" rel="noopener">Python connector</a>, pass <code>query_tags</code> when you open the connection.</p>
+<h2 id="2-serverless-jobs-dbus-from-the-dbt-tasks">2. Serverless Jobs DBUs from the dbt tasks</h2>
+<p><strong>What you described (9 Nov):</strong> on the daily dbt cost, serverless jobs DBUs are about as large as the SQL warehouse DBUs, and the dbt CLI accounts for roughly 40% of your serverless jobs DBUs, even though almost all of the real work runs on the warehouse.</p>
+<p><strong>Why it happens:</strong> a dbt task uses two kinds of compute. The SQL warehouse runs the SQL that dbt generates; a separate "dbt CLI compute" runs dbt Core itself.</p>
+<blockquote>
+<p>"In SQL warehouse, select a SQL warehouse to run the SQL generated by dbt." [...] "Choose dbt CLI compute to run dbt Core. Databricks recommends using serverless compute for jobs or classic jobs compute configured with a single-node cluster." (<a href="https://learn.microsoft.com/en-us/azure/databricks/jobs/tasks/dbt" target="_blank" rel="noopener">dbt task for jobs</a>)</p>
+</blockquote>
+<p>The CLI does little computing itself, but it stays up for the whole dbt command: it parses the project, sends queries, and then waits while the warehouse runs them. So a long or queued dbt run also costs more on the CLI side. Confirm this with your own data: compare the CLI task's serverless DBUs per run with the run's duration in <code>system.lakeflow.job_task_run_timeline</code>.</p>
+<p><strong>Recommendations, in order:</strong></p>
+<ol>
+<li><strong>Shorten the dbt runs.</strong> Every minute a dbt run spends queued on the warehouse is also paid for on the CLI. Raising max clusters on the dbt warehouse (<a href="#1b-size-up-or-scale-out">see 1b</a>) lowers both.</li>
+<li><strong>Start the CLI fewer times.</strong> With 58 dbt jobs, and orchestrator chains where each product job is its own dbt task, every task starts its own CLI and re-parses the 313-model project. Group the models of a chain into one <code>dbt build</code> with selectors, raise <code>threads</code> so the warehouse is kept busy, and avoid separate tasks for <code>deps</code>, <code>seed</code> and <code>run</code> where one command will do.</li>
+<li>
+<p><strong>Use standard performance mode</strong> for dbt jobs that aren't time-critical. Keep performance optimized for the hourly UA chain that feeds the P0 automation.</p>
+<blockquote>
+<p>"Both modes use the same SKU, but standard performance mode consumes fewer DBUs, reflecting lower compute usage." (<a href="https://learn.microsoft.com/en-us/azure/databricks/jobs/run-serverless-jobs" target="_blank" rel="noopener">Run jobs on serverless</a>)</p>
+</blockquote>
 </li>
-</ul>
+<li>
+<p><strong>Test a classic single-node cluster for the CLI</strong> on one long-running chain. It's the other documented option (<a href="https://learn.microsoft.com/en-us/azure/databricks/jobs/tasks/dbt#configure-a-dbt-task" target="_blank" rel="noopener">dbt CLI compute</a>), and you already have <a href="https://learn.microsoft.com/en-us/azure/databricks/compute/pool-index" target="_blank" rel="noopener">pools</a> to soften the start-up. See <a href="https://learn.microsoft.com/en-us/azure/databricks/compute/configure#single-node" target="_blank" rel="noopener">single-node compute</a> for the setup. The trade-off is start-up time and paying the Azure VM cost again. Compare a week of each on the same chain before switching more.</p>
+</li>
+</ol>
 <h2 id="3-single-workspace-for-dev-and-prod">3. Single workspace for dev and prod</h2>
 <p><strong>Recommendation:</strong> split into a dev workspace and a prod workspace on the <strong>same</strong> metastore. Bind each environment catalog to its workspace and set the default catalog per workspace. Your bundle targets and Terraform map onto this directly.</p>
 <blockquote>
@@ -90,34 +138,28 @@
 <tr>
 <th>Today</th>
 <th>Databricks option</th>
-<th>Status (per docs)</th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <td>Airflow → Kafka for Google Ads, Meta, TikTok</td>
 <td>Lakeflow Connect managed connectors (<a href="https://learn.microsoft.com/en-us/azure/databricks/ingestion/lakeflow-connect/google-ads" target="_blank" rel="noopener">Google Ads</a>, <a href="https://learn.microsoft.com/en-us/azure/databricks/ingestion/lakeflow-connect/meta-ads" target="_blank" rel="noopener">Meta Ads</a>, <a href="https://learn.microsoft.com/en-us/azure/databricks/ingestion/lakeflow-connect/tiktok-ads" target="_blank" rel="noopener">TikTok Ads</a>)</td>
-<td>Beta</td>
 </tr>
 <tr>
 <td>Sources with no native or partner connector (Unity Ads, Mintegral, Newsbreak, Payrails, Sensor Tower)</td>
 <td><a href="https://learn.microsoft.com/en-us/azure/databricks/ingestion/custom-connectors" target="_blank" rel="noopener">Custom connectors</a> / <a href="https://learn.microsoft.com/en-us/azure/databricks/ingestion/community-connectors" target="_blank" rel="noopener">community connectors</a></td>
-<td>Beta</td>
 </tr>
 <tr>
 <td>Airbyte/Debezium CDC from Supabase</td>
 <td><a href="https://learn.microsoft.com/en-us/azure/databricks/ingestion/lakeflow-connect/postgresql-source-setup" target="_blank" rel="noopener">PostgreSQL connector</a></td>
-<td>Public Preview (enrollment through us)</td>
 </tr>
 <tr>
 <td>Kafka producers you keep</td>
 <td>Zerobus Ingest Kafka-compatible API (<a href="https://learn.microsoft.com/en-us/azure/databricks/ingestion/zerobus-ingest" target="_blank" rel="noopener">Use Zerobus Ingest</a>)</td>
-<td>Check region and status with us</td>
 </tr>
 <tr>
 <td>Airflow orchestration</td>
 <td>Lakeflow Jobs triggers (table update, file arrival), For each task (<a href="https://learn.microsoft.com/en-us/azure/databricks/jobs/triggers" target="_blank" rel="noopener">Triggers</a>)</td>
-<td>No preview label for table/file triggers</td>
 </tr>
 </tbody>
 </table></div>
@@ -128,190 +170,140 @@
 </blockquote>
 <p>The first caveat applies to the connection, which needs a one-time interactive sign-in. The pipelines themselves can still be defined in bundles: the Google Ads page lists Declarative Automation Bundles as supported.</p>
 <p>The PostgreSQL docs don't name Supabase, so we'll validate logical replication on Supabase in a short test.</p>
-<h3 id="4a-connector-coverage-for-your-sources">4a. Connector coverage for your sources</h3>
-<p>"Native" means a Lakeflow Connect managed connector, which runs on serverless and is billed in DBUs (in Azure West Europe, $0.50/DBU after a free tier of 100 DBU per workspace per day, <a href="https://www.databricks.com/product/pricing/lakeflow-connect" target="_blank" rel="noopener">pricing</a>). "Community" means an open-source Lakeflow Community Connector (Beta, not covered by Databricks SLAs). "Partner" means a third-party tool, licensed separately. <strong>Fivetran</strong> is in Azure Databricks <a href="https://learn.microsoft.com/en-us/azure/databricks/integrations/" target="_blank" rel="noopener">Partner Connect</a>. <strong>Airbyte</strong> is not in Partner Connect, but you already run it. Airbyte is listed only where we confirmed a connector page.</p>
+<h3 id="4a-zerobus-ingest-push-ingestion-without-kafka">4a. Zerobus Ingest: push ingestion without Kafka</h3>
+<blockquote>
+<p>"Zerobus Ingest is a push-based streaming API that writes data straight into Unity Catalog Delta tables at high scale, with no message bus to run." (<a href="https://learn.microsoft.com/en-us/azure/databricks/ingestion/zerobus-overview" target="_blank" rel="noopener">Zerobus Ingest overview</a>)</p>
+</blockquote>
+<p>Zerobus Ingest is serverless and available in West Europe (<a href="https://learn.microsoft.com/en-us/azure/databricks/resources/feature-region-support#ingestion" target="_blank" rel="noopener">region table</a>). There's nothing to deploy: your producers call one endpoint per workspace, and the records land in a Unity Catalog table.</p>
+<p><strong>Where it fits for you</strong></p>
 <div class="table-wrap"><table>
 <thead>
 <tr>
-<th>Source</th>
-<th>Lakeflow Connect (native)</th>
-<th>Partner connector</th>
+<th>Today</th>
+<th>With Zerobus</th>
+<th>What goes away</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td><strong>Ad networks</strong></td>
-<td></td>
-<td></td>
+<td>Payment webhooks → n8n → SQL warehouse single-row INSERTs</td>
+<td>n8n posts each event to the REST API</td>
+<td>Warehouses kept awake 24/7; thousands of tiny Delta commits</td>
 </tr>
 <tr>
-<td>Google Ads</td>
-<td><a href="https://learn.microsoft.com/en-us/azure/databricks/ingestion/lakeflow-connect/google-ads" target="_blank" rel="noopener">Native</a> (Beta)</td>
-<td><a href="https://fivetran.com/docs/connectors/applications/google-ads" target="_blank" rel="noopener">Fivetran</a>, <a href="https://docs.airbyte.com/integrations/sources/google-ads" target="_blank" rel="noopener">Airbyte</a></td>
+<td>Airflow producer → Kafka topic → Databricks sink job (Pattern A)</td>
+<td>Airflow tasks write directly with the Python SDK, or keep the producer code and point it at the Kafka-compatible API</td>
+<td>The Kafka hop and the sink jobs on pool clusters</td>
 </tr>
 <tr>
-<td>Meta Ads</td>
-<td><a href="https://learn.microsoft.com/en-us/azure/databricks/ingestion/lakeflow-connect/meta-ads" target="_blank" rel="noopener">Native</a> (Beta)</td>
-<td><a href="https://fivetran.com/docs/connectors/applications/facebook-ads" target="_blank" rel="noopener">Fivetran</a>, <a href="https://docs.airbyte.com/integrations/sources/facebook-marketing" target="_blank" rel="noopener">Airbyte</a></td>
-</tr>
-<tr>
-<td>TikTok Ads</td>
-<td><a href="https://learn.microsoft.com/en-us/azure/databricks/ingestion/lakeflow-connect/tiktok-ads" target="_blank" rel="noopener">Native</a> (Beta)</td>
-<td><a href="https://fivetran.com/docs/connectors/applications/tiktok-ads" target="_blank" rel="noopener">Fivetran</a>, <a href="https://docs.airbyte.com/integrations/sources/tiktok-marketing" target="_blank" rel="noopener">Airbyte</a></td>
-</tr>
-<tr>
-<td>Snapchat Ads</td>
-<td>None</td>
-<td><a href="https://fivetran.com/docs/connectors/applications/snapchat-ads" target="_blank" rel="noopener">Fivetran</a>, <a href="https://docs.airbyte.com/integrations/sources/snapchat-marketing" target="_blank" rel="noopener">Airbyte</a></td>
-</tr>
-<tr>
-<td>Pinterest Ads</td>
-<td>None</td>
-<td><a href="https://fivetran.com/docs/connectors/applications/pinterest-ads" target="_blank" rel="noopener">Fivetran</a>, <a href="https://docs.airbyte.com/integrations/sources/pinterest" target="_blank" rel="noopener">Airbyte</a></td>
-</tr>
-<tr>
-<td>Apple Search Ads</td>
-<td>None</td>
-<td><a href="https://fivetran.com/docs/connectors/applications/apple-search-ads" target="_blank" rel="noopener">Fivetran</a>, <a href="https://docs.airbyte.com/integrations/sources/apple-search-ads" target="_blank" rel="noopener">Airbyte</a></td>
-</tr>
-<tr>
-<td>AppLovin</td>
-<td>None</td>
-<td><a href="https://fivetran.com/docs/connectors/applications/applovin" target="_blank" rel="noopener">Fivetran</a></td>
-</tr>
-<tr>
-<td>Moloco</td>
-<td>None</td>
-<td><a href="https://fivetran.com/docs/connectors/applications/moloco" target="_blank" rel="noopener">Fivetran</a></td>
-</tr>
-<tr>
-<td>Liftoff</td>
-<td>None</td>
-<td><a href="https://fivetran.com/docs/connectors/applications/liftoff" target="_blank" rel="noopener">Fivetran</a></td>
-</tr>
-<tr>
-<td>Unity Ads, Mintegral, Newsbreak</td>
-<td>None</td>
-<td>None found: keep the current Airflow ingestion, or build a <a href="https://learn.microsoft.com/en-us/azure/databricks/ingestion/custom-connectors" target="_blank" rel="noopener">custom connector</a> (Beta)</td>
-</tr>
-<tr>
-<td><strong>MMP and app stores</strong></td>
-<td></td>
+<td>Debezium CDC → Kafka</td>
+<td>Possible, but you'd still need the LSN-ordered MERGE downstream; the <a href="https://learn.microsoft.com/en-us/azure/databricks/ingestion/lakeflow-connect/postgresql-source-setup" target="_blank" rel="noopener">PostgreSQL connector</a> is the better fit for CDC</td>
 <td></td>
 </tr>
 <tr>
-<td>AppsFlyer</td>
-<td><a href="https://github.com/databrickslabs/lakeflow-community-connectors" target="_blank" rel="noopener">Community</a> (Beta)</td>
-<td><a href="https://fivetran.com/docs/connectors/applications/appsflyer" target="_blank" rel="noopener">Fivetran</a>, <a href="https://docs.airbyte.com/integrations/sources/appsflyer" target="_blank" rel="noopener">Airbyte</a></td>
-</tr>
-<tr>
-<td>App Store Connect</td>
-<td>None</td>
-<td><a href="https://fivetran.com/docs/connectors/applications/apple-app-store" target="_blank" rel="noopener">Fivetran</a></td>
-</tr>
-<tr>
-<td>Google Play Console</td>
-<td>None</td>
-<td><a href="https://fivetran.com/docs/connectors/applications/google-play" target="_blank" rel="noopener">Fivetran</a></td>
-</tr>
-<tr>
-<td>Appfigures</td>
-<td>None</td>
-<td><a href="https://fivetran.com/docs/connectors/applications/appfigures" target="_blank" rel="noopener">Fivetran</a>, <a href="https://docs.airbyte.com/integrations/sources/appfigures" target="_blank" rel="noopener">Airbyte</a></td>
-</tr>
-<tr>
-<td><strong>Payments</strong></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td>PayPal</td>
-<td><a href="https://learn.microsoft.com/en-us/azure/databricks/ingestion/lakeflow-connect/paypal" target="_blank" rel="noopener">Native</a> (Beta)</td>
-<td><a href="https://fivetran.com/docs/connectors/applications/paypal" target="_blank" rel="noopener">Fivetran</a>, <a href="https://docs.airbyte.com/integrations/sources/paypal-transaction" target="_blank" rel="noopener">Airbyte</a></td>
-</tr>
-<tr>
-<td>Stripe</td>
-<td>None</td>
-<td><a href="https://fivetran.com/docs/connectors/applications/stripe" target="_blank" rel="noopener">Fivetran</a>, <a href="https://docs.airbyte.com/integrations/sources/stripe" target="_blank" rel="noopener">Airbyte</a></td>
-</tr>
-<tr>
-<td>Adyen</td>
-<td>None</td>
-<td><a href="https://fivetran.com/docs/connectors/applications/adyen" target="_blank" rel="noopener">Fivetran</a></td>
-</tr>
-<tr>
-<td>Payrails</td>
-<td>None</td>
-<td>None found: webhooks via <a href="https://learn.microsoft.com/en-us/azure/databricks/ingestion/zerobus-overview" target="_blank" rel="noopener">Zerobus Ingest</a>, or a custom connector</td>
-</tr>
-<tr>
-<td><strong>App database</strong></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td>Supabase Postgres (CDC)</td>
-<td><a href="https://learn.microsoft.com/en-us/azure/databricks/ingestion/lakeflow-connect/postgresql-source-setup" target="_blank" rel="noopener">PostgreSQL connector</a> (Public Preview; Supabase to be validated)</td>
-<td><a href="https://fivetran.com/docs/connectors/databases/postgresql" target="_blank" rel="noopener">Fivetran PostgreSQL</a>, <a href="https://docs.airbyte.com/integrations/sources/postgres" target="_blank" rel="noopener">Airbyte Postgres</a> (your current setup)</td>
-</tr>
-<tr>
-<td><strong>Product and SaaS</strong></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td>Amplitude</td>
-<td><a href="https://learn.microsoft.com/en-us/azure/databricks/ingestion/lakeflow-connect/amplitude-overview" target="_blank" rel="noopener">Native</a> (Beta)</td>
-<td><a href="https://fivetran.com/docs/connectors/applications/amplitude" target="_blank" rel="noopener">Fivetran</a>, <a href="https://docs.airbyte.com/integrations/sources/amplitude" target="_blank" rel="noopener">Airbyte</a></td>
-</tr>
-<tr>
-<td>Zendesk Support</td>
-<td><a href="https://learn.microsoft.com/en-us/azure/databricks/ingestion/lakeflow-connect/zendesk-support-overview" target="_blank" rel="noopener">Native</a> (no preview label)</td>
-<td><a href="https://fivetran.com/docs/connectors/applications/zendesk" target="_blank" rel="noopener">Fivetran</a>, <a href="https://docs.airbyte.com/integrations/sources/zendesk-support" target="_blank" rel="noopener">Airbyte</a></td>
-</tr>
-<tr>
-<td>Notion</td>
-<td><a href="https://learn.microsoft.com/en-us/azure/databricks/ingestion/lakeflow-connect/notion" target="_blank" rel="noopener">Native</a> (Beta)</td>
-<td><a href="https://fivetran.com/docs/connectors/applications/notion" target="_blank" rel="noopener">Fivetran</a>, <a href="https://docs.airbyte.com/integrations/sources/notion" target="_blank" rel="noopener">Airbyte</a></td>
-</tr>
-<tr>
-<td>Google Sheets</td>
-<td><a href="https://github.com/databrickslabs/lakeflow-community-connectors" target="_blank" rel="noopener">Community</a> (Beta)</td>
-<td><a href="https://fivetran.com/docs/connectors/files/google-sheets" target="_blank" rel="noopener">Fivetran</a>, <a href="https://docs.airbyte.com/integrations/sources/google-sheets" target="_blank" rel="noopener">Airbyte</a></td>
-</tr>
-<tr>
-<td>Airtable</td>
-<td>None</td>
-<td><a href="https://fivetran.com/docs/connectors/applications/airtable" target="_blank" rel="noopener">Fivetran</a>, <a href="https://docs.airbyte.com/integrations/sources/airtable" target="_blank" rel="noopener">Airbyte</a></td>
-</tr>
-<tr>
-<td>Sensor Tower</td>
-<td>None</td>
-<td>None found: custom connector</td>
-</tr>
-<tr>
-<td>PeopleForce (HR)</td>
-<td>None</td>
-<td><a href="https://fivetran.com/docs/connectors/applications/peopleforce" target="_blank" rel="noopener">Fivetran</a></td>
-</tr>
-<tr>
-<td><strong>Roadmap sources</strong></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td>Odoo (ERP)</td>
-<td>None</td>
-<td><a href="https://fivetran.com/docs/connectors/applications/odoo" target="_blank" rel="noopener">Fivetran</a></td>
-</tr>
-<tr>
-<td>Google Search Console (SEO)</td>
-<td><a href="https://learn.microsoft.com/en-us/azure/databricks/ingestion/lakeflow-connect/google-search-console" target="_blank" rel="noopener">Native</a> (Beta, enable in Previews)</td>
-<td><a href="https://fivetran.com/docs/connectors/applications/google-search-console" target="_blank" rel="noopener">Fivetran</a>, <a href="https://docs.airbyte.com/integrations/sources/google-search-console" target="_blank" rel="noopener">Airbyte</a></td>
+<td>Prometheus/Grafana on AKS (optional)</td>
+<td>The OpenTelemetry interface lands traces, logs and metrics in Delta</td>
+<td>Part of the self-hosted observability stack</td>
 </tr>
 </tbody>
 </table></div>
-<p>Summary: 9 of your sources have a native connector: 7 in Beta, PostgreSQL in Public Preview, and Zendesk with no preview label. AppsFlyer and Google Sheets have community connectors. Fivetran covers almost all of the rest. Five sources (Unity Ads, Mintegral, Newsbreak, Payrails, Sensor Tower) have no off-the-shelf connector anywhere, so they stay on your current pattern or move to a custom connector.</p>
+<p><strong>How it works</strong></p>
+<ul>
+<li>
+<p><strong>No topic setup.</strong> The target table is the topic. You create the table, then push to it. For the Kafka-compatible API:</p>
+<blockquote>
+<p>"A Kafka topic name is the full three-level Unity Catalog table name (<code>catalog.schema.table</code>). The target table must already exist, because Zerobus never creates topics." (<a href="https://learn.microsoft.com/en-us/azure/databricks/ingestion/zerobus-kafka" target="_blank" rel="noopener">Kafka-compatible APIs</a>)</p>
+</blockquote>
+</li>
+<li>
+<p><strong>Target table.</strong> It can be a regular managed Delta table or a streaming table:</p>
+<blockquote>
+<p>"Zerobus Ingest can write to both managed Delta tables and streaming tables, which work the same way, with the same limits and quotas." (<a href="https://learn.microsoft.com/en-us/azure/databricks/ingestion/zerobus-ingest" target="_blank" rel="noopener">Use Zerobus Ingest</a>)</p>
+</blockquote>
+<p>Downstream it's a normal table: dbt incremental models, <code>readStream</code>, Genie and Tableau all work on it.
+- <strong>Latency.</strong> Records are durable in about 150 ms and in the table in about 5 seconds (<a href="https://learn.microsoft.com/en-us/azure/databricks/ingestion/zerobus-quotas" target="_blank" rel="noopener">Quotas</a>).
+- <strong>Delivery:</strong> at least once, so deduplicate downstream (for example, MERGE on the payment event ID in silver):</p>
+<blockquote>
+<p>"Zerobus Ingest provides at-least-once delivery when the protocol provides a durability acknowledgment and the client retries records that aren't acknowledged." (<a href="https://learn.microsoft.com/en-us/azure/databricks/ingestion/zerobus-quotas" target="_blank" rel="noopener">Quotas</a>)</p>
+</blockquote>
+</li>
+</ul>
+<p><strong>Interfaces for your producers</strong></p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Producer</th>
+<th>Interface</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>n8n (webhooks)</td>
+<td>REST API</td>
+<td>JSON body, OAuth token refreshed hourly</td>
+</tr>
+<tr>
+<td>Airflow tasks</td>
+<td>Python SDK (gRPC)</td>
+<td>Highest throughput, per-record acknowledgments</td>
+</tr>
+<tr>
+<td>Existing Kafka producers</td>
+<td>Kafka-compatible API</td>
+<td>JSON only, no compression, write-only, public endpoint only</td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>Schema contract</strong></p>
+<blockquote>
+<p>"Your table schema is the contract for what Zerobus Ingest accepts, and Zerobus Ingest never auto-evolves it." (<a href="https://learn.microsoft.com/en-us/azure/databricks/ingestion/zerobus-ingest" target="_blank" rel="noopener">Use Zerobus Ingest</a>)</p>
+</blockquote>
+<ul>
+<li>To change the schema, evolve the table first, then the producer.</li>
+<li>
+<p>Payment providers add webhook fields over time, so add a <strong>rescue column</strong>. It's a nullable <code>VARIANT</code> column tagged <code>zerobus-rescue</code> (JSON ingestion only).</p>
+<blockquote>
+<p>"Fields that don't fit the schema are grouped into a JSON object and stored in a designated rescue column as a <code>VARIANT</code> type." (<a href="https://learn.microsoft.com/en-us/azure/databricks/ingestion/zerobus-rescue-column" target="_blank" rel="noopener">Rescue column</a>)</p>
+</blockquote>
+</li>
+</ul>
+<p><strong>Security and networking</strong></p>
+<ul>
+<li><strong>Authentication:</strong> a service principal with <code>USE CATALOG</code>, <code>USE SCHEMA</code> and <code>MODIFY, SELECT</code> on the target table gets a table-scoped OAuth token. Microsoft Entra ID federation is also supported.</li>
+<li>
+<p><strong>Private Link and storage firewall:</strong></p>
+<blockquote>
+<p>"MQTT and Kafka-compatible APIs don't support front-end Private Link and must use the public endpoint." (<a href="https://learn.microsoft.com/en-us/azure/databricks/ingestion/zerobus-networking" target="_blank" rel="noopener">Networking</a>)</p>
+</blockquote>
+<p>If the ADLS account behind your UC storage root has a firewall, allowlist the Databricks serverless outbound IPs (<a href="https://learn.microsoft.com/en-us/azure/databricks/ingestion/zerobus-networking" target="_blank" rel="noopener">same page</a>).</p>
+</li>
+</ul>
+<p><strong>Limits</strong> (all adjustable, far above your volumes): 100 MB/s and 100,000 records/s per gRPC stream, 10,000 REST requests/s, 10 MB per record, unlimited concurrent streams (<a href="https://learn.microsoft.com/en-us/azure/databricks/ingestion/zerobus-quotas" target="_blank" rel="noopener">Quotas</a>).</p>
+<p><strong>Cost</strong></p>
+<ul>
+<li><strong>Rate:</strong> $0.072/GB ingested in West Europe (0.143 DBU per GB), with compute included and no idle cost (<a href="https://www.databricks.com/product/pricing/lakeflow-connect" target="_blank" rel="noopener">pricing</a>).</li>
+<li><strong>On the bill:</strong> it appears as Automated Serverless. Track it with <code>billing_origin_product = 'LAKEFLOW_CONNECT'</code> in <code>system.billing.usage</code> (<a href="https://learn.microsoft.com/en-us/azure/databricks/ingestion/zerobus-overview" target="_blank" rel="noopener">overview</a>).</li>
+<li><strong>Example:</strong> 100k payment events a day at about 2 KB each costs under $1 a month.</li>
+</ul>
+<p><strong>Things to watch</strong></p>
+<ul>
+<li>
+<p><strong>Unflushed data:</strong> if Zerobus can't write to the table (for example, it was dropped or broken), it buffers the data, but not forever:</p>
+<blockquote>
+<p>"If the data remains unflushed for 28 days, the service deletes the buffered data and emits a per-stream discard event recording the number of records and bytes dropped." (<a href="https://learn.microsoft.com/en-us/azure/databricks/ingestion/zerobus-quotas" target="_blank" rel="noopener">Quotas</a>)</p>
+</blockquote>
+<p>Route those events into your Alert Hub.
+- <strong>Table layout:</strong></p>
+<blockquote>
+<p>"Databricks recommends using liquid clustered tables with Zerobus Ingest instead of partitioning." (<a href="https://learn.microsoft.com/en-us/azure/databricks/ingestion/zerobus-quotas" target="_blank" rel="noopener">Quotas</a>)</p>
+</blockquote>
+<p>Keep predictive optimization on for the target tables.</p>
+</li>
+</ul>
+<p><strong>Suggested pilot:</strong>
+1. Payment webhooks first: one n8n flow → REST → a <code>bronze.payment_webhooks</code> table with a rescue column. Run it side by side with the current INSERT path for a week, and compare row counts and warehouse uptime.
+2. Then move one Pattern A DAG from Kafka to the Python SDK, and measure the sink-job cost removed.</p>
 <h2 id="5-semantic-layer-multi-fact-metric-views-tableau-and-genie">5. Semantic layer: multi-fact metric views, Tableau and Genie</h2>
 <p><strong>Recommendation:</strong> the bridge pattern you built is the documented approach. Speed it up with materialization only where the source tables carry no RLS or ABAC.</p>
 <blockquote>
@@ -398,7 +390,5 @@
 <p>(1) Max-cluster and 1-minute auto-stop changes on the consolidated warehouses, plus the serverless A/B, to support the December −15% target; (2) the ABAC single-policy fix and PII classification; (3) a 30-minute session on the dev/prod workspace split; (4) pLTV scoping for the Q1 2027 build.</p>
   </main>
 </div>
-<footer class="foot">Prepared by Databricks. Quotes are from the Azure Databricks documentation on learn.microsoft.com
-unless marked otherwise. Preview status is given as the documentation states it.</footer>
 </body>
 </html>

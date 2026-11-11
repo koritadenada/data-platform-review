@@ -4,146 +4,26 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex, nofollow">
-<title>SQL warehouse topology, billing and dbt practices</title>
+<title>dbt practices</title>
 <link rel="stylesheet" href="style.css">
 </head>
 <body class="page">
 <header class="top">
-  <a class="brand" href="index.html"><span class="mark"></span>Data platform review</a>
-  <nav class="tabs"><a href="platform-review.html" class="">Platform review</a><a href="warehouse-dbt.html" class="on">Warehouses and dbt</a><a href="resources.html" class="">Resources</a></nav>
+  <a class="brand" href="index.html"><svg class="mark" viewBox="0 0 24 24" role="img" aria-label="Databricks"><path fill="#FF3621" d="M.95 14.184L12 20.403l9.919-5.55v2.21L12 22.662l-10.484-5.96-.565.308v.77L12 24l11.05-6.218v-4.317l-.515-.309L12 19.118l-9.867-5.653v-2.21L12 16.805l11.05-6.218V6.32l-.565-.308L12 11.974 2.647 6.681 12 1.388l7.76 4.368.668-.411v-.566L12 0 .95 6.27v.72L12 13.207l9.919-5.55v2.26L12 15.52 1.516 9.56l-.565.308Z"/></svg>Data platform review</a>
+  <nav class="tabs"><a href="platform-review.html" class="">Platform review</a><a href="warehouse-dbt.html" class="on">dbt practices</a><a href="resources.html" class="">Resources</a><a href="genie.html" class="">Genie</a></nav>
 </header>
 <div class="layout">
   <aside class="side">
     <div class="side-inner">
       <div class="side-label">On this page</div>
-      <ol class="toc"><li><a href="#1-sql-warehouse-topology-and-billing">1. SQL warehouse topology and billing</a></li><li class="sub"><a href="#shared-autoscaling-or-per-workload-isolation">Shared autoscaling or per-workload isolation?</a></li><li class="sub"><a href="#how-serverless-is-billed-for-many-short-queries">How serverless is billed for many short queries</a></li><li class="sub"><a href="#size-up-or-scale-out">Size up or scale out?</a></li><li class="sub"><a href="#statement-timeouts">Statement timeouts</a></li><li><a href="#2-dbt-practices-at-your-scale-313-models-58-jobs">2. dbt practices at your scale (313 models, 58 jobs)</a></li><li class="sub"><a href="#incremental-strategies">Incremental strategies</a></li><li class="sub"><a href="#keeping-dbt-test-cheap">Keeping dbt test cheap</a></li><li class="sub"><a href="#adapter-pinning">Adapter pinning</a></li></ol>
+      <ol class="toc"><li><a href="#1-dbt-practices-at-your-scale-313-models-58-jobs">1. dbt practices at your scale (313 models, 58 jobs)</a></li><li class="sub"><a href="#incremental-strategies">Incremental strategies</a></li><li class="sub"><a href="#keeping-dbt-test-cheap">Keeping dbt test cheap</a></li><li class="sub"><a href="#adapter-pinning">Adapter pinning</a></li></ol>
     </div>
   </aside>
   <main class="doc">
     <div class="kicker">Deep dive</div>
-    <h1>SQL warehouse topology, billing and dbt practices</h1>
+    <h1>dbt practices</h1>
     
-<p>Prepared by Databricks. Quotes are from the Azure Databricks documentation (learn.microsoft.com). dbt-specific behavior is quoted from the official dbt documentation (docs.getdbt.com) where the Azure docs don't cover it. Prices are Azure West Europe, Premium, list price.</p>
-<p>This is a companion to the <a href="platform-review.html">platform review</a> and goes deeper on the SQL warehouse and dbt points.</p>
-<h2 id="1-sql-warehouse-topology-and-billing">1. SQL warehouse topology and billing</h2>
-<h3 id="shared-autoscaling-or-per-workload-isolation">Shared autoscaling or per-workload isolation?</h3>
-<p><strong>Recommendation:</strong> use a hybrid. Isolate by service level and query shape, and let workloads with similar behavior share an autoscaling warehouse. Sharing pools capacity and replaces many idle tails with one, which is where most of the savings come from. Isolate only where a heavy workload could make a time-critical one queue, or where you need billed cost per workload.</p>
-<blockquote>
-<p>"Start with a single larger warehouse and let serverless features manage concurrency and performance. It is usually more efficient to size down if necessary than to start small and scale up." (<a href="https://learn.microsoft.com/en-us/azure/databricks/compute/sql-warehouse/warehouse-behavior" target="_blank" rel="noopener">Warehouse behavior</a>)</p>
-</blockquote>
-<div class="table-wrap"><table>
-<thead>
-<tr>
-<th>Class</th>
-<th>Workloads</th>
-<th>Why separate</th>
-<th>Starting config</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>ETL</td>
-<td>hourly dbt + 3× daily full refresh</td>
-<td>Heavy, bursty; must not block BI</td>
-<td>Small, max 3–4 clusters, auto-stop 1 min (API)</td>
-</tr>
-<tr>
-<td>BI</td>
-<td>Tableau live connections, analysts</td>
-<td>Interactive latency</td>
-<td>X-Small/Small, max 2–4, auto-stop 5–10 min</td>
-</tr>
-<tr>
-<td>Automation (P0)</td>
-<td>P0 bots, LLM agents</td>
-<td>15-minute SLA; never queue behind ETL</td>
-<td>2X-Small, max 2, auto-stop 1 min</td>
-</tr>
-<tr>
-<td>CI</td>
-<td>PR checks, dbt CI builds</td>
-<td>Spiky, cost belongs to engineering</td>
-<td>X-Small, max 2, auto-stop 1 min</td>
-</tr>
-<tr>
-<td>Dev</td>
-<td>dbt dev, ad-hoc</td>
-<td>Keeps prod spend clean</td>
-<td>2X-Small, max 2, auto-stop 1–5 min</td>
-</tr>
-</tbody>
-</table></div>
-<p>The payment-webhook INSERTs come off SQL warehouses entirely (see the Zerobus Ingest recommendation in section 1 of the <a href="platform-review.html">platform review</a>).</p>
-<p><strong>Cost attribution inside a shared warehouse:</strong> billing rows carry the warehouse ID, so a warehouse is your billed unit. To split a shared warehouse's cost by team or model, use query tags. dbt-databricks 1.11+ sets them automatically (you're on 1.12).</p>
-<blockquote>
-<p>"Query tags are custom key-value pairs you apply to SQL workloads so you can group, filter, and track costs on Databricks SQL warehouses [...]" (<a href="https://learn.microsoft.com/en-us/azure/databricks/sql/user/queries/query-tags" target="_blank" rel="noopener">Query tags</a>)</p>
-<p>"Tags appear in the <code>system.query.history</code> table and on the Query History page of the Azure Databricks UI." (<a href="https://learn.microsoft.com/en-us/azure/databricks/sql/user/queries/query-tags" target="_blank" rel="noopener">same page</a>)</p>
-</blockquote>
-<p>Query tags give you an estimated split. They don't appear in <code>system.billing.usage</code>. Tableau can set them through Initial SQL.</p>
-<h3 id="how-serverless-is-billed-for-many-short-queries">How serverless is billed for many short queries</h3>
-<ul>
-<li>
-<p><strong>Granularity:</strong></p>
-<blockquote>
-<p>"A DBU is a unit of processing capability, billed on a per-second usage." (<a href="https://azure.microsoft.com/en-us/pricing/details/databricks/" target="_blank" rel="noopener">Azure Databricks pricing</a>)</p>
-</blockquote>
-<p>No minimum charge per query is documented.
-- <strong>What you pay for:</strong> the time the warehouse is running, times the DBU rate for its size, times the number of running clusters. You don't pay per query. Serverless SQL is <strong>$0.91/DBU</strong> in West Europe, including compute (<a href="https://www.databricks.com/product/pricing/databricks-sql" target="_blank" rel="noopener">Databricks SQL pricing</a>).
-- <strong>Idle tail:</strong> you pay until auto-stop.</p>
-<blockquote>
-<p>"Idle SQL warehouses continue to accumulate DBU and cloud instance charges until they are stopped." (<a href="https://learn.microsoft.com/en-us/azure/databricks/compute/sql-warehouse/create" target="_blank" rel="noopener">Create a SQL warehouse</a>)</p>
-<p>"The minimum is 5 minutes when you use the UI. Note that you can create a serverless SQL warehouse using the SQL warehouses API, in which case you can set the Auto Stop value as low as 1 minute." (<a href="https://learn.microsoft.com/en-us/azure/databricks/compute/sql-warehouse/create" target="_blank" rel="noopener">same page</a>)</p>
-</blockquote>
-</li>
-<li>
-<p><strong>Worked example:</strong> a bot query every 15 minutes, with a 10-minute auto-stop, keeps the warehouse up about 70% of the time. With a 1-minute auto-stop it's about 10%. Serverless restarts in "typically between 2 and 6 seconds" (<a href="https://learn.microsoft.com/en-us/azure/databricks/compute/sql-warehouse/warehouse-types" target="_blank" rel="noopener">Warehouse types</a>), so short auto-stops cost very little latency.</p>
-</li>
-<li><strong>Measure, don't estimate:</strong> group <code>system.billing.usage</code> by <code>usage_metadata.warehouse_id</code> and hour to get the actual DBUs per warehouse. Then compare before and after consolidation.</li>
-</ul>
-<h3 id="size-up-or-scale-out">Size up or scale out?</h3>
-<blockquote>
-<p>"If queries are spilling to disk, increase the cluster size. Check for spills in the query profile." (<a href="https://learn.microsoft.com/en-us/azure/databricks/compute/sql-warehouse/warehouse-behavior" target="_blank" rel="noopener">Warehouse behavior</a>)</p>
-<p>"For workloads with many concurrent queries, configure a sufficient maximum number of clusters to handle peak loads." (<a href="https://learn.microsoft.com/en-us/azure/databricks/compute/sql-warehouse/warehouse-behavior" target="_blank" rel="noopener">same page</a>)</p>
-</blockquote>
-<div class="table-wrap"><table>
-<thead>
-<tr>
-<th>Signal</th>
-<th>Action</th>
-<th>Typical case for you</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>Peak Queued Queries consistently &gt; 0</td>
-<td>Raise max clusters</td>
-<td>Hourly and full-refresh dbt overlap; Tableau at the top of the hour</td>
-</tr>
-<tr>
-<td>Bytes spilled to disk in query profile</td>
-<td>Size up</td>
-<td>Full-refresh models on the subscription OBT</td>
-</tr>
-<tr>
-<td>Both</td>
-<td>Size up and raise max clusters</td>
-<td>Check one model at a time</td>
-</tr>
-</tbody>
-</table></div>
-<p>Extra clusters run only during the burst, while a bigger size costs more for the whole time the warehouse runs. So for your bursts, scaling out is usually cheaper.</p>
-<h3 id="statement-timeouts">Statement timeouts</h3>
-<blockquote>
-<p>"When the timeout is set at more than one scope, the first non-null value in the following order applies:" Session, then Warehouse (Beta), then Workspace. (<a href="https://learn.microsoft.com/en-us/azure/databricks/sql/language-manual/parameters/statement_timeout" target="_blank" rel="noopener">STATEMENT_TIMEOUT</a>)</p>
-<p>"The system default is 172800 seconds (2 days)." (<a href="https://learn.microsoft.com/en-us/azure/databricks/sql/language-manual/parameters/statement_timeout" target="_blank" rel="noopener">same page</a>)</p>
-</blockquote>
-<ul>
-<li><strong>Workspace:</strong> lower the 2-day default to a safety net, for example 2 hours.</li>
-<li><strong>Warehouse level (Beta, enable in Previews):</strong> set one per class. For example BI 10 min, Automation 5 min, CI 30 min, Dev 30 min, and ETL about 2× your longest full-refresh model.</li>
-<li><strong>Session level:</strong> for known exceptions, e.g. a dbt pre-hook <code>SET STATEMENT_TIMEOUT = ...</code> on a heavy backfill.</li>
-<li><strong>Job level:</strong> a task-level timeout on each dbt job caps the whole run, not just a single statement (<a href="https://learn.microsoft.com/en-us/azure/databricks/jobs/configure-task" target="_blank" rel="noopener">Configure a task</a>).</li>
-</ul>
-<h2 id="2-dbt-practices-at-your-scale-313-models-58-jobs">2. dbt practices at your scale (313 models, 58 jobs)</h2>
+<h2 id="1-dbt-practices-at-your-scale-313-models-58-jobs">1. dbt practices at your scale (313 models, 58 jobs)</h2>
 <h3 id="incremental-strategies">Incremental strategies</h3>
 <div class="table-wrap"><table>
 <thead>
@@ -213,7 +93,6 @@
 <blockquote>
 <p>"When a constraint is violated, the transaction fails with an error." (<a href="https://learn.microsoft.com/en-us/azure/databricks/tables/constraints" target="_blank" rel="noopener">Constraints</a>)</p>
 </blockquote>
-<p>dbt applies model-contract constraints on Databricks after the table is built, so we'll check this behavior with your setup in a sandbox before you replace tests with constraints.</p>
 </li>
 </ul>
 <h3 id="adapter-pinning">Adapter pinning</h3>
@@ -241,7 +120,5 @@
 </ul>
   </main>
 </div>
-<footer class="foot">Prepared by Databricks. Quotes are from the Azure Databricks documentation on learn.microsoft.com
-unless marked otherwise. Preview status is given as the documentation states it.</footer>
 </body>
 </html>
