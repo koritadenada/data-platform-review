@@ -1,0 +1,247 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>SQL warehouse topology, billing and dbt practices</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body class="page">
+<header class="top">
+  <a class="brand" href="index.html"><span class="mark"></span>Data platform review</a>
+  <nav class="tabs"><a href="platform-review.html" class="">Platform review</a><a href="warehouse-dbt.html" class="on">Warehouses and dbt</a><a href="resources.html" class="">Resources</a></nav>
+</header>
+<div class="layout">
+  <aside class="side">
+    <div class="side-inner">
+      <div class="side-label">On this page</div>
+      <ol class="toc"><li><a href="#1-sql-warehouse-topology-and-billing">1. SQL warehouse topology and billing</a></li><li class="sub"><a href="#shared-autoscaling-or-per-workload-isolation">Shared autoscaling or per-workload isolation?</a></li><li class="sub"><a href="#how-serverless-is-billed-for-many-short-queries">How serverless is billed for many short queries</a></li><li class="sub"><a href="#size-up-or-scale-out">Size up or scale out?</a></li><li class="sub"><a href="#statement-timeouts">Statement timeouts</a></li><li><a href="#2-dbt-practices-at-your-scale-313-models-58-jobs">2. dbt practices at your scale (313 models, 58 jobs)</a></li><li class="sub"><a href="#incremental-strategies">Incremental strategies</a></li><li class="sub"><a href="#keeping-dbt-test-cheap">Keeping dbt test cheap</a></li><li class="sub"><a href="#adapter-pinning">Adapter pinning</a></li></ol>
+    </div>
+  </aside>
+  <main class="doc">
+    <div class="kicker">Deep dive</div>
+    <h1>SQL warehouse topology, billing and dbt practices</h1>
+    
+<p>Prepared by Databricks. Quotes are from the Azure Databricks documentation (learn.microsoft.com). dbt-specific behavior is quoted from the official dbt documentation (docs.getdbt.com) where the Azure docs don't cover it. Prices are Azure West Europe, Premium, list price.</p>
+<p>This is a companion to the <a href="platform-review.html">platform review</a> and goes deeper on the SQL warehouse and dbt points.</p>
+<h2 id="1-sql-warehouse-topology-and-billing">1. SQL warehouse topology and billing</h2>
+<h3 id="shared-autoscaling-or-per-workload-isolation">Shared autoscaling or per-workload isolation?</h3>
+<p><strong>Recommendation:</strong> use a hybrid. Isolate by service level and query shape, and let workloads with similar behavior share an autoscaling warehouse. Sharing pools capacity and replaces many idle tails with one, which is where most of the savings come from. Isolate only where a heavy workload could make a time-critical one queue, or where you need billed cost per workload.</p>
+<blockquote>
+<p>"Start with a single larger warehouse and let serverless features manage concurrency and performance. It is usually more efficient to size down if necessary than to start small and scale up." (<a href="https://learn.microsoft.com/en-us/azure/databricks/compute/sql-warehouse/warehouse-behavior" target="_blank" rel="noopener">Warehouse behavior</a>)</p>
+</blockquote>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Class</th>
+<th>Workloads</th>
+<th>Why separate</th>
+<th>Starting config</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ETL</td>
+<td>hourly dbt + 3× daily full refresh</td>
+<td>Heavy, bursty; must not block BI</td>
+<td>Small, max 3–4 clusters, auto-stop 1 min (API)</td>
+</tr>
+<tr>
+<td>BI</td>
+<td>Tableau live connections, analysts</td>
+<td>Interactive latency</td>
+<td>X-Small/Small, max 2–4, auto-stop 5–10 min</td>
+</tr>
+<tr>
+<td>Automation (P0)</td>
+<td>P0 bots, LLM agents</td>
+<td>15-minute SLA; never queue behind ETL</td>
+<td>2X-Small, max 2, auto-stop 1 min</td>
+</tr>
+<tr>
+<td>CI</td>
+<td>PR checks, dbt CI builds</td>
+<td>Spiky, cost belongs to engineering</td>
+<td>X-Small, max 2, auto-stop 1 min</td>
+</tr>
+<tr>
+<td>Dev</td>
+<td>dbt dev, ad-hoc</td>
+<td>Keeps prod spend clean</td>
+<td>2X-Small, max 2, auto-stop 1–5 min</td>
+</tr>
+</tbody>
+</table></div>
+<p>The payment-webhook INSERTs come off SQL warehouses entirely (see the Zerobus Ingest recommendation in section 1 of the <a href="platform-review.html">platform review</a>).</p>
+<p><strong>Cost attribution inside a shared warehouse:</strong> billing rows carry the warehouse ID, so a warehouse is your billed unit. To split a shared warehouse's cost by team or model, use query tags. dbt-databricks 1.11+ sets them automatically (you're on 1.12).</p>
+<blockquote>
+<p>"Query tags are custom key-value pairs you apply to SQL workloads so you can group, filter, and track costs on Databricks SQL warehouses [...]" (<a href="https://learn.microsoft.com/en-us/azure/databricks/sql/user/queries/query-tags" target="_blank" rel="noopener">Query tags</a>)</p>
+<p>"Tags appear in the <code>system.query.history</code> table and on the Query History page of the Azure Databricks UI." (<a href="https://learn.microsoft.com/en-us/azure/databricks/sql/user/queries/query-tags" target="_blank" rel="noopener">same page</a>)</p>
+</blockquote>
+<p>Query tags give you an estimated split. They don't appear in <code>system.billing.usage</code>. Tableau can set them through Initial SQL.</p>
+<h3 id="how-serverless-is-billed-for-many-short-queries">How serverless is billed for many short queries</h3>
+<ul>
+<li>
+<p><strong>Granularity:</strong></p>
+<blockquote>
+<p>"A DBU is a unit of processing capability, billed on a per-second usage." (<a href="https://azure.microsoft.com/en-us/pricing/details/databricks/" target="_blank" rel="noopener">Azure Databricks pricing</a>)</p>
+</blockquote>
+<p>No minimum charge per query is documented.
+- <strong>What you pay for:</strong> the time the warehouse is running, times the DBU rate for its size, times the number of running clusters. You don't pay per query. Serverless SQL is <strong>$0.91/DBU</strong> in West Europe, including compute (<a href="https://www.databricks.com/product/pricing/databricks-sql" target="_blank" rel="noopener">Databricks SQL pricing</a>).
+- <strong>Idle tail:</strong> you pay until auto-stop.</p>
+<blockquote>
+<p>"Idle SQL warehouses continue to accumulate DBU and cloud instance charges until they are stopped." (<a href="https://learn.microsoft.com/en-us/azure/databricks/compute/sql-warehouse/create" target="_blank" rel="noopener">Create a SQL warehouse</a>)</p>
+<p>"The minimum is 5 minutes when you use the UI. Note that you can create a serverless SQL warehouse using the SQL warehouses API, in which case you can set the Auto Stop value as low as 1 minute." (<a href="https://learn.microsoft.com/en-us/azure/databricks/compute/sql-warehouse/create" target="_blank" rel="noopener">same page</a>)</p>
+</blockquote>
+</li>
+<li>
+<p><strong>Worked example:</strong> a bot query every 15 minutes, with a 10-minute auto-stop, keeps the warehouse up about 70% of the time. With a 1-minute auto-stop it's about 10%. Serverless restarts in "typically between 2 and 6 seconds" (<a href="https://learn.microsoft.com/en-us/azure/databricks/compute/sql-warehouse/warehouse-types" target="_blank" rel="noopener">Warehouse types</a>), so short auto-stops cost very little latency.</p>
+</li>
+<li><strong>Measure, don't estimate:</strong> group <code>system.billing.usage</code> by <code>usage_metadata.warehouse_id</code> and hour to get the actual DBUs per warehouse. Then compare before and after consolidation.</li>
+</ul>
+<h3 id="size-up-or-scale-out">Size up or scale out?</h3>
+<blockquote>
+<p>"If queries are spilling to disk, increase the cluster size. Check for spills in the query profile." (<a href="https://learn.microsoft.com/en-us/azure/databricks/compute/sql-warehouse/warehouse-behavior" target="_blank" rel="noopener">Warehouse behavior</a>)</p>
+<p>"For workloads with many concurrent queries, configure a sufficient maximum number of clusters to handle peak loads." (<a href="https://learn.microsoft.com/en-us/azure/databricks/compute/sql-warehouse/warehouse-behavior" target="_blank" rel="noopener">same page</a>)</p>
+</blockquote>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Signal</th>
+<th>Action</th>
+<th>Typical case for you</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Peak Queued Queries consistently &gt; 0</td>
+<td>Raise max clusters</td>
+<td>Hourly and full-refresh dbt overlap; Tableau at the top of the hour</td>
+</tr>
+<tr>
+<td>Bytes spilled to disk in query profile</td>
+<td>Size up</td>
+<td>Full-refresh models on the subscription OBT</td>
+</tr>
+<tr>
+<td>Both</td>
+<td>Size up and raise max clusters</td>
+<td>Check one model at a time</td>
+</tr>
+</tbody>
+</table></div>
+<p>Extra clusters run only during the burst, while a bigger size costs more for the whole time the warehouse runs. So for your bursts, scaling out is usually cheaper.</p>
+<h3 id="statement-timeouts">Statement timeouts</h3>
+<blockquote>
+<p>"When the timeout is set at more than one scope, the first non-null value in the following order applies:" Session, then Warehouse (Beta), then Workspace. (<a href="https://learn.microsoft.com/en-us/azure/databricks/sql/language-manual/parameters/statement_timeout" target="_blank" rel="noopener">STATEMENT_TIMEOUT</a>)</p>
+<p>"The system default is 172800 seconds (2 days)." (<a href="https://learn.microsoft.com/en-us/azure/databricks/sql/language-manual/parameters/statement_timeout" target="_blank" rel="noopener">same page</a>)</p>
+</blockquote>
+<ul>
+<li><strong>Workspace:</strong> lower the 2-day default to a safety net, for example 2 hours.</li>
+<li><strong>Warehouse level (Beta, enable in Previews):</strong> set one per class. For example BI 10 min, Automation 5 min, CI 30 min, Dev 30 min, and ETL about 2× your longest full-refresh model.</li>
+<li><strong>Session level:</strong> for known exceptions, e.g. a dbt pre-hook <code>SET STATEMENT_TIMEOUT = ...</code> on a heavy backfill.</li>
+<li><strong>Job level:</strong> a task-level timeout on each dbt job caps the whole run, not just a single statement (<a href="https://learn.microsoft.com/en-us/azure/databricks/jobs/configure-task" target="_blank" rel="noopener">Configure a task</a>).</li>
+</ul>
+<h2 id="2-dbt-practices-at-your-scale-313-models-58-jobs">2. dbt practices at your scale (313 models, 58 jobs)</h2>
+<h3 id="incremental-strategies">Incremental strategies</h3>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Strategy</th>
+<th>Use it for</th>
+<th>Example for you</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>merge</code> + <code>unique_key</code></td>
+<td>Upserts / CDC</td>
+<td>Bronze CDC from Supabase. Add a <code>matched_condition</code> so only newer LSNs update rows. Use <code>liquid_clustered_by</code> on the key</td>
+</tr>
+<tr>
+<td><code>replace_where</code></td>
+<td>Recomputing a time window atomically, no key needed</td>
+<td>UA report and aggregates: rewrite the last N days</td>
+</tr>
+<tr>
+<td><code>microbatch</code> (dbt 1.9+)</td>
+<td>Large time-series, backfills in batches</td>
+<td>Amplitude events (multi-TB), daily batches</td>
+</tr>
+<tr>
+<td><code>append</code></td>
+<td>Truly immutable logs only</td>
+<td>Rarely; risk of duplicates</td>
+</tr>
+<tr>
+<td>Streaming table / MV materializations</td>
+<td>Ingestion and simple incremental aggregates run by Lakeflow pipelines</td>
+<td>Bronze-from-files/Kafka models as they move to dbt</td>
+</tr>
+</tbody>
+</table></div>
+<blockquote>
+<p>"The Databricks adapter implements the microbatch strategy using replace_where." (<a href="https://docs.getdbt.com/reference/resource-configs/databricks-configs" target="_blank" rel="noopener">dbt Databricks configs</a>)</p>
+<p>"For incremental microbatch models, if your upstream models don't have event_time configured, dbt cannot automatically filter them during batch processing and will perform full table scans on every batch run." (<a href="https://docs.getdbt.com/docs/build/incremental-microbatch" target="_blank" rel="noopener">dbt microbatch</a>)</p>
+<p>"replace_where inserts data into columns in the order provided, rather than by column name." (<a href="https://docs.getdbt.com/reference/resource-configs/databricks-configs" target="_blank" rel="noopener">dbt Databricks configs</a>)</p>
+</blockquote>
+<p><strong>Biggest saving:</strong> check whether the 3× daily full refresh is still needed. If late-arriving data and restatements fall within a known window, a <code>replace_where</code> or microbatch lookback (for example, the last 7 days) on every run gives the same correctness at a fraction of the cost. You'd keep full refreshes for schema changes and occasional reconciliation. This is likely part of the +33% on SQL warehouses since the UA chain moved to dbt.</p>
+<h3 id="keeping-dbt-test-cheap">Keeping <code>dbt test</code> cheap</h3>
+<ul>
+<li><strong>Test recent data only on big tables.</strong> Use the test <code>where</code> config, for example only the last 3 days of Amplitude, and run full-table tests on a daily or weekly tag.</li>
+<li>
+<p><strong>Use thresholds instead of failing on any bad row:</strong></p>
+<blockquote>
+<p>"You can use the error_if and warn_if configs to set custom failure thresholds in your tests." (<a href="https://docs.getdbt.com/docs/build/data-tests" target="_blank" rel="noopener">dbt data tests</a>)</p>
+</blockquote>
+</li>
+<li>
+<p><strong>Store failures only where someone acts on them.</strong> <code>store_failures</code> writes a table for each test run.</p>
+</li>
+<li>
+<p><strong>Run unit tests in CI only:</strong></p>
+<blockquote>
+<p>"dbt Labs strongly recommends only running unit tests in development or CI environments. Since the inputs of the unit tests are static, there's no need to use additional compute cycles running them in production." (<a href="https://docs.getdbt.com/docs/build/unit-tests" target="_blank" rel="noopener">dbt unit tests</a>)</p>
+</blockquote>
+</li>
+<li>
+<p><strong>CI builds only what changed:</strong> <code>state:modified+</code> against the prod manifest, with <code>--defer</code>, on the CI warehouse (<a href="https://docs.getdbt.com/reference/node-selection/methods" target="_blank" rel="noopener">dbt state selection</a>).</p>
+</li>
+<li>
+<p><strong>Push simple rules into Delta constraints.</strong> NOT NULL and CHECK constraints are enforced by Delta at write time, so they cost nothing at test time:</p>
+<blockquote>
+<p>"When a constraint is violated, the transaction fails with an error." (<a href="https://learn.microsoft.com/en-us/azure/databricks/tables/constraints" target="_blank" rel="noopener">Constraints</a>)</p>
+</blockquote>
+<p>dbt applies model-contract constraints on Databricks after the table is built, so we'll check this behavior with your setup in a sandbox before you replace tests with constraints.</p>
+</li>
+</ul>
+<h3 id="adapter-pinning">Adapter pinning</h3>
+<blockquote>
+<p>"Databricks recommends pinning your dbt tasks to a specific version of the dbt-databricks package to ensure the same version is used for development and production runs." (<a href="https://learn.microsoft.com/en-us/azure/databricks/jobs/tasks/dbt" target="_blank" rel="noopener">dbt task for jobs</a>)</p>
+</blockquote>
+<ul>
+<li>
+<p><strong>Pin exact versions</strong> (<code>dbt-databricks==1.12.x</code>, plus a matching <code>dbt-core</code>) in the serverless job environment.</p>
+<blockquote>
+<p>"DBT tasks use a job-level environment for library configuration." (<a href="https://learn.microsoft.com/en-us/azure/databricks/compute/serverless/dependencies" target="_blank" rel="noopener">Serverless dependencies</a>)</p>
+</blockquote>
+</li>
+<li>
+<p><strong>Use the same pins everywhere:</strong> one constraints file shared by the bundle environment, GitHub Actions CI and local development.</p>
+</li>
+<li><strong>Guard the project</strong> with <code>require-dbt-version</code> in <code>dbt_project.yml</code> (<a href="https://docs.getdbt.com/reference/project-configs/require-dbt-version" target="_blank" rel="noopener">dbt docs</a>).</li>
+<li>
+<p><strong>Upgrade cadence:</strong></p>
+<blockquote>
+<p>"Upgrade to new patch versions as soon as they're available. Upgrade to new minor versions when you're ready because you can only get some features and fixes on the latest minor version." (<a href="https://docs.getdbt.com/docs/dbt-versions/core" target="_blank" rel="noopener">dbt Core versions</a>)</p>
+</blockquote>
+<p>Do minor upgrades through a release PR, with a dev bundle run first.</p>
+</li>
+</ul>
+  </main>
+</div>
+<footer class="foot">Prepared by Databricks. Quotes are from the Azure Databricks documentation on learn.microsoft.com
+unless marked otherwise. Preview status is given as the documentation states it.</footer>
+</body>
+</html>

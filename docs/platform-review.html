@@ -1,0 +1,404 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Data platform review: answers to the open questions</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body class="page">
+<header class="top">
+  <a class="brand" href="index.html"><span class="mark"></span>Data platform review</a>
+  <nav class="tabs"><a href="platform-review.html" class="on">Platform review</a><a href="warehouse-dbt.html" class="">Warehouses and dbt</a><a href="resources.html" class="">Resources</a></nav>
+</header>
+<div class="layout">
+  <aside class="side">
+    <div class="side-inner">
+      <div class="side-label">On this page</div>
+      <ol class="toc"><li><a href="#1-sql-warehouse-sprawl-and-idle-cost">1. SQL warehouse sprawl and idle cost</a></li><li><a href="#2-classic-vs-serverless-for-short-hourly-single-node-jobs">2. Classic vs serverless for short, hourly, single-node jobs</a></li><li><a href="#3-single-workspace-for-dev-and-prod">3. Single workspace for dev and prod</a></li><li><a href="#4-self-managed-oss-on-aks-about-12-of-spend">4. Self-managed OSS on AKS (about 12% of spend)</a></li><li class="sub"><a href="#4a-connector-coverage-for-your-sources">4a. Connector coverage for your sources</a></li><li><a href="#5-semantic-layer-multi-fact-metric-views-tableau-and-genie">5. Semantic layer: multi-fact metric views, Tableau and Genie</a></li><li><a href="#6-abac-nested-policy-errors-and-pii-masking">6. ABAC: nested-policy errors and PII masking</a></li><li><a href="#7-ml-from-notebooks-to-a-production-path-pltv">7. ML: from notebooks to a production path (pLTV)</a></li><li><a href="#8-custom-observability-what-native-monitoring-can-replace">8. Custom observability: what native monitoring can replace</a></li><li><a href="#proposed-next-steps">Proposed next steps</a></li></ol>
+    </div>
+  </aside>
+  <main class="doc">
+    <div class="kicker">Recommendations</div>
+    <h1>Data platform review: answers to the open questions</h1>
+    
+<p>Prepared by Databricks in response to your data platform architecture overview (state as of 27 Oct 2026), section 15 "Known pain points". All quotes are from the Azure Databricks documentation on learn.microsoft.com. Preview status is given as the documentation states it.</p>
+<p>Overall: the platform is in good shape (code-managed bundle, contracts in CI, Terraform-owned grants, UC throughout). Most of the points below are configuration and consolidation, not re-architecture.</p>
+<h2 id="1-sql-warehouse-sprawl-and-idle-cost">1. SQL warehouse sprawl and idle cost</h2>
+<p><strong>Recommendation:</strong> you've already consolidated from 16 warehouses to 3 core ones (with a 12% monthly cost reduction, together with the instance pool changes). Keep that shape, one warehouse per workload class, and let serverless scaling absorb the overlaps. The one class worth keeping separate is the P0 automation (the bot feeds), so it never queues behind ETL; see the class table on the <a href="warehouse-dbt.html">companion page</a>.</p>
+<ul>
+<li>
+<p>Raise max clusters on the dbt and BI warehouses instead of adding warehouses. The dbt warehouse is close to using all 3 of its clusters, and a higher maximum also fixes the dbt queueing when hourly and daily runs overlap.</p>
+<blockquote>
+<p>"Start with a single larger warehouse and let serverless features manage concurrency and performance. It is usually more efficient to size down if necessary than to start small and scale up." (<a href="https://learn.microsoft.com/en-us/azure/databricks/compute/sql-warehouse/warehouse-behavior" target="_blank" rel="noopener">Warehouse behavior</a>)</p>
+<p>"For workloads with many concurrent queries, configure a sufficient maximum number of clusters to handle peak loads." (<a href="https://learn.microsoft.com/en-us/azure/databricks/compute/sql-warehouse/warehouse-behavior" target="_blank" rel="noopener">same page</a>)</p>
+</blockquote>
+</li>
+<li>
+<p>Set auto-stop to 1 minute through the API (Terraform) on the low-traffic warehouses.</p>
+<blockquote>
+<p>"The minimum is 5 minutes when you use the UI. Note that you can create a serverless SQL warehouse using the SQL warehouses API, in which case you can set the Auto Stop value as low as 1 minute." (<a href="https://learn.microsoft.com/en-us/azure/databricks/compute/sql-warehouse/create" target="_blank" rel="noopener">Create a SQL warehouse</a>)</p>
+</blockquote>
+</li>
+<li>
+<p>Take the payment-webhook single-row INSERTs off SQL warehouses. n8n can post to Zerobus Ingest over REST, which writes straight into Delta and is billed as serverless ingest, so it doesn't keep a warehouse awake.</p>
+<blockquote>
+<p>"Zerobus Ingest is a push-based streaming API that writes data straight into Unity Catalog Delta tables at high scale, with no message bus to run." (<a href="https://learn.microsoft.com/en-us/azure/databricks/ingestion/zerobus-overview" target="_blank" rel="noopener">Zerobus Ingest overview</a>)</p>
+</blockquote>
+</li>
+<li>
+<p>Find the bots in <code>system.query.history</code> (by client application or user). Then batch them onto a schedule or point them at the BI warehouse.</p>
+</li>
+</ul>
+<h2 id="2-classic-vs-serverless-for-short-hourly-single-node-jobs">2. Classic vs serverless for short, hourly, single-node jobs</h2>
+<p><strong>Recommendation:</strong> there is no fixed break-even. Run a two-week A/B on 5 to 10 representative jobs and compare total cost. For classic jobs, total cost means the DBUs plus the Azure VM and disk cost of the pools, which is your 17% line item.</p>
+<ul>
+<li>
+<p>Serverless removes pool idle VMs and cold-start management. Choose the mode per job: <strong>performance optimized</strong> for SLA-critical jobs (for example the P0 bot feeds), <strong>standard</strong> where startup latency doesn't matter.</p>
+<blockquote>
+<p>"This mode uses less compute to reduce costs, making it suitable for workloads that can tolerate slightly higher startup latency of 4 to 6 minutes, depending on compute availability and optimized scheduling." (<a href="https://learn.microsoft.com/en-us/azure/databricks/jobs/run-serverless-jobs" target="_blank" rel="noopener">Run jobs on serverless</a>)</p>
+<p>"If your workload supports serverless compute, Databricks recommends using serverless compute instead of pools to take advantage of always-on, scalable compute." (<a href="https://learn.microsoft.com/en-us/azure/databricks/compute/pool-best-practices" target="_blank" rel="noopener">Pool best practices</a>)</p>
+</blockquote>
+</li>
+<li>
+<p>Measure with <code>system.billing.usage</code> joined to <code>system.lakeflow.job_task_run_timeline</code>. Sample queries, including one by performance mode, are on <a href="https://learn.microsoft.com/en-us/azure/databricks/admin/system-tables/serverless-billing" target="_blank" rel="noopener">Monitor serverless cost</a>.</p>
+</li>
+<li>
+<p>To get under 5% unattributed spend: use serverless usage policies for notebooks, jobs and Genie, warehouse tags for SQL, and account budgets for alerts.</p>
+<blockquote>
+<p>"Serverless usage policies consist of tags that are applied to any serverless compute activity incurred by a user assigned to the policy." (Public Preview, <a href="https://learn.microsoft.com/en-us/azure/databricks/admin/usage/budget-policies" target="_blank" rel="noopener">Usage policies</a>)</p>
+<p>"Budgets enable you to monitor usage across your account." (<a href="https://learn.microsoft.com/en-us/azure/databricks/admin/account-settings/budgets" target="_blank" rel="noopener">Budgets</a>)</p>
+</blockquote>
+</li>
+</ul>
+<h2 id="3-single-workspace-for-dev-and-prod">3. Single workspace for dev and prod</h2>
+<p><strong>Recommendation:</strong> split into a dev workspace and a prod workspace on the <strong>same</strong> metastore. Bind each environment catalog to its workspace and set the default catalog per workspace. Your bundle targets and Terraform map onto this directly.</p>
+<blockquote>
+<p>"Use your single-region metastore for all software development lifecycle scopes and business units, for example, dev, test, prod, sales, and marketing." (<a href="https://learn.microsoft.com/en-us/azure/databricks/data-governance/unity-catalog/best-practices" target="_blank" rel="noopener">UC best practices</a>)</p>
+<p>"Access from an unbound workspace is denied, even for users with explicit privilege grants on the catalog." (<a href="https://learn.microsoft.com/en-us/azure/databricks/data-governance/unity-catalog/access-control/workspace-catalog-binding" target="_blank" rel="noopener">Workspace-catalog binding</a>)</p>
+<p>"When binding a catalog to a workspace, you can optionally restrict that workspace to read-only access." (<a href="https://learn.microsoft.com/en-us/azure/databricks/data-governance/unity-catalog/access-control/workspace-catalog-binding" target="_blank" rel="noopener">same page</a>)</p>
+</blockquote>
+<ul>
+<li><code>analytics_prod</code> can be bound read-only into dev for testing against real data, so an unqualified write can no longer land in prod.</li>
+<li>Setting the default catalog per workspace (<a href="https://learn.microsoft.com/en-us/azure/databricks/catalogs/default" target="_blank" rel="noopener">Default catalog</a>) removes the unqualified-name risk.</li>
+</ul>
+<h2 id="4-self-managed-oss-on-aks-about-12-of-spend">4. Self-managed OSS on AKS (about 12% of spend)</h2>
+<p><strong>Recommendation:</strong> retire it source by source rather than all at once.</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Today</th>
+<th>Databricks option</th>
+<th>Status (per docs)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Airflow → Kafka for Google Ads, Meta, TikTok</td>
+<td>Lakeflow Connect managed connectors (<a href="https://learn.microsoft.com/en-us/azure/databricks/ingestion/lakeflow-connect/google-ads" target="_blank" rel="noopener">Google Ads</a>, <a href="https://learn.microsoft.com/en-us/azure/databricks/ingestion/lakeflow-connect/meta-ads" target="_blank" rel="noopener">Meta Ads</a>, <a href="https://learn.microsoft.com/en-us/azure/databricks/ingestion/lakeflow-connect/tiktok-ads" target="_blank" rel="noopener">TikTok Ads</a>)</td>
+<td>Beta</td>
+</tr>
+<tr>
+<td>Sources with no native or partner connector (Unity Ads, Mintegral, Newsbreak, Payrails, Sensor Tower)</td>
+<td><a href="https://learn.microsoft.com/en-us/azure/databricks/ingestion/custom-connectors" target="_blank" rel="noopener">Custom connectors</a> / <a href="https://learn.microsoft.com/en-us/azure/databricks/ingestion/community-connectors" target="_blank" rel="noopener">community connectors</a></td>
+<td>Beta</td>
+</tr>
+<tr>
+<td>Airbyte/Debezium CDC from Supabase</td>
+<td><a href="https://learn.microsoft.com/en-us/azure/databricks/ingestion/lakeflow-connect/postgresql-source-setup" target="_blank" rel="noopener">PostgreSQL connector</a></td>
+<td>Public Preview (enrollment through us)</td>
+</tr>
+<tr>
+<td>Kafka producers you keep</td>
+<td>Zerobus Ingest Kafka-compatible API (<a href="https://learn.microsoft.com/en-us/azure/databricks/ingestion/zerobus-ingest" target="_blank" rel="noopener">Use Zerobus Ingest</a>)</td>
+<td>Check region and status with us</td>
+</tr>
+<tr>
+<td>Airflow orchestration</td>
+<td>Lakeflow Jobs triggers (table update, file arrival), For each task (<a href="https://learn.microsoft.com/en-us/azure/databricks/jobs/triggers" target="_blank" rel="noopener">Triggers</a>)</td>
+<td>No preview label for table/file triggers</td>
+</tr>
+</tbody>
+</table></div>
+<p>Two caveats for an everything-as-code team:</p>
+<blockquote>
+<p>"Connectors that use browser-based OAuth (OAuth U2M) as their only authentication option cannot be created programmatically. [...] This includes: Confluence, Google Ads, HubSpot, Jira, Meta Ads, Slack, Slack Audit Logs, TikTok Ads, and Zendesk Support." (<a href="https://learn.microsoft.com/en-us/azure/databricks/ingestion/lakeflow-connect/" target="_blank" rel="noopener">Lakeflow Connect</a>)</p>
+<p>"Because the ingestion gateway runs continuously, you provision and pay for its classic compute even when your ingestion pipeline is idle." (<a href="https://learn.microsoft.com/en-us/azure/databricks/ingestion/lakeflow-connect/cdc-overview" target="_blank" rel="noopener">CDC overview</a>)</p>
+</blockquote>
+<p>The first caveat applies to the connection, which needs a one-time interactive sign-in. The pipelines themselves can still be defined in bundles: the Google Ads page lists Declarative Automation Bundles as supported.</p>
+<p>The PostgreSQL docs don't name Supabase, so we'll validate logical replication on Supabase in a short test.</p>
+<h3 id="4a-connector-coverage-for-your-sources">4a. Connector coverage for your sources</h3>
+<p>"Native" means a Lakeflow Connect managed connector, which runs on serverless and is billed in DBUs (in Azure West Europe, $0.50/DBU after a free tier of 100 DBU per workspace per day, <a href="https://www.databricks.com/product/pricing/lakeflow-connect" target="_blank" rel="noopener">pricing</a>). "Community" means an open-source Lakeflow Community Connector (Beta, not covered by Databricks SLAs). "Partner" means a third-party tool, licensed separately. <strong>Fivetran</strong> is in Azure Databricks <a href="https://learn.microsoft.com/en-us/azure/databricks/integrations/" target="_blank" rel="noopener">Partner Connect</a>. <strong>Airbyte</strong> is not in Partner Connect, but you already run it. Airbyte is listed only where we confirmed a connector page.</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Source</th>
+<th>Lakeflow Connect (native)</th>
+<th>Partner connector</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Ad networks</strong></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Google Ads</td>
+<td><a href="https://learn.microsoft.com/en-us/azure/databricks/ingestion/lakeflow-connect/google-ads" target="_blank" rel="noopener">Native</a> (Beta)</td>
+<td><a href="https://fivetran.com/docs/connectors/applications/google-ads" target="_blank" rel="noopener">Fivetran</a>, <a href="https://docs.airbyte.com/integrations/sources/google-ads" target="_blank" rel="noopener">Airbyte</a></td>
+</tr>
+<tr>
+<td>Meta Ads</td>
+<td><a href="https://learn.microsoft.com/en-us/azure/databricks/ingestion/lakeflow-connect/meta-ads" target="_blank" rel="noopener">Native</a> (Beta)</td>
+<td><a href="https://fivetran.com/docs/connectors/applications/facebook-ads" target="_blank" rel="noopener">Fivetran</a>, <a href="https://docs.airbyte.com/integrations/sources/facebook-marketing" target="_blank" rel="noopener">Airbyte</a></td>
+</tr>
+<tr>
+<td>TikTok Ads</td>
+<td><a href="https://learn.microsoft.com/en-us/azure/databricks/ingestion/lakeflow-connect/tiktok-ads" target="_blank" rel="noopener">Native</a> (Beta)</td>
+<td><a href="https://fivetran.com/docs/connectors/applications/tiktok-ads" target="_blank" rel="noopener">Fivetran</a>, <a href="https://docs.airbyte.com/integrations/sources/tiktok-marketing" target="_blank" rel="noopener">Airbyte</a></td>
+</tr>
+<tr>
+<td>Snapchat Ads</td>
+<td>None</td>
+<td><a href="https://fivetran.com/docs/connectors/applications/snapchat-ads" target="_blank" rel="noopener">Fivetran</a>, <a href="https://docs.airbyte.com/integrations/sources/snapchat-marketing" target="_blank" rel="noopener">Airbyte</a></td>
+</tr>
+<tr>
+<td>Pinterest Ads</td>
+<td>None</td>
+<td><a href="https://fivetran.com/docs/connectors/applications/pinterest-ads" target="_blank" rel="noopener">Fivetran</a>, <a href="https://docs.airbyte.com/integrations/sources/pinterest" target="_blank" rel="noopener">Airbyte</a></td>
+</tr>
+<tr>
+<td>Apple Search Ads</td>
+<td>None</td>
+<td><a href="https://fivetran.com/docs/connectors/applications/apple-search-ads" target="_blank" rel="noopener">Fivetran</a>, <a href="https://docs.airbyte.com/integrations/sources/apple-search-ads" target="_blank" rel="noopener">Airbyte</a></td>
+</tr>
+<tr>
+<td>AppLovin</td>
+<td>None</td>
+<td><a href="https://fivetran.com/docs/connectors/applications/applovin" target="_blank" rel="noopener">Fivetran</a></td>
+</tr>
+<tr>
+<td>Moloco</td>
+<td>None</td>
+<td><a href="https://fivetran.com/docs/connectors/applications/moloco" target="_blank" rel="noopener">Fivetran</a></td>
+</tr>
+<tr>
+<td>Liftoff</td>
+<td>None</td>
+<td><a href="https://fivetran.com/docs/connectors/applications/liftoff" target="_blank" rel="noopener">Fivetran</a></td>
+</tr>
+<tr>
+<td>Unity Ads, Mintegral, Newsbreak</td>
+<td>None</td>
+<td>None found: keep the current Airflow ingestion, or build a <a href="https://learn.microsoft.com/en-us/azure/databricks/ingestion/custom-connectors" target="_blank" rel="noopener">custom connector</a> (Beta)</td>
+</tr>
+<tr>
+<td><strong>MMP and app stores</strong></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>AppsFlyer</td>
+<td><a href="https://github.com/databrickslabs/lakeflow-community-connectors" target="_blank" rel="noopener">Community</a> (Beta)</td>
+<td><a href="https://fivetran.com/docs/connectors/applications/appsflyer" target="_blank" rel="noopener">Fivetran</a>, <a href="https://docs.airbyte.com/integrations/sources/appsflyer" target="_blank" rel="noopener">Airbyte</a></td>
+</tr>
+<tr>
+<td>App Store Connect</td>
+<td>None</td>
+<td><a href="https://fivetran.com/docs/connectors/applications/apple-app-store" target="_blank" rel="noopener">Fivetran</a></td>
+</tr>
+<tr>
+<td>Google Play Console</td>
+<td>None</td>
+<td><a href="https://fivetran.com/docs/connectors/applications/google-play" target="_blank" rel="noopener">Fivetran</a></td>
+</tr>
+<tr>
+<td>Appfigures</td>
+<td>None</td>
+<td><a href="https://fivetran.com/docs/connectors/applications/appfigures" target="_blank" rel="noopener">Fivetran</a>, <a href="https://docs.airbyte.com/integrations/sources/appfigures" target="_blank" rel="noopener">Airbyte</a></td>
+</tr>
+<tr>
+<td><strong>Payments</strong></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>PayPal</td>
+<td><a href="https://learn.microsoft.com/en-us/azure/databricks/ingestion/lakeflow-connect/paypal" target="_blank" rel="noopener">Native</a> (Beta)</td>
+<td><a href="https://fivetran.com/docs/connectors/applications/paypal" target="_blank" rel="noopener">Fivetran</a>, <a href="https://docs.airbyte.com/integrations/sources/paypal-transaction" target="_blank" rel="noopener">Airbyte</a></td>
+</tr>
+<tr>
+<td>Stripe</td>
+<td>None</td>
+<td><a href="https://fivetran.com/docs/connectors/applications/stripe" target="_blank" rel="noopener">Fivetran</a>, <a href="https://docs.airbyte.com/integrations/sources/stripe" target="_blank" rel="noopener">Airbyte</a></td>
+</tr>
+<tr>
+<td>Adyen</td>
+<td>None</td>
+<td><a href="https://fivetran.com/docs/connectors/applications/adyen" target="_blank" rel="noopener">Fivetran</a></td>
+</tr>
+<tr>
+<td>Payrails</td>
+<td>None</td>
+<td>None found: webhooks via <a href="https://learn.microsoft.com/en-us/azure/databricks/ingestion/zerobus-overview" target="_blank" rel="noopener">Zerobus Ingest</a>, or a custom connector</td>
+</tr>
+<tr>
+<td><strong>App database</strong></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Supabase Postgres (CDC)</td>
+<td><a href="https://learn.microsoft.com/en-us/azure/databricks/ingestion/lakeflow-connect/postgresql-source-setup" target="_blank" rel="noopener">PostgreSQL connector</a> (Public Preview; Supabase to be validated)</td>
+<td><a href="https://fivetran.com/docs/connectors/databases/postgresql" target="_blank" rel="noopener">Fivetran PostgreSQL</a>, <a href="https://docs.airbyte.com/integrations/sources/postgres" target="_blank" rel="noopener">Airbyte Postgres</a> (your current setup)</td>
+</tr>
+<tr>
+<td><strong>Product and SaaS</strong></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Amplitude</td>
+<td><a href="https://learn.microsoft.com/en-us/azure/databricks/ingestion/lakeflow-connect/amplitude-overview" target="_blank" rel="noopener">Native</a> (Beta)</td>
+<td><a href="https://fivetran.com/docs/connectors/applications/amplitude" target="_blank" rel="noopener">Fivetran</a>, <a href="https://docs.airbyte.com/integrations/sources/amplitude" target="_blank" rel="noopener">Airbyte</a></td>
+</tr>
+<tr>
+<td>Zendesk Support</td>
+<td><a href="https://learn.microsoft.com/en-us/azure/databricks/ingestion/lakeflow-connect/zendesk-support-overview" target="_blank" rel="noopener">Native</a> (no preview label)</td>
+<td><a href="https://fivetran.com/docs/connectors/applications/zendesk" target="_blank" rel="noopener">Fivetran</a>, <a href="https://docs.airbyte.com/integrations/sources/zendesk-support" target="_blank" rel="noopener">Airbyte</a></td>
+</tr>
+<tr>
+<td>Notion</td>
+<td><a href="https://learn.microsoft.com/en-us/azure/databricks/ingestion/lakeflow-connect/notion" target="_blank" rel="noopener">Native</a> (Beta)</td>
+<td><a href="https://fivetran.com/docs/connectors/applications/notion" target="_blank" rel="noopener">Fivetran</a>, <a href="https://docs.airbyte.com/integrations/sources/notion" target="_blank" rel="noopener">Airbyte</a></td>
+</tr>
+<tr>
+<td>Google Sheets</td>
+<td><a href="https://github.com/databrickslabs/lakeflow-community-connectors" target="_blank" rel="noopener">Community</a> (Beta)</td>
+<td><a href="https://fivetran.com/docs/connectors/files/google-sheets" target="_blank" rel="noopener">Fivetran</a>, <a href="https://docs.airbyte.com/integrations/sources/google-sheets" target="_blank" rel="noopener">Airbyte</a></td>
+</tr>
+<tr>
+<td>Airtable</td>
+<td>None</td>
+<td><a href="https://fivetran.com/docs/connectors/applications/airtable" target="_blank" rel="noopener">Fivetran</a>, <a href="https://docs.airbyte.com/integrations/sources/airtable" target="_blank" rel="noopener">Airbyte</a></td>
+</tr>
+<tr>
+<td>Sensor Tower</td>
+<td>None</td>
+<td>None found: custom connector</td>
+</tr>
+<tr>
+<td>PeopleForce (HR)</td>
+<td>None</td>
+<td><a href="https://fivetran.com/docs/connectors/applications/peopleforce" target="_blank" rel="noopener">Fivetran</a></td>
+</tr>
+<tr>
+<td><strong>Roadmap sources</strong></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Odoo (ERP)</td>
+<td>None</td>
+<td><a href="https://fivetran.com/docs/connectors/applications/odoo" target="_blank" rel="noopener">Fivetran</a></td>
+</tr>
+<tr>
+<td>Google Search Console (SEO)</td>
+<td><a href="https://learn.microsoft.com/en-us/azure/databricks/ingestion/lakeflow-connect/google-search-console" target="_blank" rel="noopener">Native</a> (Beta, enable in Previews)</td>
+<td><a href="https://fivetran.com/docs/connectors/applications/google-search-console" target="_blank" rel="noopener">Fivetran</a>, <a href="https://docs.airbyte.com/integrations/sources/google-search-console" target="_blank" rel="noopener">Airbyte</a></td>
+</tr>
+</tbody>
+</table></div>
+<p>Summary: 9 of your sources have a native connector: 7 in Beta, PostgreSQL in Public Preview, and Zendesk with no preview label. AppsFlyer and Google Sheets have community connectors. Fivetran covers almost all of the rest. Five sources (Unity Ads, Mintegral, Newsbreak, Payrails, Sensor Tower) have no off-the-shelf connector anywhere, so they stay on your current pattern or move to a custom connector.</p>
+<h2 id="5-semantic-layer-multi-fact-metric-views-tableau-and-genie">5. Semantic layer: multi-fact metric views, Tableau and Genie</h2>
+<p><strong>Recommendation:</strong> the bridge pattern you built is the documented approach. Speed it up with materialization only where the source tables carry no RLS or ABAC.</p>
+<blockquote>
+<p>"To combine measures from two or more fact tables that sit at different grains, define a bridge that enumerates the valid combinations of the dimensions the facts share, directly in the metric view's <code>source</code>." (<a href="https://learn.microsoft.com/en-us/azure/databricks/uc-semantics/metric-views/joins" target="_blank" rel="noopener">Metric view joins</a>)</p>
+<p>"You can't materialize a metric view when the view or any of its source tables uses row-level security (RLS), column masks, or attribute-based access control (ABAC) policies." (<a href="https://learn.microsoft.com/en-us/azure/databricks/uc-semantics/metric-views/materialization" target="_blank" rel="noopener">Materialization</a>)</p>
+</blockquote>
+<ul>
+<li>This matters with your BU/app row filters: keep the pre-aggregated bridge as a regular, ABAC-governed table, and use materialization on unrestricted metric views.</li>
+<li>
+<p><strong>Tableau:</strong> use Custom SQL with <code>MEASURE()</code>, BI compatibility mode, or a wrapper view.</p>
+<blockquote>
+<p>"Use Tableau's Custom SQL connection option with the <code>MEASURE()</code> pattern, or enable BI compatibility mode from the Initial SQL field in the connection dialog." (<a href="https://learn.microsoft.com/en-us/azure/databricks/uc-semantics/metric-views/bi-tools" target="_blank" rel="noopener">BI tools</a>)</p>
+</blockquote>
+</li>
+<li>
+<p><strong>Genie:</strong> add metric views directly as Genie data sources, so Genie and Tableau share one definition (<a href="https://learn.microsoft.com/en-us/azure/databricks/uc-semantics/metric-views/query" target="_blank" rel="noopener">Query metric views</a>).</p>
+</li>
+</ul>
+<h2 id="6-abac-nested-policy-errors-and-pii-masking">6. ABAC: nested-policy errors and PII masking</h2>
+<p><strong>Likely cause of the error:</strong> the BU policy and the app policy both match the same table for the same user. That produces two different row filters, and ABAC blocks it.</p>
+<blockquote>
+<p>"Only one distinct row filter can be applied at query time for a given table and user. [...] If multiple distinct filters or masks apply to the same user and table (or column), Azure Databricks blocks access and returns an error." (<a href="https://learn.microsoft.com/en-us/azure/databricks/data-governance/unity-catalog/abac/policy-evaluation" target="_blank" rel="noopener">Policy evaluation</a>)</p>
+</blockquote>
+<ul>
+<li><strong>Fix:</strong> use one row-filter policy whose UDF takes both the BU and the app columns. Also remove any manually applied table filters, which conflict with ABAC too. Use <code>SHOW EFFECTIVE POLICIES</code> to diagnose.</li>
+<li>
+<p><strong>PII:</strong> turn on data classification (Public Preview). It auto-tags IP addresses, names and similar columns, and one ABAC column-mask policy on those tags then covers current and future tables.</p>
+<blockquote>
+<p>"Databricks recommends using Attribute-based access control in Unity Catalog to create governance controls based on data classification results." (<a href="https://learn.microsoft.com/en-us/azure/databricks/data-governance/unity-catalog/data-classification" target="_blank" rel="noopener">Data classification</a>)</p>
+</blockquote>
+</li>
+<li>
+<p>Exempt the dbt and pipeline service principals in <code>EXCEPT</code>. Otherwise their outputs are built on filtered data:</p>
+<blockquote>
+<p>"If that identity is subject to an ABAC policy, the materialized view or streaming table permanently contains masked or filtered data." (<a href="https://learn.microsoft.com/en-us/azure/databricks/data-governance/unity-catalog/abac/requirements" target="_blank" rel="noopener">ABAC requirements</a>)</p>
+</blockquote>
+</li>
+</ul>
+<h2 id="7-ml-from-notebooks-to-a-production-path-pltv">7. ML: from notebooks to a production path (pLTV)</h2>
+<p><strong>Recommendation:</strong> train on UC feature tables, register models in UC with an alias, batch-score into gold, monitor, and deploy all of it as code with MLOps Stacks (which fits your bundle and GitHub Actions setup). Add real-time serving only if the product needs it.</p>
+<blockquote>
+<p>"Databricks recommends that you deploy ML pipelines as code. This eliminates the need to promote models across environments, as all production models can be produced through automated training workflows in a production environment." (<a href="https://learn.microsoft.com/en-us/azure/databricks/machine-learning/manage-model-lifecycle/" target="_blank" rel="noopener">Model lifecycle in UC</a>)</p>
+<p>"Batch inference workloads can reference a model version by alias." (<a href="https://learn.microsoft.com/en-us/azure/databricks/machine-learning/manage-model-lifecycle/" target="_blank" rel="noopener">same page</a>)</p>
+<p>"The environment created by MLOps Stacks implements the MLOps workflow recommended by Databricks." (<a href="https://learn.microsoft.com/en-us/azure/databricks/machine-learning/mlops/mlops-stacks" target="_blank" rel="noopener">MLOps Stacks</a>)</p>
+</blockquote>
+<ul>
+<li>Features: <a href="https://learn.microsoft.com/en-us/azure/databricks/machine-learning/feature-store/" target="_blank" rel="noopener">Feature Store in UC</a>.</li>
+<li>Monitoring: <a href="https://learn.microsoft.com/en-us/azure/databricks/data-governance/unity-catalog/data-quality-monitoring/data-profiling/" target="_blank" rel="noopener">data profiling</a> on the scored table to track drift and accuracy.</li>
+</ul>
+<h2 id="8-custom-observability-what-native-monitoring-can-replace">8. Custom observability: what native monitoring can replace</h2>
+<p><strong>Recommendation:</strong> keep the parts that are specific to your platform: contracts, dbt tests, Tableau extract status and the status page. Replace the collection and freshness plumbing with native features.</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Your framework collects</th>
+<th>Native replacement</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Job runs, durations, failures</td>
+<td><code>system.lakeflow.*</code> tables (<a href="https://learn.microsoft.com/en-us/azure/databricks/admin/system-tables/jobs" target="_blank" rel="noopener">Jobs system tables</a>)</td>
+</tr>
+<tr>
+<td>Table freshness / completeness</td>
+<td>Anomaly detection across a schema (<a href="https://learn.microsoft.com/en-us/azure/databricks/data-governance/unity-catalog/data-quality-monitoring/anomaly-detection/" target="_blank" rel="noopener">Data quality monitoring</a>)</td>
+</tr>
+<tr>
+<td>Real-time failure / duration alerts</td>
+<td>Job notifications to a webhook, which can be your n8n Alert Hub (<a href="https://learn.microsoft.com/en-us/azure/databricks/jobs/notifications" target="_blank" rel="noopener">Notifications</a>)</td>
+</tr>
+<tr>
+<td>Cost and business-metric checks</td>
+<td><a href="https://learn.microsoft.com/en-us/azure/databricks/sql/user/alerts/" target="_blank" rel="noopener">SQL alerts</a> on system tables and metric views</td>
+</tr>
+</tbody>
+</table></div>
+<blockquote>
+<p>"Anomaly detection enables you to monitor data quality across all tables in a schema." (<a href="https://learn.microsoft.com/en-us/azure/databricks/data-governance/unity-catalog/data-quality-monitoring/anomaly-detection/" target="_blank" rel="noopener">Anomaly detection</a>)</p>
+<p>"System tables do not support real-time monitoring." (<a href="https://learn.microsoft.com/en-us/azure/databricks/admin/system-tables/" target="_blank" rel="noopener">System tables</a>)</p>
+</blockquote>
+<p>For P0 flows such as the bot feeds, keep alerting on job notifications, not on system tables. Job system tables typically land within an hour.</p>
+<h2 id="proposed-next-steps">Proposed next steps</h2>
+<p>(1) Max-cluster and 1-minute auto-stop changes on the consolidated warehouses, plus the serverless A/B, to support the December −15% target; (2) the ABAC single-policy fix and PII classification; (3) a 30-minute session on the dev/prod workspace split; (4) pLTV scoping for the Q1 2027 build.</p>
+  </main>
+</div>
+<footer class="foot">Prepared by Databricks. Quotes are from the Azure Databricks documentation on learn.microsoft.com
+unless marked otherwise. Preview status is given as the documentation states it.</footer>
+</body>
+</html>

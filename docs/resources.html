@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Resources from the 9 Nov session</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body class="page">
+<header class="top">
+  <a class="brand" href="index.html"><span class="mark"></span>Data platform review</a>
+  <nav class="tabs"><a href="platform-review.html" class="">Platform review</a><a href="warehouse-dbt.html" class="">Warehouses and dbt</a><a href="resources.html" class="on">Resources</a></nav>
+</header>
+<div class="layout">
+  <aside class="side">
+    <div class="side-inner">
+      <div class="side-label">On this page</div>
+      <ol class="toc"><li><a href="#1-query-tags-for-cost-attribution">1. Query tags for cost attribution</a></li><li><a href="#2-monitoring-dashboards">2. Monitoring dashboards</a></li><li><a href="#3-scaling-dbt-and-keeping-its-cost-down">3. Scaling dbt and keeping its cost down</a></li><li><a href="#4-serverless-dbus-from-the-dbt-cli-tasks">4. Serverless DBUs from the dbt CLI tasks</a></li><li><a href="#5-genie-best-practices-and-the-mcp-api-setup">5. Genie: best practices and the MCP / API setup</a></li><li><a href="#6-nested-policy-errors-row-filters">6. Nested policy errors (row filters)</a></li><li><a href="#7-warehouse-settings-max-clusters-and-1-minute-auto-stop">7. Warehouse settings: max clusters and 1-minute auto-stop</a></li><li><a href="#8-zerobus-ingest-for-the-webhook-writes">8. Zerobus Ingest for the webhook writes</a></li><li><a href="#9-semantic-layer">9. Semantic layer</a></li></ol>
+    </div>
+  </aside>
+  <main class="doc">
+    <div class="kicker">Links</div>
+    <h1>Resources from the 9 Nov session</h1>
+    
+<p>Links for each topic we discussed, grouped by topic. All Databricks docs are the Azure Databricks versions on learn.microsoft.com.</p>
+<h2 id="1-query-tags-for-cost-attribution">1. Query tags for cost attribution</h2>
+<ul>
+<li><a href="https://learn.microsoft.com/en-us/azure/databricks/sql/user/queries/query-tags" target="_blank" rel="noopener">Query tags overview, with setup for each tool</a></li>
+<li><a href="https://learn.microsoft.com/en-us/azure/databricks/sql/user/queries/query-tags#dbt" target="_blank" rel="noopener">dbt</a>: dbt-databricks 1.11+ adds <code>@@dbt_model_name</code> and other tags automatically, and you can add your own per project or per model.</li>
+<li><a href="https://learn.microsoft.com/en-us/azure/databricks/sql/language-manual/sql-ref-syntax-aux-conf-mgmt-set-query-tags" target="_blank" rel="noopener">SET QUERY_TAGS syntax</a></li>
+<li><a href="https://learn.microsoft.com/en-us/azure/databricks/admin/system-tables/query-history" target="_blank" rel="noopener">Query history system table</a>: tags land in the <code>query_tags</code> column.</li>
+</ul>
+<p><strong>Tableau:</strong> set tags through <a href="https://learn.microsoft.com/en-us/azure/databricks/sql/user/queries/query-tags#tableau" target="_blank" rel="noopener">Initial SQL</a>. Example (test it on one workbook first):</p>
+<pre><code class="language-sql">SET QUERY_TAGS['tool'] = 'tableau', QUERY_TAGS['workbook'] = [WorkbookName], QUERY_TAGS['user'] = [TableauServerUser];
+</code></pre>
+<p>The Tableau parameters you can use are listed in <a href="https://help.tableau.com/current/pro/desktop/en-us/connect_basic_initialsql.htm#parameters-in-an-initial-sql-statement" target="_blank" rel="noopener">Initial SQL parameters</a>.</p>
+<p><strong>CI builds:</strong> set <code>query_tags</code> on the CI target in <code>profiles.yml</code>, for example:</p>
+<pre><code class="language-yaml">query_tags: '{&quot;env&quot;: &quot;ci&quot;, &quot;pr&quot;: &quot;{{ env_var(''PR_NUMBER'', ''none'') }}&quot;}'
+</code></pre>
+<p>For CI scripts that use the <a href="https://learn.microsoft.com/en-us/azure/databricks/sql/user/queries/query-tags#python" target="_blank" rel="noopener">Python connector</a>, pass <code>query_tags</code> when you open the connection.</p>
+<h2 id="2-monitoring-dashboards">2. Monitoring dashboards</h2>
+<ul>
+<li><a href="https://github.com/databrickslabs/sandbox/tree/main/dbsql/cost_per_query" target="_blank" rel="noopener">Cost per query for SQL warehouses</a> (Databricks Labs sandbox): a materialized view plus an AI/BI dashboard. Labelled Private Preview and community-supported.</li>
+<li><a href="https://github.com/databricks-solutions/databricks-blogposts/tree/main/cost-attribution" target="_blank" rel="noopener">Cost attribution dashboard</a>: by workspace, SKU, tag and user.</li>
+<li><a href="https://github.com/CodyAustinDavis/dbsql_sme/tree/main/Observability%20Dashboards%20and%20DBA%20Resources" target="_blank" rel="noopener">DBSQL observability templates</a>: query observability, warehouse SLA monitor, usage trend alerting.</li>
+<li><a href="https://learn.microsoft.com/en-us/azure/databricks/admin/account-settings/usage" target="_blank" rel="noopener">Account usage dashboard</a>: the native consumption dashboard.</li>
+<li><a href="https://learn.microsoft.com/en-us/azure/databricks/compute/sql-warehouse/monitor/queries" target="_blank" rel="noopener">Example system-table queries for warehouse usage, sizing and cost</a></li>
+<li><a href="https://learn.microsoft.com/en-us/azure/databricks/admin/system-tables/jobs-cost" target="_blank" rel="noopener">Lakeflow jobs monitoring dashboard and cost queries</a></li>
+</ul>
+<h2 id="3-scaling-dbt-and-keeping-its-cost-down">3. Scaling dbt and keeping its cost down</h2>
+<ul>
+<li><a href="https://learn.microsoft.com/en-us/azure/databricks/partners/prep/dbt" target="_blank" rel="noopener">dbt on Azure Databricks</a></li>
+<li><a href="https://learn.microsoft.com/en-us/azure/databricks/jobs/tasks/dbt" target="_blank" rel="noopener">dbt task in Lakeflow Jobs</a></li>
+<li><a href="https://docs.getdbt.com/guides/optimize-dbt-models-on-databricks" target="_blank" rel="noopener">Optimize dbt models on Databricks</a> (dbt guide)</li>
+<li><a href="https://docs.getdbt.com/guides/productionize-your-dbt-databricks-project" target="_blank" rel="noopener">Productionize your dbt Databricks project</a> (dbt guide)</li>
+<li><a href="https://docs.getdbt.com/best-practices/dbt-unity-catalog-best-practices" target="_blank" rel="noopener">dbt and Unity Catalog best practices</a></li>
+<li><a href="https://docs.getdbt.com/reference/resource-configs/databricks-configs" target="_blank" rel="noopener">dbt-databricks configs</a>: incremental strategies, liquid clustering, query tags.</li>
+</ul>
+<h2 id="4-serverless-dbus-from-the-dbt-cli-tasks">4. Serverless DBUs from the dbt CLI tasks</h2>
+<p>We're still checking this with the Databricks product team and will follow up. In the meantime, two options from the docs:</p>
+<ul>
+<li><a href="https://learn.microsoft.com/en-us/azure/databricks/jobs/tasks/dbt#configure-a-dbt-task" target="_blank" rel="noopener">dbt CLI compute</a>: the docs recommend either serverless jobs compute or a classic single-node jobs cluster.</li>
+<li><a href="https://learn.microsoft.com/en-us/azure/databricks/jobs/run-serverless-jobs#performance" target="_blank" rel="noopener">Serverless performance mode</a>: if you stay on serverless, standard mode costs less than performance optimized.</li>
+<li><a href="https://learn.microsoft.com/en-us/azure/databricks/admin/system-tables/serverless-billing" target="_blank" rel="noopener">Monitor serverless cost</a>: to measure it per job.</li>
+</ul>
+<h2 id="5-genie-best-practices-and-the-mcp-api-setup">5. Genie: best practices and the MCP / API setup</h2>
+<ul>
+<li><a href="https://learn.microsoft.com/en-us/azure/databricks/genie-agents/best-practices" target="_blank" rel="noopener">Best practices for Genie Agents</a></li>
+<li><a href="https://learn.microsoft.com/en-us/azure/databricks/genie-agents/tune-quality" target="_blank" rel="noopener">Tune quality</a>: instructions, example SQL, joins, knowledge store.</li>
+<li><a href="https://learn.microsoft.com/en-us/azure/databricks/genie-agents/monitor#benchmarks" target="_blank" rel="noopener">Benchmarks</a>: a question and answer set to measure accuracy before rollout.</li>
+<li><a href="https://learn.microsoft.com/en-us/azure/databricks/genie-agents/conversation-api" target="_blank" rel="noopener">Conversation API</a>: what an MCP gateway calls.</li>
+<li><a href="https://learn.microsoft.com/en-us/azure/databricks/agents/mcp-tools/built-in-mcp-services#choose-between-genie-one-genie-agent-and-databricks-sql-mcp-servers" target="_blank" rel="noopener">Genie One MCP vs Genie Agent MCP vs Databricks SQL MCP</a>: when to use each.</li>
+<li><a href="https://learn.microsoft.com/en-us/azure/databricks/genie-one/" target="_blank" rel="noopener">Genie One</a></li>
+</ul>
+<h2 id="6-nested-policy-errors-row-filters">6. Nested policy errors (row filters)</h2>
+<p>Once we have the exact error message we can give a specific recommendation. Background reading:</p>
+<ul>
+<li><a href="https://learn.microsoft.com/en-us/azure/databricks/data-governance/unity-catalog/abac/policy-evaluation#troubleshooting-policy-conflicts" target="_blank" rel="noopener">Conflicting filters and how to troubleshoot them</a></li>
+<li><a href="https://learn.microsoft.com/en-us/azure/databricks/data-governance/unity-catalog/filters-and-masks/" target="_blank" rel="noopener">Row filters and column masks</a></li>
+</ul>
+<h2 id="7-warehouse-settings-max-clusters-and-1-minute-auto-stop">7. Warehouse settings: max clusters and 1-minute auto-stop</h2>
+<ul>
+<li><a href="https://learn.microsoft.com/en-us/azure/databricks/compute/sql-warehouse/warehouse-behavior" target="_blank" rel="noopener">Sizing, autoscaling and queuing</a></li>
+<li><a href="https://learn.microsoft.com/en-us/azure/databricks/compute/sql-warehouse/create" target="_blank" rel="noopener">Create a SQL warehouse</a>: auto-stop down to 1 minute through the API.</li>
+<li><a href="https://registry.terraform.io/providers/databricks/databricks/latest/docs/resources/sql_endpoint" target="_blank" rel="noopener">Terraform <code>databricks_sql_endpoint</code></a>: <code>auto_stop_mins</code>, <code>max_num_clusters</code>.</li>
+<li><a href="https://learn.microsoft.com/en-us/azure/databricks/sql/user/queries/query-profile" target="_blank" rel="noopener">Query profile</a>: check for disk spill before sizing up.</li>
+</ul>
+<h2 id="8-zerobus-ingest-for-the-webhook-writes">8. Zerobus Ingest for the webhook writes</h2>
+<ul>
+<li><a href="https://learn.microsoft.com/en-us/azure/databricks/ingestion/zerobus-overview" target="_blank" rel="noopener">Zerobus Ingest overview</a>, including the REST API.</li>
+<li><a href="https://learn.microsoft.com/en-us/azure/databricks/ingestion/zerobus-ingest" target="_blank" rel="noopener">Write a client</a></li>
+<li><a href="https://learn.microsoft.com/en-us/azure/databricks/ingestion/zerobus-overview#cost" target="_blank" rel="noopener">Cost and how to monitor it</a></li>
+<li><a href="https://www.databricks.com/product/pricing/lakeflow-connect" target="_blank" rel="noopener">Pricing</a></li>
+</ul>
+<h2 id="9-semantic-layer">9. Semantic layer</h2>
+<ul>
+<li><a href="https://learn.microsoft.com/en-us/azure/databricks/uc-semantics/metric-views/" target="_blank" rel="noopener">Metric views</a></li>
+<li><a href="https://learn.microsoft.com/en-us/azure/databricks/uc-semantics/metric-views/joins" target="_blank" rel="noopener">Multi-fact joins in metric views</a></li>
+</ul>
+  </main>
+</div>
+<footer class="foot">Prepared by Databricks. Quotes are from the Azure Databricks documentation on learn.microsoft.com
+unless marked otherwise. Preview status is given as the documentation states it.</footer>
+</body>
+</html>
