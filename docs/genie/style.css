@@ -499,3 +499,11 @@ pre.mini .c { color: var(--ink-3); }
 .dl-card .chip { font-size: 12px; padding: 4px 8px; }
 .dl-warn { margin-top: 4px; display: inline-flex; align-items: center; gap: 6px; align-self: flex-start; font-size: 12px; font-weight: 600;
   color: var(--warn); background: var(--warn-soft); border: 1px solid color-mix(in srgb, var(--warn) 30%, transparent); border-radius: 999px; padding: 3px 10px; }
+.onto-g { grid-template-columns: 1.3fr 1fr .85fr .85fr; }
+.onto-c.ready { display: flex; flex-direction: column; gap: 5px; text-decoration: none; color: var(--ink); border: 1px dashed color-mix(in srgb, var(--accent) 45%, var(--line));
+  border-radius: 10px; padding: 7px 10px; background: var(--quote-bg); }
+.onto-c.ready:hover { border-color: var(--accent); }
+.onto-c.ready .verbs { display: flex; flex-direction: column; gap: 2px; font-size: 11.5px; color: var(--ink-2); }
+.onto-c.ready .verbs b { color: var(--accent); font-weight: 650; margin-right: 4px; }
+.onto-c.ready .gh { display: inline-flex; align-items: center; gap: 5px; font-size: 11px; color: var(--ink-3); }
+.onto-c.ready .gh .ic { color: var(--accent); }

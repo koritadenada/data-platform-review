@@ -208,17 +208,15 @@
           <rect x="210" y="4" width="200" height="44" rx="12" class="hub"/>
           <text x="310" y="24" class="hub-t">Genie One</text>
           <text x="310" y="40" class="hub-s">routes, answers, cites sources</text>
-          <g class="edges"><path d="M310 48 V74"/><path d="M70 74 H550"/><path d="M70 74 V84"/><path d="M190 74 V84"/><path d="M310 74 V84"/><path d="M430 74 V84"/><path d="M550 74 V84"/>
-            <path d="M130 74 V150"/><path d="M490 74 V150"/></g>
-          <g class="node agent"><rect x="14" y="84" width="112" height="50" rx="10"/><text x="70" y="105">UA</text><text x="70" y="121">Performance</text></g>
-          <g class="node agent"><rect x="134" y="84" width="112" height="50" rx="10"/><text x="190" y="105">Subscription</text><text x="190" y="121">Revenue</text></g>
-          <g class="node agent"><rect x="254" y="84" width="112" height="50" rx="10"/><text x="310" y="105">UA Playbook</text><text x="310" y="121">(files)</text></g>
-          <g class="node agent"><rect x="374" y="84" width="112" height="50" rx="10"/><text x="430" y="105">Marketing</text><text x="430" y="121">Copilot</text></g>
-          <g class="node"><rect x="494" y="84" width="112" height="50" rx="10"/><text x="550" y="105">AI/BI</text><text x="550" y="121">dashboards</text></g>
-          <g class="node"><rect x="64" y="150" width="132" height="44" rx="10"/><text x="130" y="176">Metric views, tables</text></g>
+          <g class="edges"><path d="M310 48 V74"/><path d="M85 74 H535"/><path d="M85 74 V84"/><path d="M235 74 V84"/><path d="M385 74 V84"/><path d="M535 74 V84"/>
+            <path d="M160 74 V150"/><path d="M310 74 V150"/><path d="M460 74 V150"/></g>
+          <g class="node agent"><rect x="20" y="84" width="130" height="50" rx="10"/><text x="85" y="105">UA</text><text x="85" y="121">Performance</text></g>
+          <g class="node agent"><rect x="170" y="84" width="130" height="50" rx="10"/><text x="235" y="105">Subscription</text><text x="235" y="121">Revenue</text></g>
+          <g class="node agent"><rect x="320" y="84" width="130" height="50" rx="10"/><text x="385" y="105">UA Playbook</text><text x="385" y="121">(files)</text></g>
+          <g class="node"><rect x="470" y="84" width="130" height="50" rx="10"/><text x="535" y="105">AI/BI</text><text x="535" y="121">dashboards</text></g>
+          <g class="node"><rect x="94" y="150" width="132" height="44" rx="10"/><text x="160" y="176">Metric views, tables</text></g>
           <g class="node page"><rect x="244" y="150" width="132" height="44" rx="10"/><text x="310" y="176">Pages</text></g>
-          <g class="node"><rect x="424" y="150" width="132" height="44" rx="10"/><text x="490" y="176">Apps</text></g>
-          <path d="M310 134 V150" class="edge2"/>
+          <g class="node"><rect x="394" y="150" width="132" height="44" rx="10"/><text x="460" y="176">Apps</text></g>
         </svg>
         <p class="fine">"It searches available Genie Agents for one relevant to your question." If none matches, it searches for relevant data assets.</p>
       </div>
@@ -246,6 +244,9 @@
         <div class="onto-c base"><h4>Also in play</h4><div class="chips">
           <a class="chip" href="https://learn.microsoft.com/en-us/azure/databricks/genie-agents/concepts">UC table and column comments, PK and FK (Genie Agents)</a>
           <a class="chip" href="https://learn.microsoft.com/en-us/azure/databricks/genie-one/chat">Your memories and past conversations (Genie One, cited)</a></div></div>
+        <a class="onto-c ready" href="https://github.com/databricks-solutions/genie-ontology-readiness" target="_blank" rel="noopener"><h4>Check your readiness</h4>
+          <div class="verbs"><span><b>Assess</b> 7 pillars, 0 to 100 score</span><span><b>Plan</b> prioritized actions</span><span><b>Learn</b> best practices</span></div>
+          <span class="gh"><svg class="ic sm"><use href="#i-git"/></svg>genie-ontology-readiness (Databricks App)</span></a>
       </div>
     </div>
     <div class="foot"><div class="docs"><b>Docs</b>
@@ -407,7 +408,7 @@ https://&lt;workspace-hostname&gt;/api/2.0/mcp/genie/&lt;space-id&gt;</pre>
         <div class="bpc-ic"><svg class="ic"><use href="#i-git"/></svg></div>
         <div class="bpc-t">Lifecycle</div>
         <div class="bpc-l">Start small, ship as code.</div>
-        <span class="bpc-demo"><b>Demo</b>All four agents in the repo</span>
+        <span class="bpc-demo"><b>Demo</b>All three agents in the repo</span>
         <div class="bpc-a"><button class="more-btn" data-more="m8">See more</button><a href="https://learn.microsoft.com/en-us/azure/databricks/genie-agents/best-practices#deploy-and-version-your-agent-with-declarative-automation-bundles">Docs</a></div>
         <div class="bpc-more" id="m8"><ul><li><a href="https://learn.microsoft.com/en-us/azure/databricks/genie-agents/best-practices#start-small">Start small and plan to iterate</a></li><li><a href="https://learn.microsoft.com/en-us/azure/databricks/genie-agents/best-practices#deploy-and-version-your-agent-with-declarative-automation-bundles">Agents as code: bundles or the management APIs</a></li><li><a href="https://learn.microsoft.com/en-us/azure/databricks/genie-agents/set-up#clone-a-genie-agent">Clone to test changes; add agents gradually</a></li></ul></div>
       </div>
@@ -454,7 +455,6 @@ https://&lt;workspace-hostname&gt;/api/2.0/mcp/genie/&lt;space-id&gt;</pre>
             <span class="chip hot"><svg class="ic sm"><use href="#i-chart"/></svg>UA Performance</span>
             <span class="chip"><svg class="ic sm"><use href="#i-loop"/></svg>Subscription Revenue</span>
             <span class="chip"><svg class="ic sm"><use href="#i-file"/></svg>UA Playbook (files)</span>
-            <span class="chip"><svg class="ic sm"><use href="#i-branch"/></svg>Marketing Copilot (parent)</span>
           </div>
         </div>
         <div class="layer l-sem">
@@ -494,7 +494,7 @@ https://&lt;workspace-hostname&gt;/api/2.0/mcp/genie/&lt;space-id&gt;</pre>
   <aside class="n"><ul>
     <li>Read it bottom up. The data and the permissions stay in Unity Catalog, nothing is copied into Genie.</li>
     <li>The semantic layer is the investment that pays off everywhere: Genie One, Genie Code and external agents all read the same ontology.</li>
-    <li>Agents are thin and curated. These four are what I'll show in the demo.</li>
+    <li>Agents are thin and curated. These three are what I'll show in the demo, with Genie One on top.</li>
     <li>Today the self-service POC calls the Conversation API through a gateway. That fits in the top row; we'll compare options on slide 7.</li>
   </ul></aside>
 </section>
@@ -741,10 +741,9 @@ https://&lt;workspace-hostname&gt;/api/2.0/mcp/genie/&lt;space-id&gt;</pre>
       <div class="step"><div class="card"><div class="head"><span class="num">2</span><h2>UA Performance agent</h2></div><p>Configure tab tour of the best practices, then live questions and a benchmark run.</p></div></div>
       <div class="step"><div class="card"><div class="head"><span class="num">3</span><h2>Genie One across agents</h2></div><p>One question, routed to the right agent, citing Pages and certified sources.</p></div></div>
       <div class="step"><div class="card"><div class="head"><span class="num">4</span><h2>Playbook over files</h2></div><p>Agent mode over UA playbooks and naming conventions, with page-level citations.</p></div></div>
-      <div class="step"><div class="card"><div class="head"><span class="num">5</span><h2>Marketing Copilot</h2></div><p>A parent agent that combines performance, revenue and playbook answers.</p></div></div>
+      <div class="step"><div class="card"><div class="head"><span class="num">5</span><h2>Genie One orchestrates</h2></div><p>One question answered from UA Performance and UA Playbook: "Is PixelMuse on TikTok below target and what does the playbook say?"</p></div></div>
       <div class="step"><div class="card"><div class="head"><span class="num">6</span><h2>Claude Code via MCP</h2></div><p>Same questions from a coding agent, with the same governed answers.</p></div></div>
     </div>
-    <p class="placeholder" style="margin:14px 0 0;font-size:13px">Demo object names and links to be added after the build.</p>
   </div>
   <div class="foot"><div class="docs"><b>Docs</b>
     <a href="https://learn.microsoft.com/en-us/azure/databricks/genie-agents/set-up">Create a Genie Agent</a>
@@ -753,7 +752,7 @@ https://&lt;workspace-hostname&gt;/api/2.0/mcp/genie/&lt;space-id&gt;</pre>
   <aside class="n"><ul>
     <li>All data is synthetic but shaped like a subscription app studio: campaigns, installs, trials, renewals.</li>
     <li>Keep it moving: about five minutes per step, questions at the end of each.</li>
-    <li>If sub-agents aren't enabled in the workspace yet, show step 5 as a design and let Genie One do the routing.</li>
+    <li>Step 5 is the orchestration story: Genie One pulls the numbers from UA Performance and the guidance from UA Playbook in one answer.</li>
   </ul></aside>
 </section>
 
@@ -797,6 +796,7 @@ https://&lt;workspace-hostname&gt;/api/2.0/mcp/genie/&lt;space-id&gt;</pre>
         <li class="placeholder">Pick 10 to 15 real pilot questions from marketing</li>
         <li class="placeholder">Confirm the KPI definitions to model first</li>
         <li class="placeholder">Name the pilot users and an agent owner</li>
+        <li>Run the <a href="https://github.com/databricks-solutions/genie-ontology-readiness" target="_blank" rel="noopener">Genie Ontology Readiness</a> app on your workspace: a read-only score and a prioritized plan</li>
       </ul></div>
       <div class="card"><div class="head"><div class="badge-ic"><svg class="ic"><use href="#i-agent"/></svg></div><h2>Our side</h2></div><ul>
         <li class="placeholder">Share the demo repo and this deck</li>
@@ -847,7 +847,7 @@ https://&lt;workspace-hostname&gt;/api/2.0/mcp/genie/&lt;space-id&gt;</pre>
   // Presenter-only demo links (loaded from a local file that is not published)
   const DL = window.DEMO_LINKS;
   function esc(t) { return String(t).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
-  function lk(o, ic) { return '<a class="dl-row" target="_blank" rel="noopener" href="' + esc(o.url) + '"><svg class="ic sm"><use href="#' + ic + '"/></svg><span>' + esc(o.name || o.label) + '</span>' + (o.badge ? '<span class="pill beta">' + esc(o.badge) + '</span>' : '') + '<svg class="ic sm ext"><use href="#i-right"/></svg></a>'; }
+  function lk(o, ic) { return '<a class="dl-row" target="_blank" rel="noopener" href="' + esc(o.url) + '"><svg class="ic sm"><use href="#' + ic + '"/></svg><span>' + esc(o.name || o.label) + '</span>' + (o.badge ? '<span class="pill beta">' + esc(o.badge) + '</span>' : '') + (o.note ? '<span class="pill pp">' + esc(o.note) + '</span>' : '') + '<svg class="ic sm ext"><use href="#i-right"/></svg></a>'; }
   function card(ic, title, inner, cls) { return '<div class="dl-card ' + (cls || '') + '"><div class="dl-h"><span class="badge-ic"><svg class="ic"><use href="#' + ic + '"/></svg></span><b>' + title + '</b></div>' + inner + '</div>'; }
   if (DL) {
     const d = document.getElementById('d-links');
@@ -857,7 +857,7 @@ https://&lt;workspace-hostname&gt;/api/2.0/mcp/genie/&lt;space-id&gt;</pre>
       '<span class="d-title"><span class="badge-ic"><svg class="ic"><use href="#i-link"/></svg></span>Demo links</span><span class="d-sub">Presenter only. Links open in a new tab.</span></div>' +
       '<div class="dl-grid">' +
         card('i-play', 'Presentation and workspace', lk(DL.presentation, 'i-dash') + lk(DL.workspace, 'i-server')) +
-        card('i-agent', 'Genie Agents', DL.agents.map(a => lk(a, 'i-agent')).join('')) +
+        card('i-agent', 'Genie Agents', DL.agents.map(a => lk(a, a.icon || 'i-agent')).join('')) +
         card('i-layers', 'Metric views', DL.metricViews.map(m => lk(m, 'i-target')).join('')) +
         card('i-tag', 'Domains and Pages', '<p class="dl-t">' + esc(DL.domains.text) + '</p><p class="dl-t">Subdomains: ' + DL.domains.subdomains.map(esc).join(', ') + '</p><div class="chips">' + DL.domains.pages.map(x => '<span class="chip">' + esc(x) + '</span>').join('') + '</div><span class="dl-warn"><svg class="ic sm"><use href="#i-alert"/></svg>' + esc(DL.domains.warning) + '</span>', 'wide') +
         card('i-alert', 'Deprecated legacy table', DL.deprecated.map(m => lk(m, 'i-db')).join('')) +
