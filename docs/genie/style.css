@@ -875,3 +875,13 @@ a.bubble.live:hover, a.scen.live:hover { border-color: var(--green) !important; 
 #d-one .onto-h { margin-bottom: 5px; }
 #d-one .scen { padding: 7px 12px; margin-bottom: 6px; }
 .j-step { z-index: 3; } .j-dot { z-index: 2; width: 16px; height: 16px; margin: -8px 0 0 -8px; } .j-gate { z-index: 1; }
+/* Standalone Best practices and Demo links slides */
+#s-links { --accent: var(--navy); --accent-soft: var(--navy-soft); }
+#s-links > .body { justify-content: flex-start; min-height: 0; }
+#s-links .dl-scroll { flex: 1; min-height: 0; overflow-y: auto; padding-right: 6px; margin-right: -6px; }
+#s-links .dl-grid { align-content: start; }
+#s-links h1 { margin-bottom: 2px; }
+#s-links .lede { margin-bottom: 12px; }
+#s-bp .bpcards { flex: 0 0 auto; }
+#d-agents .cta { margin-top: 14px; align-self: stretch; }
+#d-bp .bpcards { flex: 1; }
