@@ -61,15 +61,15 @@ window.DEMO_LINKS = {
     "links": [
       {
         "name": "App Portfolio Marketing",
-        "url": "https://fe-sandbox-korita-demo.cloud.databricks.com/one/discover/domains/bcf485cd-c34d-4796-b645-085074ea9d55?o=7474650857654748"
+        "url": "https://fe-sandbox-korita-demo.cloud.databricks.com/one/discover?o=7474650857654748&q=domain%3A%22App+Portfolio+Marketing%22"
       },
       {
         "name": "User Acquisition",
-        "url": "https://fe-sandbox-korita-demo.cloud.databricks.com/one/discover/domains/8a7d9d9b-0875-4b9f-ba2a-a8c15942f442?o=7474650857654748"
+        "url": "https://fe-sandbox-korita-demo.cloud.databricks.com/one/discover?o=7474650857654748&q=domain%3A%22App+Portfolio+Marketing%2FUser+Acquisition%22"
       },
       {
         "name": "Subscriptions",
-        "url": "https://fe-sandbox-korita-demo.cloud.databricks.com/one/discover/domains/5e8fc5f9-4262-4118-966c-661d0e1d145a?o=7474650857654748"
+        "url": "https://fe-sandbox-korita-demo.cloud.databricks.com/one/discover?o=7474650857654748&q=domain%3A%22App+Portfolio+Marketing%2FSubscriptions%22"
       }
     ],
     "pages": [

@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Genie for marketing self-service</title>
-<link rel="stylesheet" href="style.css?v=1794768054">
+<link rel="stylesheet" href="style.css?v=1794768453">
 </head>
 <body>
 
@@ -48,6 +48,7 @@
   <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></symbol>
   <symbol id="i-live" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M10 8.5v7l6-3.5z"/></symbol>
   <symbol id="i-copy" viewBox="0 0 24 24"><rect x="8" y="8" width="12" height="12" rx="2"/><path d="M16 8V5a1 1 0 00-1-1H5a1 1 0 00-1 1v10a1 1 0 001 1h3"/></symbol>
+  <symbol id="i-grid" viewBox="0 0 24 24"><rect x="4" y="4" width="6.5" height="6.5" rx="1.5"/><rect x="13.5" y="4" width="6.5" height="6.5" rx="1.5"/><rect x="4" y="13.5" width="6.5" height="6.5" rx="1.5"/><rect x="13.5" y="13.5" width="6.5" height="6.5" rx="1.5"/></symbol>
   <symbol id="i-left" viewBox="0 0 24 24"><path d="M15 6l-6 6 6 6"/></symbol>
   <symbol id="i-right" viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></symbol>
 </svg>
@@ -825,14 +826,17 @@ https://&lt;workspace-hostname&gt;/api/2.0/mcp/genie/&lt;space-id&gt;</pre>
 </div>
 
 <div class="chrome">
-  <span class="keys"><kbd>&larr;</kbd> <kbd>&rarr;</kbd> navigate &nbsp; <kbd>N</kbd> notes &nbsp; <kbd>F</kbd> fullscreen</span>
-  <span id="counter">1 / 10</span>
+  <span class="keys"><kbd>&larr;</kbd><kbd>&rarr;</kbd> move <kbd>O</kbd> overview <kbd>N</kbd> notes <kbd>F</kbd> full</span>
+  <nav class="rail" id="rail" aria-label="Slides"></nav>
+  <span class="chrome-r">
+    <button id="links-btn" class="cbtn" aria-label="Demo links" hidden><svg class="ic sm"><use href="#i-link"/></svg>Links</button>
+    <button id="ov-btn" class="cbtn" aria-label="Overview"><svg class="ic sm"><use href="#i-grid"/></svg></button>
+    <button id="prev" class="cbtn" aria-label="Previous"><svg class="ic sm"><use href="#i-left"/></svg></button>
+    <button id="next" class="cbtn" aria-label="Next"><svg class="ic sm"><use href="#i-right"/></svg></button>
+    <span id="counter">1 / 10</span>
+  </span>
 </div>
-<div class="nav">
-  <button id="links-btn" class="links-btn" aria-label="Demo links" hidden><svg class="ic sm"><use href="#i-link"/></svg>Links</button>
-  <button id="prev" aria-label="Previous slide"><svg class="ic sm"><use href="#i-left"/></svg></button>
-  <button id="next" aria-label="Next slide"><svg class="ic sm"><use href="#i-right"/></svg></button>
-</div>
+<div class="overview" id="overview" hidden><div class="ov-box"><div class="ov-h"><b>All slides</b><button class="back" id="ov-close">Close <kbd>Esc</kbd></button></div><div class="ov-grid" id="ov-grid"></div></div></div>
 <aside class="notes" id="notes"><h3>Presenter notes</h3><div id="notes-body"></div><p class="hint">Press N to close.</p></aside>
 
 <script src="demo-links.local.js" onerror="window.DEMO_LINKS = null"></script>
@@ -846,7 +850,7 @@ https://&lt;workspace-hostname&gt;/api/2.0/mcp/genie/&lt;space-id&gt;</pre>
   let i = 0;
 
   function fit() {
-    const s = Math.min(window.innerWidth / 1280, (window.innerHeight - 34) / 720);
+    const s = Math.min(window.innerWidth / 1280, (window.innerHeight - 46) / 720);
     deck.style.transform = 'scale(' + s + ')';
   }
 
@@ -929,6 +933,7 @@ https://&lt;workspace-hostname&gt;/api/2.0/mcp/genie/&lt;space-id&gt;</pre>
     sl.querySelectorAll('.detail').forEach(x => x.classList.remove('on'));
     d.classList.add('on'); sl.classList.add('open-detail'); openId = id; setNotes();
     history.replaceState(null, '', '#' + (i + 1) + '/' + id.replace('d-', ''));
+    if (typeof updateRail === 'function') updateRail();
   }
   function closeDetail() {
     if (!openId) return false;
@@ -936,6 +941,7 @@ https://&lt;workspace-hostname&gt;/api/2.0/mcp/genie/&lt;space-id&gt;</pre>
     slides[i].querySelectorAll('.detail').forEach(x => x.classList.remove('on'));
     slides[i].classList.remove('open-detail'); openId = null; setNotes();
     history.replaceState(null, '', '#' + (i + 1));
+    updateRail();
     return true;
   }
   const modal = document.getElementById('bp-modal');
@@ -954,6 +960,58 @@ https://&lt;workspace-hostname&gt;/api/2.0/mcp/genie/&lt;space-id&gt;</pre>
     const t = e.target.closest('[data-open]'); if (t) { openDetail(t.dataset.open); return; }
     if (e.target.closest('[data-close]')) closeDetail();
   });
+
+  // ---- Navigation aids: slide rail, breadcrumbs, overview, sub-view order ----
+  const RAIL = [['Genie family','c-red'],['How it fits','c-navy'],['Metric views','c-blue'],['Ontology','c-green'],['Agent types','c-orange'],['Best practices','c-blue'],['Your tools','c-green'],['Demo','c-red'],['Rollout','c-orange'],['Next steps','c-navy']];
+  const SUBNAME = { 'd-code': 'Genie Code', 'd-agents': 'Genie Agents', 'd-one': 'Genie One', 'd-bp': 'Best practices', 'd-links': 'Demo links', 'd-own': 'Your IDE' };
+  function subOrder() { const o = ['d-code', 'd-agents', 'd-one', 'd-bp']; const l = document.getElementById('d-links'); if (l && !l.hidden) o.push('d-links'); return o; }
+  function subIndex(id) { const o = subOrder(); const el = id && document.getElementById(id); const base = el && el.dataset.parent ? el.dataset.parent : id; return o.indexOf(base); }
+  function nextSub() { const o = subOrder(); const k = subIndex(openId); if (k >= 0 && k < o.length - 1) openDetail(o[k + 1]); else show(1); }
+  function prevSub() { const o = subOrder(); const el = document.getElementById(openId);
+    if (el && el.dataset.parent) { openDetail(el.dataset.parent); return; }
+    const k = subIndex(openId); if (k > 0) openDetail(o[k - 1]); else closeDetail(); }
+  const rail = document.getElementById('rail');
+  function buildRail() {
+    rail.innerHTML = RAIL.map((r, k) => '<button class="seg ' + r[1] + '" data-go="' + k + '" title="' + (k + 1) + '. ' + slides[k].dataset.title + '"><span class="seg-l">' + r[0] + '</span>' +
+      (k === 0 ? '<span class="seg-dots">' + subOrder().map(id => '<i data-sub="' + id + '"></i>').join('') + '</span>' : '') + '</button>').join('');
+  }
+  function updateRail() {
+    rail.querySelectorAll('.seg').forEach((b, k) => { b.classList.toggle('cur', k === i); b.classList.toggle('past', k < i); });
+    const cur = subIndex(openId); const order = subOrder();
+    rail.querySelectorAll('.seg-dots i').forEach(d => d.classList.toggle('on', i === 0 && cur >= 0 && d.dataset.sub === order[cur]));
+    rail.querySelector('.seg-dots').classList.toggle('show', i === 0 && !!openId);
+  }
+  rail.addEventListener('click', (e) => { const b = e.target.closest('[data-go]'); if (b) show(parseInt(b.dataset.go, 10)); });
+  function crumbs() {
+    document.querySelectorAll('#deck .slide[data-tiles] .detail').forEach(d => {
+      if (d.hidden || d.querySelector('.crumb')) return;
+      const head = d.querySelector('.d-head'); if (!head) return;
+      const id = d.id; const o = subOrder(); const k = subIndex(id);
+      const nid = d.dataset.parent ? o[k + 1] : (k >= 0 && k < o.length - 1 ? o[k + 1] : null);
+      const nextLabel = nid ? SUBNAME[nid] : RAIL[1][0];
+      head.insertAdjacentHTML('afterbegin', '<div class="crumb"><button class="crumb-home" data-close>1 / ' + slides.length + ' &middot; Genie family</button><span>&gt;</span>' +
+        (d.dataset.parent ? '<button class="crumb-home" data-open="' + d.dataset.parent + '">' + SUBNAME[d.dataset.parent] + '</button><span>&gt;</span>' : '') +
+        '<b>' + SUBNAME[id] + '</b><button class="crumb-next" data-next>Next: ' + nextLabel + ' <svg class="ic sm"><use href="#i-right"/></svg></button></div>');
+    });
+  }
+  deck.addEventListener('click', (e) => { if (e.target.closest('[data-next]')) { e.stopPropagation(); nextSub(); } }, true);
+  const ov = document.getElementById('overview');
+  function buildOverview() {
+    document.getElementById('ov-grid').innerHTML = slides.map((sl, k) => {
+      const lede = sl.querySelector(':scope > .lede'); const sub = lede ? lede.textContent : '';
+      const chips = k === 0 ? '<div class="ov-chips">' + subOrder().map(id => '<button class="chip" data-ov-sub="' + id + '">' + SUBNAME[id] + '</button>').join('') + '</div>' : '';
+      return '<div class="ov-card ' + RAIL[k][1] + '" data-ov="' + k + '"><span class="num">' + (k + 1) + '</span><b>' + sl.dataset.title + '</b><small>' + sub + '</small>' + chips + '</div>';
+    }).join('');
+  }
+  function openOverview() { buildOverview(); ov.hidden = false; }
+  function closeOverview() { if (ov.hidden) return false; ov.hidden = true; return true; }
+  ov.addEventListener('click', (e) => {
+    const c = e.target.closest('[data-ov-sub]'); if (c) { closeOverview(); show(0); openDetail(c.dataset.ovSub); return; }
+    const card = e.target.closest('[data-ov]'); if (card) { closeOverview(); show(parseInt(card.dataset.ov, 10)); return; }
+    if (e.target === ov || e.target.closest('#ov-close')) closeOverview();
+  });
+  document.getElementById('ov-btn').addEventListener('click', () => ov.hidden ? openOverview() : closeOverview());
+
   function show(n, push) {
     closeDetail();
     i = Math.max(0, Math.min(slides.length - 1, n));
@@ -963,6 +1021,7 @@ https://&lt;workspace-hostname&gt;/api/2.0/mcp/genie/&lt;space-id&gt;</pre>
     setNotes();
     document.title = slides[i].dataset.title + ' | Genie session';
     if (push !== false) history.replaceState(null, '', '#' + (i + 1));
+    updateRail();
   }
   function fromHash() {
     const h = parseInt(location.hash.replace('#', '').split('/')[0], 10);
@@ -971,6 +1030,9 @@ https://&lt;workspace-hostname&gt;/api/2.0/mcp/genie/&lt;space-id&gt;</pre>
   document.addEventListener('keydown', (e) => {
     if (e.metaKey || e.ctrlKey || e.altKey) return;
     const k = e.key;
+    if ((k === 'Escape') && closeOverview()) { e.preventDefault(); return; }
+    if (k === 'o' || k === 'O') { e.preventDefault(); ov.hidden ? openOverview() : closeOverview(); return; }
+    if (!ov.hidden) return;
     if ((k === 'Escape' || k === 'Backspace') && closeMore()) { e.preventDefault(); return; }
     if ((k === 'Escape' || k === 'Backspace') && openId) {
       const par = document.getElementById(openId).dataset.parent;
@@ -983,6 +1045,8 @@ https://&lt;workspace-hostname&gt;/api/2.0/mcp/genie/&lt;space-id&gt;</pre>
       const tiles = slides[i].querySelectorAll('.bigtile, .slimtile'); const t = tiles[parseInt(k, 10) - 1];
       if (t) { openDetail(t.dataset.open); e.preventDefault(); return; }
     }
+    if (openId && (k === 'ArrowRight' || k === 'ArrowDown' || k === 'PageDown' || k === ' ')) { e.preventDefault(); if (!modal.classList.contains('on')) nextSub(); return; }
+    if (openId && (k === 'ArrowLeft' || k === 'ArrowUp' || k === 'PageUp')) { e.preventDefault(); if (!modal.classList.contains('on')) prevSub(); return; }
     if (k === 'ArrowRight' || k === 'ArrowDown' || k === 'PageDown' || k === ' ') { e.preventDefault(); show(i + 1); }
     else if (k === 'ArrowLeft' || k === 'ArrowUp' || k === 'PageUp') { e.preventDefault(); show(i - 1); }
     else if (k === 'Home') { show(0); }
@@ -997,6 +1061,7 @@ https://&lt;workspace-hostname&gt;/api/2.0/mcp/genie/&lt;space-id&gt;</pre>
   document.getElementById('next').addEventListener('click', () => show(i + 1));
   window.addEventListener('hashchange', () => { if (!location.hash.includes('/')) show(fromHash(), false); });
   window.addEventListener('resize', fit);
+  buildRail(); crumbs();
   fit();
   show(fromHash(), false);
   const sub = location.hash.split('/')[1]; if (sub) openDetail('d-' + sub);
