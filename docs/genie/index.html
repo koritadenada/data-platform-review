@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Genie for marketing self-service</title>
-<link rel="stylesheet" href="style.css?v=1794768453">
+<link rel="stylesheet" href="style.css?v=1794768996">
 </head>
 <body>
 
@@ -49,6 +49,8 @@
   <symbol id="i-live" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M10 8.5v7l6-3.5z"/></symbol>
   <symbol id="i-copy" viewBox="0 0 24 24"><rect x="8" y="8" width="12" height="12" rx="2"/><path d="M16 8V5a1 1 0 00-1-1H5a1 1 0 00-1 1v10a1 1 0 001 1h3"/></symbol>
   <symbol id="i-grid" viewBox="0 0 24 24"><rect x="4" y="4" width="6.5" height="6.5" rx="1.5"/><rect x="13.5" y="4" width="6.5" height="6.5" rx="1.5"/><rect x="4" y="13.5" width="6.5" height="6.5" rx="1.5"/><rect x="13.5" y="13.5" width="6.5" height="6.5" rx="1.5"/></symbol>
+  <symbol id="i-gate" viewBox="0 0 24 24"><path d="M3 20V9l9-5 9 5v11"/><path d="M7 20v-7h10v7"/><path d="M12 13v7"/></symbol>
+  <symbol id="i-down" viewBox="0 0 24 24"><path d="M12 5v14M6 13l6 6 6-6"/></symbol>
   <symbol id="i-left" viewBox="0 0 24 24"><path d="M15 6l-6 6 6 6"/></symbol>
   <symbol id="i-right" viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></symbol>
 </svg>
@@ -446,14 +448,26 @@ https://&lt;workspace-hostname&gt;/api/2.0/mcp/genie/&lt;space-id&gt;</pre>
   <div class="body">
     <div class="layers">
       <div class="stack">
-        <div class="layer l-surface c-navy">
+        <div class="layer l-surface c-orange">
           <div class="lname"><svg class="ic"><use href="#i-chat"/></svg><div>Surfaces<small>where people ask</small></div></div>
           <div class="chips">
             <span class="chip hot"><svg class="ic sm"><use href="#i-one"/></svg>Genie One</span>
-            <span class="chip"><svg class="ic sm"><use href="#i-chat"/></svg>Slack and Teams</span>
-            <span class="chip"><svg class="ic sm"><use href="#i-dash"/></svg>Ask Genie on dashboards</span>
+            <span class="chip"><svg class="ic sm"><use href="#i-chat"/></svg>Slack, Teams</span>
+            <span class="chip"><svg class="ic sm"><use href="#i-dash"/></svg>Dashboards</span>
             <span class="chip"><svg class="ic sm"><use href="#i-server"/></svg>Conversation API</span>
-            <span class="chip"><svg class="ic sm"><use href="#i-terminal"/></svg>MCP: Claude Code, Codex</span>
+            <span class="chip via"><svg class="ic sm"><use href="#i-terminal"/></svg>Claude Code, Codex, Cursor, MCP clients<svg class="ic sm"><use href="#i-down"/></svg></span>
+          </div>
+        </div>
+        <div class="layer l-gw c-navy">
+          <div class="lname"><svg class="ic"><use href="#i-gate"/></svg><div>Unity Gateway <span class="pill ga">GA</span><small>for MCP and coding agents</small></div></div>
+          <div class="gw">
+            <div class="chips">
+              <span class="chip hot"><svg class="ic sm"><use href="#i-plug"/></svg>system.ai.genie_one_mcp</span>
+              <span class="chip">system.ai.dbsql <span class="pill beta">Beta</span></span>
+              <span class="chip">Connectors: Gmail, Drive, Slack, GitHub, Atlassian, M365 <span class="pill beta">Beta in Genie Agents</span></span>
+              <span class="chip"><svg class="ic sm"><use href="#i-bolt"/></svg>Models: ug claude, ug codex</span>
+            </div>
+            <div class="gw-gov"><svg class="ic sm"><use href="#i-shield"/></svg>EXECUTE grants on MCP services &middot; <code>system.ai_gateway.usage</code> &middot; spend limits &middot; traces <span class="pill beta">Beta</span></div>
           </div>
         </div>
         <div class="layer l-agents c-red">
@@ -477,10 +491,10 @@ https://&lt;workspace-hostname&gt;/api/2.0/mcp/genie/&lt;space-id&gt;</pre>
         <div class="layer l-data c-blue">
           <div class="lname"><svg class="ic"><use href="#i-db"/></svg><div>Unity Catalog<small>data and governance</small></div></div>
           <div class="chips">
-            <span class="chip">Gold tables from dbt</span>
-            <span class="chip">Comments, PK and FK</span>
+            <span class="chip">Gold tables (dbt)</span>
+            <span class="chip">Comments, PK/FK</span>
             <span class="chip"><svg class="ic sm"><use href="#i-shield"/></svg>Grants, row filters, masks</span>
-            <span class="chip">Query history (learned context)</span>
+            <span class="chip">Query history</span>
           </div>
         </div>
       </div>
@@ -495,14 +509,17 @@ https://&lt;workspace-hostname&gt;/api/2.0/mcp/genie/&lt;space-id&gt;</pre>
     <a href="https://learn.microsoft.com/en-us/azure/databricks/genie/genie-ontology/">Genie Ontology</a>
     <a href="https://learn.microsoft.com/en-us/azure/databricks/genie-agents/conversation-api">Genie Agents API</a>
     <a href="https://learn.microsoft.com/en-us/azure/databricks/agents/mcp-tools/built-in-mcp-services">Databricks MCPs</a>
+    <a href="https://learn.microsoft.com/en-us/azure/databricks/ai-gateway/coding-agent-supported-agents">Unity Gateway for coding agents</a>
+    <a href="https://learn.microsoft.com/en-us/azure/databricks/genie-agents/external-tools">MCP tools in Genie Agents</a>
     <a href="https://learn.microsoft.com/en-us/azure/databricks/genie-one/genie-slack">Genie in Slack</a>
     <a href="https://learn.microsoft.com/en-us/azure/databricks/integrations/msft-teams">Genie in Teams</a>
   </div><span>2</span></div>
   <aside class="n"><ul>
     <li>Read it bottom up. The data and the permissions stay in Unity Catalog, nothing is copied into Genie.</li>
+    <li>Everything that leaves the Genie UI goes through Unity Gateway: one place for access, usage and cost. (The per-agent Genie Agent MCP endpoint is the exception: it uses the agent's permissions and bypasses the gateway.)</li>
     <li>The semantic layer is the investment that pays off everywhere: Genie One, Genie Code and external agents all read the same ontology.</li>
     <li>Agents are thin and curated. These three are what I'll show in the demo, with Genie One on top.</li>
-    <li>Today the self-service POC calls the Conversation API through a gateway. That fits in the top row; we'll compare options on slide 7.</li>
+    <li>Today the self-service POC calls the Conversation API through a gateway. That fits in the top row; we'll compare options on slide 5.</li>
   </ul></aside>
 </section>
 
@@ -622,90 +639,7 @@ https://&lt;workspace-hostname&gt;/api/2.0/mcp/genie/&lt;space-id&gt;</pre>
   </ul></aside>
 </section>
 
-<!-- 5. Agent types and orchestration -->
-<section class="slide" data-title="Agent types and orchestration">
-  <span class="kicker">Agents</span>
-  <h1>Agent types and orchestration</h1>
-  <p class="lede">A Genie Agent can reason over data, files and tools, and several agents can work together.</p>
-  <div class="body">
-    <div class="grid g4">
-      <div class="card">
-        <div class="head"><div class="badge-ic"><svg class="ic"><use href="#i-db"/></svg></div><h2 style="font-size:16px">Structured data</h2></div>
-        <p>Tables and metric views with examples and expressions. Chat and Agent mode.</p>
-      </div>
-      <div class="card">
-        <div class="head"><div class="badge-ic"><svg class="ic"><use href="#i-file"/></svg></div><h2 style="font-size:16px">Files in volumes</h2></div>
-        <p>Content search over PDFs, docs and decks, with citations down to the page.</p>
-        <span class="pill pp">Public Preview</span>
-      </div>
-      <div class="card">
-        <div class="head"><div class="badge-ic"><svg class="ic"><use href="#i-plug"/></svg></div><h2 style="font-size:16px">Tools via MCP</h2></div>
-        <p>Slack, Google Drive, Microsoft 365, Atlassian, GitHub. Write tools ask for approval.</p>
-        <span class="pill beta">Beta</span>
-      </div>
-      <div class="card">
-        <div class="head"><div class="badge-ic"><svg class="ic"><use href="#i-branch"/></svg></div><h2 style="font-size:16px">Sub-agents</h2></div>
-        <p>A parent Genie Agent delegates to other Genie Agents for a team experience.</p>
-        <span class="pill soon">Rolling out (Beta)</span>
-      </div>
-    </div>
-    <table class="cmp" style="margin-top:16px">
-      <tr><th>Orchestration</th><th>How it routes</th><th>Pick it when</th></tr>
-      <tr><td>Genie One</td><td>Searches available Genie Agents for a relevant one; if none matches, searches data assets</td><td>Business users want one front door; no build needed</td></tr>
-      <tr><td>Parent Genie Agent</td><td>Curated parent with Genie Agents attached as sub-agents</td><td>A team needs one governed agent across UA, subscriptions and playbooks</td></tr>
-      <tr><td>Custom orchestrator</td><td>Your code with the Agent Bricks CLI</td><td>You need model choice, custom routing or non-Genie sub-agents</td></tr>
-    </table>
-    <div class="callout warn" style="margin-top:12px"><svg class="ic"><use href="#i-alert"/></svg><div>"Workspaces with many Genie Agents might experience reduced routing accuracy." Keep agents few, focused and clearly described.</div></div>
-  </div>
-  <div class="foot"><div class="docs"><b>Docs</b>
-    <a href="https://learn.microsoft.com/en-us/azure/databricks/genie-agents/volumes">Files in volumes</a>
-    <a href="https://learn.microsoft.com/en-us/azure/databricks/genie-agents/external-tools">MCP tools in Genie Agents</a>
-    <a href="https://learn.microsoft.com/en-us/azure/databricks/genie-one/chat">Genie One chat routing</a>
-    <a href="https://learn.microsoft.com/en-us/azure/databricks/agents/custom-agents/agent-bricks-cli">Agent Bricks CLI</a>
-  </div><span>5</span></div>
-  <aside class="n"><ul>
-    <li>The structured agent is the core. The other three add context: documents, tools and other agents.</li>
-    <li>Files and MCP tools run in Agent mode, so it reasons in several steps and cites what it used.</li>
-    <li>Genie One is orchestration with zero build. A parent agent is the curated version for one team.</li>
-    <li>Only go custom when you really need control. Most teams don't for self-service.</li>
-  </ul></aside>
-</section>
-
-<!-- 6. Best practices -->
-<section class="slide" data-title="Best practices for Genie Agents">
-  <span class="kicker">Best practices</span>
-  <h1>Best practices for Genie Agents</h1>
-  <p class="lede">Applied one by one in the demo agent. Full checklist with demo notes: slide 1, Agent best practices (press 4).</p>
-  <div class="body">
-    <div class="bp">
-      <div class="card"><div class="t"><svg class="ic sm"><use href="#i-target"/></svg>Stay focused</div><p>One topic and audience. Aim for five or fewer tables; limit columns.</p><a class="doc" href="https://learn.microsoft.com/en-us/azure/databricks/genie-agents/best-practices#start-small"><svg class="ic sm"><use href="#i-link"/></svg>Start small</a></div>
-      <div class="card"><div class="t"><svg class="ic sm"><use href="#i-text"/></svg>Metadata first</div><p>Clear table and column descriptions. PK and FK become join relationships automatically.</p><a class="doc" href="https://learn.microsoft.com/en-us/azure/databricks/genie-agents/tune-quality#knowledge-mining-recommendations"><svg class="ic sm"><use href="#i-link"/></svg>Knowledge store</a></div>
-      <div class="card"><div class="t"><svg class="ic sm"><use href="#i-layers"/></svg>Metric views as sources</div><p>Pre-defined metrics, dimensions and aggregations. Synonyms import automatically.</p><a class="doc" href="https://learn.microsoft.com/en-us/azure/databricks/genie-agents/best-practices"><svg class="ic sm"><use href="#i-link"/></svg>Curate an agent</a></div>
-      <div class="card"><div class="t"><svg class="ic sm"><use href="#i-code"/></svg>Teach with SQL</div><p>SQL expressions for measures, filters and fields: Genie applies them exactly as written.</p><a class="doc" href="https://learn.microsoft.com/en-us/azure/databricks/genie-agents/tune-quality#define-sql-expressions"><svg class="ic sm"><use href="#i-link"/></svg>SQL expressions</a></div>
-      <div class="card"><div class="t"><svg class="ic sm"><use href="#i-play"/></svg>Example SQL per shape</div><p>Typical phrasing as the title; parameterized examples give verified answers.</p><a class="doc" href="https://learn.microsoft.com/en-us/azure/databricks/genie-agents/tune-quality#add-example-sql-queries-and-functions"><svg class="ic sm"><use href="#i-link"/></svg>Example queries</a></div>
-      <div class="card"><div class="t"><svg class="ic sm"><use href="#i-join"/></svg>Explicit joins</div><p>Define join relationships with the right cardinality when keys alone aren't enough.</p><a class="doc" href="https://learn.microsoft.com/en-us/azure/databricks/genie-agents/tune-quality#define-join-relationships"><svg class="ic sm"><use href="#i-link"/></svg>Join relationships</a></div>
-      <div class="card"><div class="t"><svg class="ic sm"><use href="#i-eye"/></svg>Prompt matching, selectively</div><p>Entity matching on channel, country, app; hide noisy columns. Row-filtered tables are excluded.</p><a class="doc" href="https://learn.microsoft.com/en-us/azure/databricks/genie-agents/tune-quality#prompt-matching-overview"><svg class="ic sm"><use href="#i-link"/></svg>Prompt matching</a></div>
-      <div class="card"><div class="t"><svg class="ic sm"><use href="#i-chat"/></svg>Text instructions last</div><p>Only global rules: clarification triggers, summary format. Short and specific.</p><a class="doc" href="https://learn.microsoft.com/en-us/azure/databricks/genie-agents/best-practices#choose-the-right-instruction-type"><svg class="ic sm"><use href="#i-link"/></svg>Instruction types</a></div>
-      <div class="card"><div class="t"><svg class="ic sm"><use href="#i-check"/></svg>Benchmarks</div><p>Two to four phrasings per real question. Rerun after every change to data or context.</p><a class="doc" href="https://learn.microsoft.com/en-us/azure/databricks/genie-agents/monitor#benchmarks"><svg class="ic sm"><use href="#i-link"/></svg>Benchmarks</a></div>
-      <div class="card"><div class="t"><svg class="ic sm"><use href="#i-loop"/></svg>Monitor and act</div><p>Feedback alone doesn't change behavior. Review the Monitor tab and fix the context.</p><a class="doc" href="https://learn.microsoft.com/en-us/azure/databricks/genie-agents/monitor#monitor-the-agent"><svg class="ic sm"><use href="#i-link"/></svg>Monitor</a></div>
-      <div class="card"><div class="t"><svg class="ic sm"><use href="#i-shield"/></svg>Govern in Unity Catalog</div><p>Genie uses the asking user's permissions; row filters and masks apply per user.</p><a class="doc" href="https://learn.microsoft.com/en-us/azure/databricks/genie-agents/set-up"><svg class="ic sm"><use href="#i-link"/></svg>Set up</a></div>
-      <div class="card"><div class="t"><svg class="ic sm"><use href="#i-git"/></svg>Agents as code</div><p>Version and promote agents with Declarative Automation Bundles or the API.</p><a class="doc" href="https://learn.microsoft.com/en-us/azure/databricks/genie-agents/best-practices#deploy-and-version-your-agent-with-declarative-automation-bundles"><svg class="ic sm"><use href="#i-link"/></svg>Bundles</a></div>
-    </div>
-  </div>
-  <div class="foot"><div class="docs"><b>Docs</b>
-    <a href="https://learn.microsoft.com/en-us/azure/databricks/genie-agents/best-practices">Curate an effective Genie Agent</a>
-    <a href="https://learn.microsoft.com/en-us/azure/databricks/genie-agents/tune-quality">Tune quality</a>
-    <a href="https://learn.microsoft.com/en-us/azure/databricks/genie-agents/monitor">Test and monitor</a>
-  </div><span>6</span></div>
-  <aside class="n"><ul>
-    <li>Don't read all twelve. Pick three: stay focused, teach with SQL, benchmarks.</li>
-    <li>"Think of Genie as a new analyst joining the team": it needs context, not a rulebook.</li>
-    <li>The demo agent applies each of these; I'll point at them in the Configure tab.</li>
-    <li>Note the trade-off: entity matching is off for tables with row filters, so lean on metric view synonyms there.</li>
-  </ul></aside>
-</section>
-
-<!-- 7. Connecting your own tools -->
+<!-- 5. Connecting your own tools -->
 <section class="slide" data-title="Connecting your own tools">
   <span class="kicker">APIs and MCP</span>
   <h1>Connecting your own tools</h1>
@@ -728,7 +662,7 @@ https://&lt;workspace-hostname&gt;/api/2.0/mcp/genie/&lt;space-id&gt;</pre>
     <a href="https://learn.microsoft.com/en-us/azure/databricks/agents/mcp-tools/genie-mcp">Genie One MCP</a>
     <a href="https://learn.microsoft.com/en-us/azure/databricks/genie-agents/conversation-api">Genie Agents API</a>
     <a href="https://learn.microsoft.com/en-us/azure/databricks/genie/">Genie pricing note</a>
-  </div><span>7</span></div>
+  </div><span>5</span></div>
   <aside class="n"><ul>
     <li>Your gateway on the Conversation API keeps working. The question is whether you still need to run it.</li>
     <li>Genie One MCP gives Claude Code and Codex the whole ontology with no gateway to maintain.</li>
@@ -737,7 +671,7 @@ https://&lt;workspace-hostname&gt;/api/2.0/mcp/genie/&lt;space-id&gt;</pre>
   </ul></aside>
 </section>
 
-<!-- 8. Demo flow -->
+<!-- 6. Demo flow -->
 <section class="slide" data-title="Live demo">
   <span class="kicker">Live demo</span>
   <h1>What we'll walk through</h1>
@@ -755,7 +689,7 @@ https://&lt;workspace-hostname&gt;/api/2.0/mcp/genie/&lt;space-id&gt;</pre>
   <div class="foot"><div class="docs"><b>Docs</b>
     <a href="https://learn.microsoft.com/en-us/azure/databricks/genie-agents/set-up">Create a Genie Agent</a>
     <a href="https://learn.microsoft.com/en-us/azure/databricks/agents/mcp-tools/genie-mcp">Genie One MCP</a>
-  </div><span>8</span></div>
+  </div><span>6</span></div>
   <aside class="n"><ul>
     <li>All data is synthetic but shaped like a subscription app studio: campaigns, installs, trials, renewals.</li>
     <li>Keep it moving: about five minutes per step, questions at the end of each.</li>
@@ -763,7 +697,7 @@ https://&lt;workspace-hostname&gt;/api/2.0/mcp/genie/&lt;space-id&gt;</pre>
   </ul></aside>
 </section>
 
-<!-- 9. Rollout path -->
+<!-- 7. Rollout path -->
 <section class="slide" data-title="Rollout path for the marketing pilot">
   <span class="kicker">Rollout</span>
   <h1>Rollout path for the marketing pilot</h1>
@@ -784,7 +718,7 @@ https://&lt;workspace-hostname&gt;/api/2.0/mcp/genie/&lt;space-id&gt;</pre>
     <a href="https://learn.microsoft.com/en-us/azure/databricks/genie-agents/best-practices#conduct-user-testing">User testing</a>
     <a href="https://learn.microsoft.com/en-us/azure/databricks/genie-agents/monitor">Monitor</a>
     <a href="https://learn.microsoft.com/en-us/azure/databricks/genie-one/genie-slack">Genie in Slack</a>
-  </div><span>9</span></div>
+  </div><span>7</span></div>
   <aside class="n"><ul>
     <li>No dates on purpose. The gate between steps is the benchmark score, not the calendar.</li>
     <li>Step 1 is mostly work you've already started with the bridge metric views.</li>
@@ -792,7 +726,7 @@ https://&lt;workspace-hostname&gt;/api/2.0/mcp/genie/&lt;space-id&gt;</pre>
   </ul></aside>
 </section>
 
-<!-- 10. Next steps -->
+<!-- 8. Next steps -->
 <section class="slide" data-title="Next steps">
   <span class="kicker">Next steps</span>
   <h1>Next steps</h1>
@@ -815,7 +749,7 @@ https://&lt;workspace-hostname&gt;/api/2.0/mcp/genie/&lt;space-id&gt;</pre>
   </div>
   <div class="foot"><div class="docs"><b>Docs</b>
     <a href="https://learn.microsoft.com/en-us/azure/databricks/genie/">Genie</a>
-  </div><span>10</span></div>
+  </div><span>8</span></div>
   <aside class="n"><ul>
     <li>Placeholders: fill in after the call.</li>
     <li>The single most useful thing they can give us is the list of real questions.</li>
@@ -833,7 +767,7 @@ https://&lt;workspace-hostname&gt;/api/2.0/mcp/genie/&lt;space-id&gt;</pre>
     <button id="ov-btn" class="cbtn" aria-label="Overview"><svg class="ic sm"><use href="#i-grid"/></svg></button>
     <button id="prev" class="cbtn" aria-label="Previous"><svg class="ic sm"><use href="#i-left"/></svg></button>
     <button id="next" class="cbtn" aria-label="Next"><svg class="ic sm"><use href="#i-right"/></svg></button>
-    <span id="counter">1 / 10</span>
+    <span id="counter">1 / 8</span>
   </span>
 </div>
 <div class="overview" id="overview" hidden><div class="ov-box"><div class="ov-h"><b>All slides</b><button class="back" id="ov-close">Close <kbd>Esc</kbd></button></div><div class="ov-grid" id="ov-grid"></div></div></div>
@@ -962,7 +896,7 @@ https://&lt;workspace-hostname&gt;/api/2.0/mcp/genie/&lt;space-id&gt;</pre>
   });
 
   // ---- Navigation aids: slide rail, breadcrumbs, overview, sub-view order ----
-  const RAIL = [['Genie family','c-red'],['How it fits','c-navy'],['Metric views','c-blue'],['Ontology','c-green'],['Agent types','c-orange'],['Best practices','c-blue'],['Your tools','c-green'],['Demo','c-red'],['Rollout','c-orange'],['Next steps','c-navy']];
+  const RAIL = [['Genie family','c-red'],['How it fits','c-navy'],['Metric views','c-blue'],['Ontology','c-green'],['Your tools','c-green'],['Demo','c-red'],['Rollout','c-orange'],['Next steps','c-navy']];
   const SUBNAME = { 'd-code': 'Genie Code', 'd-agents': 'Genie Agents', 'd-one': 'Genie One', 'd-bp': 'Best practices', 'd-links': 'Demo links', 'd-own': 'Your IDE' };
   function subOrder() { const o = ['d-code', 'd-agents', 'd-one', 'd-bp']; const l = document.getElementById('d-links'); if (l && !l.hidden) o.push('d-links'); return o; }
   function subIndex(id) { const o = subOrder(); const el = id && document.getElementById(id); const base = el && el.dataset.parent ? el.dataset.parent : id; return o.indexOf(base); }
