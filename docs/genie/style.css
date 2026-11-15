@@ -947,3 +947,9 @@ table.cmp.grouped td, table.cmp.grouped th { padding-top: 6px; padding-bottom: 6
 .callout.c-blue { background: var(--blue-soft); border: 1px solid color-mix(in srgb, var(--blue) 25%, transparent); }
 .callout.c-blue .ic { color: var(--blue); }
 table.cmp.grouped td { font-size: 12.5px; }
+a.uc-agent.linked { text-decoration: none; color: var(--ink); position: relative; transition: border-color .15s, transform .15s; }
+a.uc-agent.linked:hover { border-color: var(--accent); transform: translateY(-1px); }
+.open-tag { position: absolute; top: 8px; right: 10px; display: inline-flex; align-items: center; gap: 2px; font-size: 10.5px; font-weight: 650; color: var(--accent); background: var(--accent-soft); border-radius: 999px; padding: 1px 7px 1px 5px; }
+.open-tag .ic { width: 12px; height: 12px; }
+a.chip.linked { text-decoration: none; color: var(--ink); }
+a.chip.linked:hover { border-color: var(--accent); }

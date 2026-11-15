@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Genie for marketing self-service</title>
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cg fill='none' stroke='%23FF3621' stroke-width='3.2' stroke-linejoin='round' stroke-linecap='round'%3E%3Cpath d='M16 4 28 10.5 16 17 4 10.5Z' fill='%23FF3621'/%3E%3Cpath d='M4 16 16 22.5 28 16'/%3E%3Cpath d='M4 21.5 16 28 28 21.5'/%3E%3C/g%3E%3C/svg%3E">
-<link rel="stylesheet" href="style.css?v=1794772476">
+<link rel="stylesheet" href="style.css?v=1794772562">
 </head>
 <body>
 
@@ -110,7 +110,7 @@
         <div class="layer l-surface c-orange">
           <div class="lname"><svg class="ic"><use href="#i-chat"/></svg><div>Surfaces<small>where people ask</small></div></div>
           <div class="chips">
-            <span class="chip hot"><svg class="ic sm"><use href="#i-one"/></svg>Genie One</span>
+            <span class="chip hot" data-agent="Genie One"><svg class="ic sm"><use href="#i-one"/></svg>Genie One</span>
             <span class="chip"><svg class="ic sm"><use href="#i-chat"/></svg>Slack, Teams</span>
             <span class="chip"><svg class="ic sm"><use href="#i-dash"/></svg>Dashboards</span>
             <span class="chip"><svg class="ic sm"><use href="#i-server"/></svg>Conversation API</span>
@@ -132,9 +132,9 @@
         <div class="layer l-agents c-red">
           <div class="lname"><svg class="ic"><use href="#i-agent"/></svg><div>Genie Agents<small>curated per domain</small></div></div>
           <div class="chips">
-            <span class="chip hot"><svg class="ic sm"><use href="#i-chart"/></svg>UA Performance</span>
-            <span class="chip"><svg class="ic sm"><use href="#i-loop"/></svg>Subscription Revenue</span>
-            <span class="chip"><svg class="ic sm"><use href="#i-file"/></svg>UA Playbook (files)</span>
+            <span class="chip hot" data-agent="UA Performance"><svg class="ic sm"><use href="#i-chart"/></svg>UA Performance</span>
+            <span class="chip" data-agent="Subscription Revenue"><svg class="ic sm"><use href="#i-loop"/></svg>Subscription Revenue</span>
+            <span class="chip" data-agent="UA Playbook (files)"><svg class="ic sm"><use href="#i-file"/></svg>UA Playbook (files)</span>
           </div>
         </div>
         <div class="layer l-sem c-green">
@@ -307,7 +307,7 @@
   <div class="body">
     <table class="cmp tools grouped">
       <tr><th>Option</th><th>Endpoint</th><th>Use it for</th><th>Status</th><th>Docs</th></tr>
-      <tr class="tgroup c-red"><td colspan="5"><span class="tg-h"><svg class="ic sm"><use href="#i-agent"/></svg><b>Scoped to one Genie Agent</b><small>curated answers for one domain</small></span><div class="tg-agents"><span class="chip tint c-red"><svg class="ic sm"><use href="#i-chart"/></svg>UA Performance</span><span class="chip tint c-orange"><svg class="ic sm"><use href="#i-loop"/></svg>Subscription Revenue</span><span class="chip tint c-blue"><svg class="ic sm"><use href="#i-file"/></svg>UA Playbook</span><small>one endpoint per agent, same API</small></div></td></tr>
+      <tr class="tgroup c-red"><td colspan="5"><span class="tg-h"><svg class="ic sm"><use href="#i-agent"/></svg><b>Scoped to one Genie Agent</b><small>curated answers for one domain</small></span><div class="tg-agents"><span class="chip tint c-red" data-agent="UA Performance"><svg class="ic sm"><use href="#i-chart"/></svg>UA Performance</span><span class="chip tint c-orange" data-agent="Subscription Revenue"><svg class="ic sm"><use href="#i-loop"/></svg>Subscription Revenue</span><span class="chip tint c-blue" data-agent="UA Playbook"><svg class="ic sm"><use href="#i-file"/></svg>UA Playbook</span><small>one endpoint per agent, same API</small></div></td></tr>
       <tr><td>Genie Agent MCP</td><td><code>/api/2.0/mcp/genie/{space_id}</code></td><td>Coding agents and MCP clients ask one agent. Uses agent and data permissions; bypasses Unity Gateway.</td><td><span class="pill pp">Public Preview</span></td><td class="docs-c"><a class="tdoc" href="https://learn.microsoft.com/en-us/azure/databricks/agents/mcp-tools/genie-agent" target="_blank" rel="noopener"><svg class="ic sm"><use href="#i-link"/></svg>Docs</a></td></tr>
       <tr><td>Conversation API</td><td><code>/api/2.0/genie/spaces/{space_id}/...</code></td><td>Your own app, bot or gateway asks one agent, with follow-ups and history. Agent mode and management APIs sit alongside.</td><td><span class="pill soon">REST</span></td><td class="docs-c"><a class="tdoc" href="https://learn.microsoft.com/en-us/azure/databricks/genie-agents/conversation-api" target="_blank" rel="noopener"><svg class="ic sm"><use href="#i-link"/></svg>Docs</a><a class="tdoc" href="https://docs.databricks.com/api/genie/v1/conversation" target="_blank" rel="noopener"><svg class="ic sm"><use href="#i-link"/></svg>API reference</a></td></tr>
       <tr class="tgroup c-green"><td colspan="5"><span class="tg-h"><svg class="ic sm"><use href="#i-one"/></svg><b>Across all agents: Genie One</b><small>routes to the right agent and cites sources</small></span></td></tr>
@@ -357,11 +357,11 @@
       </div>
       <div class="uc-col">
         <h3>One agent per job, shared with the right people</h3>
-        <div class="uc-agent c-red"><svg class="ic"><use href="#i-agent"/></svg><div><b>UA Performance</b><small>Spend, CPI, ROAS by campaign and channel</small><span class="who">Me and the UA team</span></div></div>
-        <div class="uc-agent c-orange"><svg class="ic"><use href="#i-loop"/></svg><div><b>Subscription Revenue</b><small>Trials, renewals, refunds, net revenue</small><span class="who">Monetization and finance</span></div></div>
-        <div class="uc-agent c-blue"><svg class="ic"><use href="#i-file"/></svg><div><b>UA Playbook</b><small>Naming conventions, targets, creative guidance (files)</small><span class="who">The whole marketing team</span></div></div>
+        <div class="uc-agent c-red" data-agent-link><svg class="ic"><use href="#i-agent"/></svg><div><b data-agent-name>UA Performance</b><small>Spend, CPI, ROAS by campaign and channel</small><span class="who">Me and the UA team</span></div></div>
+        <div class="uc-agent c-orange" data-agent-link><svg class="ic"><use href="#i-loop"/></svg><div><b data-agent-name>Subscription Revenue</b><small>Trials, renewals, refunds, net revenue</small><span class="who">Monetization and finance</span></div></div>
+        <div class="uc-agent c-blue" data-agent-link><svg class="ic"><use href="#i-file"/></svg><div><b data-agent-name>UA Playbook</b><small>Naming conventions, targets, creative guidance (files)</small><span class="who">The whole marketing team</span></div></div>
         <div class="uc-arrow"><svg class="ic sm"><use href="#i-down"/></svg>all three, one front door</div>
-        <div class="uc-agent one c-green"><svg class="ic"><use href="#i-one"/></svg><div><b>Genie One</b><small>Asks across all three agents and cites the sources</small><span class="who">Shared with executives</span></div></div>
+        <div class="uc-agent one c-green" data-agent-link><svg class="ic"><use href="#i-one"/></svg><div><b data-agent-name>Genie One</b><small>Asks across all three agents and cites the sources</small><span class="who">Shared with executives</span></div></div>
       </div>
     </div>
   </div>
@@ -916,6 +916,16 @@ https://&lt;workspace-hostname&gt;/api/2.0/mcp/genie/&lt;space-id&gt;</pre>
     d.addEventListener('click', (e) => { const b = e.target.closest('[data-copy]'); if (b) copyText(b.dataset.copy, b); });
     const lb = document.getElementById('links-btn'); lb.hidden = false;
     lb.addEventListener('click', () => show(slides.indexOf(d)));
+
+    // Agent cards and chips link to their Genie Agent (presenter copy only)
+    const agentUrl = (n) => { const a = DL.agents.find(x => x.name === n.replace(' (files)', '')); return a && a.url; };
+    document.querySelectorAll('[data-agent-link]').forEach(card => {
+      const n = card.querySelector('[data-agent-name]').textContent.trim(); const u = agentUrl(n); if (!u) return;
+      const a = document.createElement('a'); a.href = u; a.target = '_blank'; a.rel = 'noopener'; a.className = card.className + ' linked'; a.innerHTML = card.innerHTML + '<span class="open-tag"><svg class="ic sm"><use href="#i-right"/></svg>open</span>';
+      card.replaceWith(a);
+    });
+    document.querySelectorAll('[data-agent]').forEach(ch => { const u = agentUrl(ch.dataset.agent); if (!u) return;
+      const a = document.createElement('a'); a.href = u; a.target = '_blank'; a.rel = 'noopener'; a.className = ch.className + ' linked'; a.innerHTML = ch.innerHTML; ch.replaceWith(a); });
     // Live answers: turn matching deck text into links to pre-run conversations
     const A = DL.answers || {};
     function liveAnchor(el, key, keepTag) {
