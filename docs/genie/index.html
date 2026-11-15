@@ -331,6 +331,7 @@ https://&lt;workspace-hostname&gt;/api/2.0/mcp/genie/&lt;space-id&gt;</pre>
       <li>Skills teach the agent how to build on Databricks; MCP lets it do the work. Most setups use both.</li>
     </ul></aside>
   </div>
+  <div class="detail" id="d-links" hidden></div>
   <!-- Detail: Agent best practices -->
   <div class="detail" id="d-bp">
     <div class="d-head"><button class="back" data-close><svg class="ic sm"><use href="#i-left"/></svg>Back <kbd>Esc</kbd></button>
@@ -822,11 +823,13 @@ https://&lt;workspace-hostname&gt;/api/2.0/mcp/genie/&lt;space-id&gt;</pre>
   <span id="counter">1 / 10</span>
 </div>
 <div class="nav">
+  <button id="links-btn" class="links-btn" aria-label="Demo links" hidden><svg class="ic sm"><use href="#i-link"/></svg>Links</button>
   <button id="prev" aria-label="Previous slide"><svg class="ic sm"><use href="#i-left"/></svg></button>
   <button id="next" aria-label="Next slide"><svg class="ic sm"><use href="#i-right"/></svg></button>
 </div>
 <aside class="notes" id="notes"><h3>Presenter notes</h3><div id="notes-body"></div><p class="hint">Press N to close.</p></aside>
 
+<script src="demo-links.local.js" onerror="window.DEMO_LINKS = null"></script>
 <script>
 (function () {
   const deck = document.getElementById('deck');
@@ -840,6 +843,32 @@ https://&lt;workspace-hostname&gt;/api/2.0/mcp/genie/&lt;space-id&gt;</pre>
     const s = Math.min(window.innerWidth / 1280, (window.innerHeight - 34) / 720);
     deck.style.transform = 'scale(' + s + ')';
   }
+
+  // Presenter-only demo links (loaded from a local file that is not published)
+  const DL = window.DEMO_LINKS;
+  function esc(t) { return String(t).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
+  function lk(o, ic) { return '<a class="dl-row" target="_blank" rel="noopener" href="' + esc(o.url) + '"><svg class="ic sm"><use href="#' + ic + '"/></svg><span>' + esc(o.name || o.label) + '</span>' + (o.badge ? '<span class="pill beta">' + esc(o.badge) + '</span>' : '') + '<svg class="ic sm ext"><use href="#i-right"/></svg></a>'; }
+  function card(ic, title, inner, cls) { return '<div class="dl-card ' + (cls || '') + '"><div class="dl-h"><span class="badge-ic"><svg class="ic"><use href="#' + ic + '"/></svg></span><b>' + title + '</b></div>' + inner + '</div>'; }
+  if (DL) {
+    const d = document.getElementById('d-links');
+    d.hidden = false;
+    const tabsHtml = document.querySelector('#d-code nav.tabs').outerHTML.replace(' class="on"', ' class=""');
+    d.innerHTML = '<div class="d-head"><button class="back" data-close><svg class="ic sm"><use href="#i-left"/></svg>Back <kbd>Esc</kbd></button>' + tabsHtml +
+      '<span class="d-title"><span class="badge-ic"><svg class="ic"><use href="#i-link"/></svg></span>Demo links</span><span class="d-sub">Presenter only. Links open in a new tab.</span></div>' +
+      '<div class="dl-grid">' +
+        card('i-play', 'Presentation and workspace', lk(DL.presentation, 'i-dash') + lk(DL.workspace, 'i-server')) +
+        card('i-agent', 'Genie Agents', DL.agents.map(a => lk(a, 'i-agent')).join('')) +
+        card('i-layers', 'Metric views', DL.metricViews.map(m => lk(m, 'i-target')).join('')) +
+        card('i-tag', 'Domains and Pages', '<p class="dl-t">' + esc(DL.domains.text) + '</p><p class="dl-t">Subdomains: ' + DL.domains.subdomains.map(esc).join(', ') + '</p><div class="chips">' + DL.domains.pages.map(x => '<span class="chip">' + esc(x) + '</span>').join('') + '</div><span class="dl-warn"><svg class="ic sm"><use href="#i-alert"/></svg>' + esc(DL.domains.warning) + '</span>', 'wide') +
+        card('i-alert', 'Deprecated legacy table', DL.deprecated.map(m => lk(m, 'i-db')).join('')) +
+        card('i-file', 'Playbook Volume', lk({ name: DL.volume.path, url: DL.volume.url }, 'i-file') + '<p class="dl-t">' + esc(DL.volume.note) + '</p>') +
+      '</div><div class="foot"><div class="docs"><b>Presenter only</b><span class="fnote">Loaded from a local file; not part of the published deck.</span></div><span>Demo links</span></div>';
+    document.querySelectorAll('nav.tabs').forEach(n => { if (!n.querySelector('[data-open="d-links"]')) n.insertAdjacentHTML('beforeend', '<button data-open="d-links"><kbd>5</kbd>Demo links</button>'); });
+    d.querySelector('nav.tabs [data-open="d-links"]').classList.add('on');
+    const lb = document.getElementById('links-btn'); lb.hidden = false;
+    lb.addEventListener('click', () => { show(0); openDetail('d-links'); });
+  }
+
   let openId = null;
   function setNotes() {
     const src = openId ? document.getElementById(openId).querySelector('aside.n') : slides[i].querySelector(':scope > aside.n');
@@ -847,7 +876,7 @@ https://&lt;workspace-hostname&gt;/api/2.0/mcp/genie/&lt;space-id&gt;</pre>
   }
   function openDetail(id) {
     const sl = slides[i]; const d = id && sl.querySelector('#' + id);
-    if (!d) return;
+    if (!d || d.hidden) return;
     sl.querySelectorAll('.detail').forEach(x => x.classList.remove('on'));
     d.classList.add('on'); sl.classList.add('open-detail'); openId = id; setNotes();
     history.replaceState(null, '', '#' + (i + 1) + '/' + id.replace('d-', ''));
@@ -899,6 +928,8 @@ https://&lt;workspace-hostname&gt;/api/2.0/mcp/genie/&lt;space-id&gt;</pre>
       e.preventDefault(); if (par) openDetail(par); else closeDetail(); return;
     }
     if ((k === 'c' || k === 'C') && slides[i].hasAttribute('data-tiles')) { openDetail('d-own'); e.preventDefault(); return; }
+    if (DL && (k === 'l' || k === 'L')) { show(0); openDetail('d-links'); e.preventDefault(); return; }
+    if (DL && k === '5' && slides[i].hasAttribute('data-tiles')) { openDetail('d-links'); e.preventDefault(); return; }
     if (slides[i].hasAttribute('data-tiles') && ['1','2','3','4'].includes(k)) {
       const tiles = slides[i].querySelectorAll('.bigtile, .slimtile'); const t = tiles[parseInt(k, 10) - 1];
       if (t) { openDetail(t.dataset.open); e.preventDefault(); return; }
