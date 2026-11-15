@@ -789,3 +789,43 @@ a.bubble.live:hover, a.scen.live:hover { border-color: var(--green) !important; 
 .slide[data-title="How it fits together"] .stack { gap: 8px; }
 .slide[data-title="How it fits together"] .layer { padding: 9px 14px; }
 .slide[data-title="How it fits together"] .chip { padding: 5px 9px; font-size: 12.5px; }
+
+/* Vertical centering of slide content above the rail */
+.slide > .body { justify-content: center; }
+.slide[data-tiles] > .body { justify-content: flex-start; }
+
+/* Rollout journey */
+.journey { position: relative; display: grid; grid-template-columns: 1fr auto 1fr auto 1fr auto 1fr; align-items: start; gap: 0; padding: 0 4px; }
+.j-line { position: absolute; left: 9%; right: 9%; top: 38px; height: 4px; border-radius: 4px;
+  background: linear-gradient(90deg, var(--blue), var(--red), var(--green), var(--orange-fill)); opacity: .35; }
+.j-step { position: relative; display: flex; flex-direction: column; align-items: center; text-align: center; padding: 0 8px; }
+.j-badge { position: relative; width: 78px; height: 78px; border-radius: 50%; display: grid; place-items: center; background: var(--surface);
+  border: 3px solid var(--accent); color: var(--accent); box-shadow: 0 6px 18px color-mix(in srgb, var(--accent) 22%, transparent); }
+.j-badge .ic { width: 30px; height: 30px; }
+.j-num { position: absolute; top: -8px; right: -8px; width: 28px; height: 28px; border-radius: 50%; background: var(--accent); color: #fff; font-weight: 800; font-size: 14px; display: grid; place-items: center; }
+.j-step h2 { margin: 16px 0 10px; font-size: 19px; color: var(--ink); }
+.j-step ul { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 7px; }
+.j-step li { font-size: 13.5px; color: var(--ink-2); background: var(--accent-soft); border-radius: 8px; padding: 6px 10px; }
+.j-gate { margin-top: 26px; display: flex; flex-direction: column; align-items: center; gap: 4px; width: 92px; text-align: center; font-size: 10.5px; font-weight: 650; color: var(--ink-3); letter-spacing: .02em; }
+.j-gate .ic { width: 16px; height: 16px; color: var(--ink-3); background: var(--surface); border: 1px solid var(--line); border-radius: 50%; padding: 4px; box-sizing: content-box; }
+.j-note { margin: 34px auto 0; display: inline-flex; align-items: center; gap: 8px; align-self: center; font-size: 14px; color: var(--ink-2);
+  background: var(--surface); border: 1px solid var(--line); border-radius: 999px; padding: 7px 16px; box-shadow: var(--shadow); }
+.j-note .ic { color: var(--green); }
+@media (prefers-color-scheme: dark) { .j-num { color: #0f1a1e; } }
+
+/* Next steps */
+.ns { display: grid; grid-template-columns: 1fr 1fr; gap: 22px; }
+.ns-card { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; box-shadow: var(--shadow); overflow: hidden; }
+.ns-h { display: flex; align-items: center; gap: 10px; padding: 14px 20px; font-size: 19px; font-weight: 700; color: #fff; background: var(--accent); }
+.ns-h .ic { color: #fff; }
+@media (prefers-color-scheme: dark) { .ns-h, .ns-h .ic { color: #0f1a1e; } }
+.ns-card ul { list-style: none; margin: 0; padding: 14px 20px 18px; display: flex; flex-direction: column; gap: 10px; }
+.ns-card li { display: flex; gap: 10px; align-items: flex-start; font-size: 15px; }
+.ns-card li .ic { color: var(--accent); width: 20px; height: 20px; flex: none; margin-top: 1px; }
+.ns-card li a { color: var(--accent); }
+.ns-next { margin-top: 18px; justify-content: center; }
+
+/* Demo flow card in links view */
+.dl-flow { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
+.dl-flow .dl-row .num.sm { flex: none; }
+.dl-flow .live-tag { margin-left: 6px; }

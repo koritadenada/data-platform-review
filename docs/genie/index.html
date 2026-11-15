@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Genie for marketing self-service</title>
-<link rel="stylesheet" href="style.css?v=1794768996">
+<link rel="stylesheet" href="style.css?v=1794769198">
 </head>
 <body>
 
@@ -51,6 +51,7 @@
   <symbol id="i-grid" viewBox="0 0 24 24"><rect x="4" y="4" width="6.5" height="6.5" rx="1.5"/><rect x="13.5" y="4" width="6.5" height="6.5" rx="1.5"/><rect x="4" y="13.5" width="6.5" height="6.5" rx="1.5"/><rect x="13.5" y="13.5" width="6.5" height="6.5" rx="1.5"/></symbol>
   <symbol id="i-gate" viewBox="0 0 24 24"><path d="M3 20V9l9-5 9 5v11"/><path d="M7 20v-7h10v7"/><path d="M12 13v7"/></symbol>
   <symbol id="i-down" viewBox="0 0 24 24"><path d="M12 5v14M6 13l6 6 6-6"/></symbol>
+  <symbol id="i-box" viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="4"/><path d="M8.5 12.3l2.4 2.4 4.7-5"/></symbol>
   <symbol id="i-left" viewBox="0 0 24 24"><path d="M15 6l-6 6 6 6"/></symbol>
   <symbol id="i-right" viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></symbol>
 </svg>
@@ -671,54 +672,45 @@ https://&lt;workspace-hostname&gt;/api/2.0/mcp/genie/&lt;space-id&gt;</pre>
   </ul></aside>
 </section>
 
-<!-- 6. Demo flow -->
-<section class="slide" data-title="Live demo">
-  <span class="kicker">Live demo</span>
-  <h1>What we'll walk through</h1>
-  <p class="lede">A marketing domain built end to end on synthetic app-studio data.</p>
-  <div class="body">
-    <div class="steps s6">
-      <div class="step c-blue"><div class="card"><div class="head"><span class="num">1</span><h2>Semantic layer in Discover</h2></div><p>Metric views for UA and subscriptions, the Marketing domain, Pages for ROAS and pLTV, certified vs deprecated assets.</p></div></div>
-      <div class="step c-red"><div class="card"><div class="head"><span class="num">2</span><h2>UA Performance agent</h2></div><p>Configure tab tour of the best practices, then live questions and a benchmark run.</p></div></div>
-      <div class="step c-green"><div class="card"><div class="head"><span class="num">3</span><h2>Genie One across agents</h2></div><p>One question, routed to the right agent, citing Pages and certified sources.</p></div></div>
-      <div class="step c-orange"><div class="card"><div class="head"><span class="num">4</span><h2>Playbook over files</h2></div><p>Agent mode over UA playbooks and naming conventions, with page-level citations.</p></div></div>
-      <div class="step c-navy"><div class="card"><div class="head"><span class="num">5</span><h2>Genie One orchestrates</h2></div><p>One question answered from UA Performance and UA Playbook: "Is PixelMuse on TikTok below target and what does the playbook say?"</p></div></div>
-      <div class="step c-blue"><div class="card"><div class="head"><span class="num">6</span><h2>Claude Code via MCP</h2></div><p>Same questions from a coding agent, with the same governed answers.</p></div></div>
-    </div>
-  </div>
-  <div class="foot"><div class="docs"><b>Docs</b>
-    <a href="https://learn.microsoft.com/en-us/azure/databricks/genie-agents/set-up">Create a Genie Agent</a>
-    <a href="https://learn.microsoft.com/en-us/azure/databricks/agents/mcp-tools/genie-mcp">Genie One MCP</a>
-  </div><span>6</span></div>
-  <aside class="n"><ul>
-    <li>All data is synthetic but shaped like a subscription app studio: campaigns, installs, trials, renewals.</li>
-    <li>Keep it moving: about five minutes per step, questions at the end of each.</li>
-    <li>Step 5 is the orchestration story: Genie One pulls the numbers from UA Performance and the guidance from UA Playbook in one answer.</li>
-  </ul></aside>
-</section>
-
-<!-- 7. Rollout path -->
+<!-- 6. Rollout path -->
 <section class="slide" data-title="Rollout path for the marketing pilot">
   <span class="kicker">Rollout</span>
   <h1>Rollout path for the marketing pilot</h1>
   <p class="lede">Small, measured, then wider.</p>
   <div class="body">
-    <div class="flow">
-      <div class="step c-blue"><div class="card"><div class="head"><span class="num">1</span><h2>Semantic layer</h2></div><ul>
-        <li>Top KPIs as metric views</li><li>Marketing domain and subdomains</li><li>Pages for the key terms</li><li>Certify gold, deprecate legacy</li></ul></div></div>
-      <div class="step c-red"><div class="card"><div class="head"><span class="num">2</span><h2>One focused agent</h2></div><ul>
-        <li>Five or fewer sources</li><li>Example SQL per question shape</li><li>Benchmark set from real questions</li><li>Agree an accuracy target</li></ul></div></div>
-      <div class="step c-green"><div class="card"><div class="head"><span class="num">3</span><h2>Pilot group</h2></div><ul>
-        <li>A few UA managers and analysts</li><li>Feedback via "Is this correct?"</li><li>Weekly review of the Monitor tab</li><li>Rerun benchmarks after each fix</li></ul></div></div>
-      <div class="step c-orange"><div class="card"><div class="head"><span class="num">4</span><h2>Publish and grow</h2></div><ul>
-        <li>Genie One, Slack or Teams</li><li>Private replies in shared channels</li><li>Add agents one domain at a time</li><li>MCP for engineers and tools</li></ul></div></div>
+    <div class="journey">
+      <div class="j-line"></div>
+      <div class="j-step c-blue">
+        <div class="j-badge"><span class="j-num">1</span><svg class="ic"><use href="#i-layers"/></svg></div>
+        <h2>Semantic layer</h2>
+        <ul><li>Top KPIs as metric views</li><li>Domain, Pages for key terms</li><li>Certify gold, deprecate legacy</li></ul>
+      </div>
+      <div class="j-gate"><svg class="ic sm"><use href="#i-flag"/></svg><span>benchmark target met</span></div>
+      <div class="j-step c-red">
+        <div class="j-badge"><span class="j-num">2</span><svg class="ic"><use href="#i-agent"/></svg></div>
+        <h2>One focused agent</h2>
+        <ul><li>Five or fewer sources</li><li>Example SQL per question shape</li><li>Benchmarks from real questions</li></ul>
+      </div>
+      <div class="j-gate"><svg class="ic sm"><use href="#i-flag"/></svg><span>feedback reviewed</span></div>
+      <div class="j-step c-green">
+        <div class="j-badge"><span class="j-num">3</span><svg class="ic"><use href="#i-users"/></svg></div>
+        <h2>Pilot group</h2>
+        <ul><li>A few UA managers and analysts</li><li>Feedback via "Is this correct?"</li><li>Weekly Monitor tab review</li></ul>
+      </div>
+      <div class="j-gate"><svg class="ic sm"><use href="#i-flag"/></svg><span>accuracy stable</span></div>
+      <div class="j-step c-orange">
+        <div class="j-badge"><span class="j-num">4</span><svg class="ic"><use href="#i-one"/></svg></div>
+        <h2>Publish and grow</h2>
+        <ul><li>Genie One, Slack or Teams</li><li>Private replies in channels</li><li>Add agents one domain at a time</li></ul>
+      </div>
     </div>
+    <p class="j-note"><svg class="ic sm"><use href="#i-check"/></svg>The gate between steps is the benchmark score, not the calendar.</p>
   </div>
   <div class="foot"><div class="docs"><b>Docs</b>
     <a href="https://learn.microsoft.com/en-us/azure/databricks/genie-agents/best-practices#conduct-user-testing">User testing</a>
     <a href="https://learn.microsoft.com/en-us/azure/databricks/genie-agents/monitor">Monitor</a>
     <a href="https://learn.microsoft.com/en-us/azure/databricks/genie-one/genie-slack">Genie in Slack</a>
-  </div><span>7</span></div>
+  </div><span>6</span></div>
   <aside class="n"><ul>
     <li>No dates on purpose. The gate between steps is the benchmark score, not the calendar.</li>
     <li>Step 1 is mostly work you've already started with the bridge metric views.</li>
@@ -726,32 +718,23 @@ https://&lt;workspace-hostname&gt;/api/2.0/mcp/genie/&lt;space-id&gt;</pre>
   </ul></aside>
 </section>
 
-<!-- 8. Next steps -->
+<!-- 7. Next steps -->
 <section class="slide" data-title="Next steps">
   <span class="kicker">Next steps</span>
   <h1>Next steps</h1>
   <p class="lede">What we take away from today.</p>
   <div class="body">
-    <div class="grid g2">
-      <div class="card c-orange"><div class="head"><div class="badge-ic"><svg class="ic"><use href="#i-flag"/></svg></div><h2>Your side</h2></div><ul>
-        <li class="placeholder">Pick 10 to 15 real pilot questions from marketing</li>
-        <li class="placeholder">Confirm the KPI definitions to model first</li>
-        <li class="placeholder">Name the pilot users and an agent owner</li>
-        <li>Run the <a href="https://github.com/databricks-solutions/genie-ontology-readiness" target="_blank" rel="noopener">Genie Ontology Readiness</a> app on your workspace: a read-only score and a prioritized plan</li>
-      </ul></div>
-      <div class="card c-blue"><div class="head"><div class="badge-ic"><svg class="ic"><use href="#i-agent"/></svg></div><h2>Our side</h2></div><ul>
-        <li class="placeholder">Share the demo repo and this deck</li>
-        <li class="placeholder">Review the draft Genie architecture together</li>
-        <li class="placeholder">Help set up benchmarks and the first agent</li>
-      </ul></div>
+    <div class="ns">
+      <div class="ns-card c-orange"><div class="ns-h"><svg class="ic"><use href="#i-flag"/></svg>Your side</div><ul><li><svg class="ic sm"><use href="#i-box"/></svg><span>Pick 10 to 15 real pilot questions from marketing</span></li><li><svg class="ic sm"><use href="#i-box"/></svg><span>Confirm the KPI definitions to model first</span></li><li><svg class="ic sm"><use href="#i-box"/></svg><span>Name the pilot users and an agent owner</span></li><li><svg class="ic sm"><use href="#i-box"/></svg><span>Run the <a href="https://github.com/databricks-solutions/genie-ontology-readiness" target="_blank" rel="noopener">Genie Ontology Readiness</a> app: a read-only score and a prioritized plan</span></li></ul></div>
+      <div class="ns-card c-blue"><div class="ns-h"><svg class="ic"><use href="#i-agent"/></svg>Our side</div><ul><li><svg class="ic sm"><use href="#i-box"/></svg><span>Share the demo repo and this deck</span></li><li><svg class="ic sm"><use href="#i-box"/></svg><span>Review the draft Genie architecture together</span></li><li><svg class="ic sm"><use href="#i-box"/></svg><span>Help set up benchmarks and the first agent</span></li></ul></div>
     </div>
-    <div class="note" style="margin-top:18px"><svg class="ic sm"><use href="#i-play"/></svg><span class="placeholder">Next session: date and agenda to confirm.</span></div>
+    <div class="note ns-next"><svg class="ic sm"><use href="#i-clock"/></svg><span>Next session: date and agenda to confirm.</span></div>
   </div>
   <div class="foot"><div class="docs"><b>Docs</b>
     <a href="https://learn.microsoft.com/en-us/azure/databricks/genie/">Genie</a>
-  </div><span>8</span></div>
+  </div><span>7</span></div>
   <aside class="n"><ul>
-    <li>Placeholders: fill in after the call.</li>
+    <li>Agree owners for each line before we hang up.</li>
     <li>The single most useful thing they can give us is the list of real questions.</li>
   </ul></aside>
 </section>
@@ -767,7 +750,7 @@ https://&lt;workspace-hostname&gt;/api/2.0/mcp/genie/&lt;space-id&gt;</pre>
     <button id="ov-btn" class="cbtn" aria-label="Overview"><svg class="ic sm"><use href="#i-grid"/></svg></button>
     <button id="prev" class="cbtn" aria-label="Previous"><svg class="ic sm"><use href="#i-left"/></svg></button>
     <button id="next" class="cbtn" aria-label="Next"><svg class="ic sm"><use href="#i-right"/></svg></button>
-    <span id="counter">1 / 8</span>
+    <span id="counter">1 / 7</span>
   </span>
 </div>
 <div class="overview" id="overview" hidden><div class="ov-box"><div class="ov-h"><b>All slides</b><button class="back" id="ov-close">Close <kbd>Esc</kbd></button></div><div class="ov-grid" id="ov-grid"></div></div></div>
@@ -822,6 +805,11 @@ https://&lt;workspace-hostname&gt;/api/2.0/mcp/genie/&lt;space-id&gt;</pre>
     d.innerHTML = '<div class="d-head"><button class="back" data-close><svg class="ic sm"><use href="#i-left"/></svg>Back <kbd>Esc</kbd></button>' + tabsHtml +
       '<span class="d-title"><span class="badge-ic"><svg class="ic"><use href="#i-link"/></svg></span>Demo links</span><span class="d-sub">Presenter only. Links open in a new tab. Scroll for MCP tests.</span></div>' +
       '<div class="dl-scroll"><div class="dl-grid">' +
+        (function () { const A = DL.answers || {}; const ag = (n) => (DL.agents.find(a => a.name === n) || {}).url;
+          const st = [['Semantic layer in Discover', (DL.domains.links || [])[0] && DL.domains.links[0].url, 'i-tag'], ['UA Performance agent', ag('UA Performance'), 'i-agent'], ['Genie One across agents', ag('Genie One'), 'i-one'],
+            ['Playbook over files', A['Playbook over files'] && A['Playbook over files'].url, 'i-live', true], ['Genie One orchestrates', A['Genie One orchestrates'] && A['Genie One orchestrates'].url, 'i-live', true], ['Claude Code via MCP: see Test MCPs below', null, 'i-terminal']];
+          return card('i-play', 'Demo flow', '<div class="dl-flow">' + st.map((x, k) => x[1] ? '<a class="dl-row' + (x[3] ? ' live' : '') + '" target="_blank" rel="noopener" href="' + esc(x[1]) + '"><span class="num sm">' + (k + 1) + '</span><span>' + esc(x[0]) + '</span>' + (x[3] ? '<span class="live-tag"><svg class="ic sm"><use href="#i-live"/></svg>live answer</span>' : '') + '<svg class="ic sm ext"><use href="#i-right"/></svg></a>'
+            : '<div class="dl-row"><span class="num sm">' + (k + 1) + '</span><span>' + esc(x[0]) + '</span></div>').join('') + '</div>', 'c-red full'); })() +
         card('i-play', 'Presentation and workspace', lk(DL.presentation, 'i-dash') + lk(DL.workspace, 'i-server') + (DL.genieCodeNotebook ? lk({ name: 'Genie Code demo notebook', url: DL.genieCodeNotebook }, 'i-dev') : ''), 'c-navy') +
         card('i-agent', 'Genie Agents', DL.agents.map(a => lk(a, 'i-agent')).join(''), 'c-red') +
         card('i-layers', 'Metric views', DL.metricViews.map(m => lk(m, 'i-target')).join(''), 'c-blue') +
@@ -896,7 +884,7 @@ https://&lt;workspace-hostname&gt;/api/2.0/mcp/genie/&lt;space-id&gt;</pre>
   });
 
   // ---- Navigation aids: slide rail, breadcrumbs, overview, sub-view order ----
-  const RAIL = [['Genie family','c-red'],['How it fits','c-navy'],['Metric views','c-blue'],['Ontology','c-green'],['Your tools','c-green'],['Demo','c-red'],['Rollout','c-orange'],['Next steps','c-navy']];
+  const RAIL = [['Genie family','c-red'],['How it fits','c-navy'],['Metric views','c-blue'],['Ontology','c-green'],['Your tools','c-green'],['Rollout','c-orange'],['Next steps','c-navy']];
   const SUBNAME = { 'd-code': 'Genie Code', 'd-agents': 'Genie Agents', 'd-one': 'Genie One', 'd-bp': 'Best practices', 'd-links': 'Demo links', 'd-own': 'Your IDE' };
   function subOrder() { const o = ['d-code', 'd-agents', 'd-one', 'd-bp']; const l = document.getElementById('d-links'); if (l && !l.hidden) o.push('d-links'); return o; }
   function subIndex(id) { const o = subOrder(); const el = id && document.getElementById(id); const base = el && el.dataset.parent ? el.dataset.parent : id; return o.indexOf(base); }
