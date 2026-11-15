@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Genie for marketing self-service</title>
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cg fill='none' stroke='%23FF3621' stroke-width='3.2' stroke-linejoin='round' stroke-linecap='round'%3E%3Cpath d='M16 4 28 10.5 16 17 4 10.5Z' fill='%23FF3621'/%3E%3Cpath d='M4 16 16 22.5 28 16'/%3E%3Cpath d='M4 21.5 16 28 28 21.5'/%3E%3C/g%3E%3C/svg%3E">
-<link rel="stylesheet" href="style.css?v=1794771948">
+<link rel="stylesheet" href="style.css?v=1794772317">
 </head>
 <body>
 
@@ -334,6 +334,44 @@
     <li>Genie Agent MCP is the closest to what you have today: one agent, one URL.</li>
     <li>Biggest design point: call Genie as the user. Row filters apply and it's inside the free promotion.</li>
     <li>If asked: there is no MCP server for Genie Code itself. It goes the other way: Genie Code uses MCP servers, including your Genie Agents.</li>
+  </ul></aside>
+</section>
+
+<!-- Demo use case -->
+<section class="slide" data-title="The demo use case" data-rail="Use case" data-color="c-orange">
+  <span class="kicker">Demo use case</span>
+  <h1>A day in the life of a UA marketer</h1>
+  <p class="lede">Synthetic data for a subscription app studio: PixelMuse, Pulse Fit and friends, paid acquisition on Meta, Google, TikTok and Apple Search Ads.</p>
+  <div class="body">
+    <div class="uc">
+      <div class="uc-col">
+        <div class="uc-persona c-orange"><span class="uc-av"><svg class="ic lg"><use href="#i-users"/></svg></span><div><b>"I'm a UA marketer."</b><small>I decide where the next euro of ad budget goes.</small></div></div>
+        <div class="uc-what"><h3>What is UA?</h3><p><b>User Acquisition:</b> paying ad networks to bring new users into our apps, then turning their free trials into paying subscribers. Every campaign has to earn back its spend.</p></div>
+      </div>
+      <div class="uc-col">
+        <h3>KPIs I watch</h3>
+        <div class="kpis"><div class="kpi c-navy"><b>Spend</b><span>Media budget paid to ad networks</span></div><div class="kpi c-blue"><b>CPI</b><span>Cost per install: spend / installs</span></div><div class="kpi c-blue"><b>CTR</b><span>Click-through rate: clicks / impressions</span></div><div class="kpi c-blue"><b>IPM</b><span>Installs per 1,000 impressions: creative strength</span></div><div class="kpi c-green"><b>Trial to paid</b><span>Share of free trials that convert to paying</span></div><div class="kpi c-orange"><b>CAC</b><span>Customer acquisition cost: spend / new payers</span></div><div class="kpi c-red"><b>ROAS D7 / D30</b><span>Return on ad spend: cohort revenue in 7 or 30 days / spend</span></div><div class="kpi c-red"><b>pLTV</b><span>Predicted lifetime value of a new subscriber</span></div><div class="kpi c-orange"><b>Blended ROAS</b><span>Also MER: total net revenue / total spend</span></div><div class="kpi c-green"><b>Rebill rate</b><span>Share of renewals that succeed</span></div></div>
+      </div>
+      <div class="uc-col">
+        <h3>One agent per job, shared with the right people</h3>
+        <div class="uc-agent c-red"><svg class="ic"><use href="#i-agent"/></svg><div><b>UA Performance</b><small>Spend, CPI, ROAS by campaign and channel</small><span class="who">Me and the UA team</span></div></div>
+        <div class="uc-agent c-orange"><svg class="ic"><use href="#i-loop"/></svg><div><b>Subscription Revenue</b><small>Trials, renewals, refunds, net revenue</small><span class="who">Monetization and finance</span></div></div>
+        <div class="uc-agent c-blue"><svg class="ic"><use href="#i-file"/></svg><div><b>UA Playbook</b><small>Naming conventions, targets, creative guidance (files)</small><span class="who">The whole marketing team</span></div></div>
+        <div class="uc-arrow"><svg class="ic sm"><use href="#i-down"/></svg>all three, one front door</div>
+        <div class="uc-agent one c-green"><svg class="ic"><use href="#i-one"/></svg><div><b>Genie One</b><small>Asks across all three agents and cites the sources</small><span class="who">Shared with executives</span></div></div>
+      </div>
+    </div>
+  </div>
+  <div class="foot"><div class="docs"><b>Docs</b>
+    <a href="https://learn.microsoft.com/en-us/azure/databricks/genie-agents/set-up#share-a-genie-agent">Share a Genie Agent</a>
+    <a href="https://learn.microsoft.com/en-us/azure/databricks/genie-one/">Genie One</a>
+    <a href="https://learn.microsoft.com/en-us/azure/databricks/uc-semantics/pages">Pages (where these KPIs are defined)</a>
+  </div><span></span></div>
+  <aside class="n"><ul>
+    <li>Put yourself in the marketer's shoes: every morning I want to know where spend is working and where it isn't.</li>
+    <li>Say the acronyms once with their meaning; they are also defined as Pages in the demo, so Genie One cites them.</li>
+    <li>I didn't build one big agent. Each job gets its own focused agent, and I share it with the colleagues who do that job.</li>
+    <li>Genie One sits on top for leadership: I share it with my executives, and they ask across all three without knowing which agent owns what.</li>
   </ul></aside>
 </section>
 

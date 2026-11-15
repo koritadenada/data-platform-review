@@ -909,3 +909,25 @@ table.cmp.tools td, table.cmp.tools th { padding: 7px 11px; }
 .bigtile[data-tile="d-one"] { --accent: var(--green); --accent-soft: var(--green-soft); }
 .bigtile[data-tile="d-code"]::after { background: var(--blue); }
 .bigtile[data-tile="d-one"]::after { background: var(--green-fill); }
+/* Demo use case slide */
+.uc { display: grid; grid-template-columns: 1fr 1.15fr 1.1fr; gap: 18px; align-items: start; }
+.uc-col { display: flex; flex-direction: column; gap: 10px; min-width: 0; }
+.uc-col h3 { margin: 0; }
+.uc-persona { display: flex; gap: 12px; align-items: center; background: var(--accent-soft); border: 1px solid color-mix(in srgb, var(--accent) 25%, transparent); border-radius: 14px; padding: 14px 16px; }
+.uc-av { width: 54px; height: 54px; border-radius: 50%; display: grid; place-items: center; background: var(--accent); color: #fff; flex: none; }
+.uc-persona b { display: block; font-size: 17px; }
+.uc-persona small { color: var(--ink-2); font-size: 13px; }
+.uc-what { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; box-shadow: var(--shadow); padding: 12px 16px; }
+.uc-what p { margin: 6px 0 0; font-size: 14px; color: var(--ink-2); line-height: 1.5; }
+.uc-what b { color: var(--ink); }
+.kpis { display: grid; grid-template-columns: 1fr 1fr; gap: 7px; }
+.kpi { background: var(--surface); border: 1px solid var(--line); border-left: 4px solid var(--accent); border-radius: 9px; padding: 6px 10px; display: flex; flex-direction: column; gap: 1px; }
+.kpi b { font-size: 13.5px; color: var(--accent); }
+.kpi span { font-size: 11.5px; color: var(--ink-2); line-height: 1.35; }
+.uc-agent { display: flex; gap: 10px; align-items: flex-start; background: var(--surface); border: 1px solid var(--line); border-radius: 11px; box-shadow: var(--shadow); padding: 9px 12px; }
+.uc-agent > .ic { color: var(--accent); background: var(--accent-soft); border-radius: 8px; padding: 6px; width: 20px; height: 20px; box-sizing: content-box; flex: none; }
+.uc-agent b { display: block; font-size: 14px; }
+.uc-agent small { display: block; font-size: 12px; color: var(--ink-2); }
+.uc-agent .who { display: inline-block; margin-top: 4px; font-size: 10.5px; font-weight: 650; color: var(--accent); background: var(--accent-soft); border-radius: 999px; padding: 1px 8px; }
+.uc-agent.one { border: 2px solid var(--accent); }
+.uc-arrow { display: flex; align-items: center; justify-content: center; gap: 6px; font-size: 11.5px; color: var(--ink-3); }
