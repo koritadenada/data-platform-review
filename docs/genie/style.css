@@ -829,3 +829,49 @@ a.bubble.live:hover, a.scen.live:hover { border-color: var(--green) !important; 
 .dl-flow { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
 .dl-flow .dl-row .num.sm { flex: none; }
 .dl-flow .live-tag { margin-left: 6px; }
+/* Genie One enterprise-ready drill-down */
+.ent-btn { all: unset; cursor: pointer; margin-left: 12px; display: inline-flex; align-items: center; gap: 5px; font-size: 12px; font-weight: 650; vertical-align: 1px;
+  color: var(--accent); background: var(--accent-soft); border: 1px solid color-mix(in srgb, var(--accent) 30%, transparent); border-radius: 999px; padding: 3px 11px; }
+.ent-btn:hover { border-color: var(--accent); }
+.ent-modal { position: absolute; inset: 0; z-index: 8; display: none; place-items: center; background: color-mix(in srgb, var(--bg) 72%, transparent); backdrop-filter: blur(2px); border-radius: 6px; }
+.ent-modal.on { display: grid; }
+.ent-box { width: 1120px; background: var(--surface); border: 1px solid var(--line); border-radius: 16px; box-shadow: 0 20px 50px rgba(27,49,57,.18); padding: 20px 24px; }
+.ent-box .bpc-ic { width: 40px; height: 40px; border-radius: 10px; display: grid; place-items: center; background: var(--accent-soft); color: var(--accent); }
+.ent-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; }
+.ent-card { display: flex; flex-direction: column; gap: 5px; border: 1px solid var(--line); border-top: 3px solid var(--accent); border-radius: 10px; padding: 10px 12px; background: var(--surface); }
+.ent-ic { width: 32px; height: 32px; border-radius: 8px; display: grid; place-items: center; background: var(--accent-soft); color: var(--accent); }
+.ent-ic .ic { width: 18px; height: 18px; }
+.ent-t { font-weight: 700; font-size: 13.5px; display: flex; flex-wrap: wrap; align-items: center; gap: 5px; }
+.ent-t .pill { font-size: 9.5px; padding: 0 6px; }
+.ent-l { font-size: 12px; color: var(--ink-2); line-height: 1.4; flex: 1; }
+.ent-card a { font-size: 11.5px; color: var(--ink-3); text-decoration: none; }
+.ent-card a:hover { color: var(--accent); }
+@media (prefers-reduced-motion: reduce) { .ent-modal.on { animation: none; } }
+/* Journey: line sized by JS between first and last badge; gates sit on it; animated dot */
+.j-line { left: 0; width: 0; z-index: 0; opacity: .45; }
+.j-step, .j-gate { position: relative; z-index: 1; }
+.j-badge { z-index: 2; }
+.j-gate { margin-top: 28px; }
+.j-gate span { background: var(--bg); padding: 1px 4px; border-radius: 4px; }
+.j-dot { position: absolute; left: var(--x1, 0); width: 14px; height: 14px; margin: -7px 0 0 -7px; border-radius: 50%; z-index: 1;
+  background: var(--blue); box-shadow: 0 0 0 4px color-mix(in srgb, var(--blue) 22%, transparent);
+  animation: jdot 7s ease-in-out infinite; }
+@keyframes jdot {
+  0%   { left: var(--x1); background: var(--blue);  opacity: 0; }
+  5%   { opacity: 1; }
+  28%  { left: var(--x2); background: var(--red); }
+  33%  { left: var(--x2); background: var(--red); }
+  58%  { left: var(--x3); background: var(--green); }
+  63%  { left: var(--x3); background: var(--green); }
+  88%  { left: var(--x4); background: var(--orange-fill); opacity: 1; }
+  96%  { left: var(--x4); background: var(--orange-fill); opacity: 1; }
+  100% { left: var(--x4); opacity: 0; }
+}
+@media (prefers-reduced-motion: reduce) { .j-dot { animation: none; left: var(--x4); opacity: 0; } }
+
+/* Genie One view: keep the docs footer clear of the rail */
+#d-one .onemap { width: 92%; }
+#d-one .onto { margin-top: 4px; padding: 8px 14px; }
+#d-one .onto-h { margin-bottom: 5px; }
+#d-one .scen { padding: 7px 12px; margin-bottom: 6px; }
+.j-step { z-index: 3; } .j-dot { z-index: 2; width: 16px; height: 16px; margin: -8px 0 0 -8px; } .j-gate { z-index: 1; }

@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Genie for marketing self-service</title>
-<link rel="stylesheet" href="style.css?v=1794769198">
+<link rel="stylesheet" href="style.css?v=1794769570">
 </head>
 <body>
 
@@ -209,7 +209,7 @@
     <div class="d-head"><button class="back" data-close><svg class="ic sm"><use href="#i-left"/></svg>Back <kbd>Esc</kbd></button>
       <nav class="tabs"><button data-open="d-code" class=""><kbd>1</kbd>Genie Code</button><button data-open="d-agents" class=""><kbd>2</kbd>Genie Agents</button><button data-open="d-one" class="on"><kbd>3</kbd>Genie One</button><button data-open="d-bp" class=""><kbd>4</kbd>Agent best practices</button></nav>
       <span class="d-title"><span class="badge-ic"><svg class="ic"><use href="#i-one"/></svg></span>Genie One</span>
-      <span class="d-sub">For executives, leadership and cross-functional business users</span></div>
+      <span class="d-sub">For executives, leadership and cross-functional business users <button class="ent-btn" data-ent><svg class="ic sm"><use href="#i-shield"/></svg>Enterprise-ready features</button></span></div>
     <div class="d-grid one">
       <div class="d-col">
         <svg class="onemap" viewBox="0 0 620 236" role="img" aria-label="Genie One routes a question to Genie Agents, dashboards, apps, metric views and Pages under the asking user's Unity Catalog permissions">
@@ -259,6 +259,7 @@
           <span class="gh"><svg class="ic sm"><use href="#i-git"/></svg>genie-ontology-readiness (Databricks App)</span><span class="cta">Run it on your workspace <span aria-hidden="true">&rarr;</span></span></a>
       </div>
     </div>
+    <div class="ent-modal" id="ent-modal"><div class="ent-box"><div class="bp-mh"><span class="bpc-ic c-green"><svg class="ic"><use href="#i-shield"/></svg></span><b>Genie One: enterprise-ready</b><button class="back" data-closeent>Close <kbd>Esc</kbd></button></div><div class="ent-grid"><div class="ent-card c-green"><span class="ent-ic"><svg class="ic"><use href="#i-dash"/></svg></span><div class="ent-t">Branded homepage</div><div class="ent-l">Admins set brand color, logo, a Markdown welcome and pinned agents or dashboards.</div><a href="https://learn.microsoft.com/en-us/azure/databricks/genie-one/customize-genie-homepage" target="_blank" rel="noopener">Docs</a></div><div class="ent-card c-blue"><span class="ent-ic"><svg class="ic"><use href="#i-link"/></svg></span><div class="ent-t">Custom URL<span class="pill pp">Public Preview</span></div><div class="ent-l">One branded entry point for the account, for example acme.azuredatabricks.net/one.</div><a href="https://learn.microsoft.com/en-us/azure/databricks/admin/account-settings/custom-url" target="_blank" rel="noopener">Docs</a></div><div class="ent-card c-navy"><span class="ent-ic"><svg class="ic"><use href="#i-layers"/></svg></span><div class="ent-t">Account-level Genie One</div><div class="ent-l">A unified view across workspaces that shows only assets shared with each user.</div><a href="https://learn.microsoft.com/en-us/azure/databricks/genie-one/#account-level-genie-one" target="_blank" rel="noopener">Docs</a></div><div class="ent-card c-red"><span class="ent-ic"><svg class="ic"><use href="#i-shield"/></svg></span><div class="ent-t">Runs as the user</div><div class="ent-l">Queries run as the asker: UC privileges, row filters, masks and bindings apply.</div><a href="https://learn.microsoft.com/en-us/azure/databricks/genie-one/#governance-and-permissions" target="_blank" rel="noopener">Docs</a></div><div class="ent-card c-orange"><span class="ent-ic"><svg class="ic"><use href="#i-users"/></svg></span><div class="ent-t">Least-privilege access</div><div class="ent-l">Consumer access, the least-privileged entitlement, is enough for chat.</div><a href="https://learn.microsoft.com/en-us/azure/databricks/genie-one/#open-genie-one" target="_blank" rel="noopener">Docs</a></div><div class="ent-card c-blue"><span class="ent-ic"><svg class="ic"><use href="#i-users"/></svg></span><div class="ent-t">Account-only users<span class="pill beta">Beta</span></div><div class="ent-l">Users from your identity provider without a workspace get a limited experience.</div><a href="https://learn.microsoft.com/en-us/azure/databricks/genie-one/account-only-user-access" target="_blank" rel="noopener">Docs</a></div><div class="ent-card c-navy"><span class="ent-ic"><svg class="ic"><use href="#i-server"/></svg></span><div class="ent-t">Front-end Private Link<span class="pill beta">Beta</span></div><div class="ent-l">Reach account-level Genie One over a private connection.</div><a href="https://learn.microsoft.com/en-us/azure/databricks/security/network/front-end/front-end-private-connect-account" target="_blank" rel="noopener">Docs</a></div><div class="ent-card c-green"><span class="ent-ic"><svg class="ic"><use href="#i-chart"/></svg></span><div class="ent-t">Genie tracing<span class="pill beta">Beta</span></div><div class="ent-l">Prompts, responses and tool results land in the Unity Gateway trace table.</div><a href="https://learn.microsoft.com/en-us/azure/databricks/ai-gateway/genie-traces" target="_blank" rel="noopener">Docs</a></div><div class="ent-card c-orange"><span class="ent-ic"><svg class="ic"><use href="#i-plug"/></svg></span><div class="ent-t">External sources via MCP</div><div class="ent-l">Per-user OAuth; the gateway authorizes each call and records usage.</div><a href="https://learn.microsoft.com/en-us/azure/databricks/genie-one/external-sources" target="_blank" rel="noopener">Docs</a></div><div class="ent-card c-red"><span class="ent-ic"><svg class="ic"><use href="#i-chat"/></svg></span><div class="ent-t">Where people work</div><div class="ent-l">Slack, Microsoft Teams and mobile, plus a Chrome extension (Beta).</div><a href="https://learn.microsoft.com/en-us/azure/databricks/genie-one/mobile" target="_blank" rel="noopener">Docs</a></div></div><p class="fine">No chip means the docs show no preview label. Custom URL and the account-level view are configured by account admins.</p></div></div>
     <div class="foot"><div class="docs"><b>Docs</b>
       <a href="https://learn.microsoft.com/en-us/azure/databricks/genie-one/">Genie One</a>
       <a href="https://learn.microsoft.com/en-us/azure/databricks/genie-one/chat">Chat in Genie One</a>
@@ -270,6 +271,7 @@
       <li>Everything sits inside the user's own Unity Catalog permissions: a BU lead only sees their BU, even through Genie One.</li>
       <li>The pLTV example is the one to show live: the answer cites the Page we certified.</li>
       <li>Scheduled tasks make it a daily briefing without anyone building a report.</li>
+      <li>If they ask about production readiness, open Enterprise-ready features: branding, custom URL, Private Link, tracing, all with status as documented.</li>
       <li>Bottom band: what feeds the answers. Genie learns from dashboards and queries, including the ones dbt runs; what we model wins when they disagree.</li>
     </ul></aside>
   </div>
@@ -679,7 +681,8 @@ https://&lt;workspace-hostname&gt;/api/2.0/mcp/genie/&lt;space-id&gt;</pre>
   <p class="lede">Small, measured, then wider.</p>
   <div class="body">
     <div class="journey">
-      <div class="j-line"></div>
+      <div class="j-line" id="j-line"></div>
+      <span class="j-dot" id="j-dot"></span>
       <div class="j-step c-blue">
         <div class="j-badge"><span class="j-num">1</span><svg class="ic"><use href="#i-layers"/></svg></div>
         <h2>Semantic layer</h2>
@@ -875,13 +878,32 @@ https://&lt;workspace-hostname&gt;/api/2.0/mcp/genie/&lt;space-id&gt;</pre>
     modal.querySelector('.bpc-ic').innerHTML = card.querySelector('.bpc-ic').innerHTML;
     modal.classList.add('on');
   }
-  function closeMore() { if (!modal.classList.contains('on')) return false; modal.classList.remove('on'); return true; }
+  const entM = document.getElementById('ent-modal');
+  function closeMore() {
+    if (entM && entM.classList.contains('on')) { entM.classList.remove('on'); return true; }
+    if (!modal.classList.contains('on')) return false; modal.classList.remove('on'); return true; }
+  function overlayOpen() { return modal.classList.contains('on') || (entM && entM.classList.contains('on')); }
   deck.addEventListener('click', (e) => {
+    if (e.target.closest('[data-ent]')) { entM.classList.add('on'); return; }
+    if (e.target.closest('[data-closeent]') || e.target === entM) { entM.classList.remove('on'); return; }
     const mb = e.target.closest('[data-more]'); if (mb) { openMore(mb); return; }
     if (e.target.closest('[data-closemore]') || e.target === modal) { closeMore(); return; }
     const t = e.target.closest('[data-open]'); if (t) { openDetail(t.dataset.open); return; }
     if (e.target.closest('[data-close]')) closeDetail();
   });
+
+
+  // Rollout journey: size the line between the first and last badge, and animate a dot along it
+  function layoutJourney() {
+    const j = document.querySelector('.journey'); if (!j) return;
+    const b = j.querySelectorAll('.j-badge'); if (b.length < 2) return;
+    const cx = el => el.offsetLeft + el.offsetParent.offsetLeft + el.offsetWidth / 2;
+    const xs = Array.from(b).map(cx); const y = b[0].offsetTop + b[0].offsetHeight / 2;
+    const line = document.getElementById('j-line'); const dot = document.getElementById('j-dot');
+    line.style.left = xs[0] + 'px'; line.style.width = (xs[xs.length - 1] - xs[0]) + 'px'; line.style.right = 'auto'; line.style.top = (y - 2) + 'px';
+    dot.style.top = y + 'px';
+    xs.forEach((x, k) => j.style.setProperty('--x' + (k + 1), x + 'px'));
+  }
 
   // ---- Navigation aids: slide rail, breadcrumbs, overview, sub-view order ----
   const RAIL = [['Genie family','c-red'],['How it fits','c-navy'],['Metric views','c-blue'],['Ontology','c-green'],['Your tools','c-green'],['Rollout','c-orange'],['Next steps','c-navy']];
@@ -944,6 +966,7 @@ https://&lt;workspace-hostname&gt;/api/2.0/mcp/genie/&lt;space-id&gt;</pre>
     document.title = slides[i].dataset.title + ' | Genie session';
     if (push !== false) history.replaceState(null, '', '#' + (i + 1));
     updateRail();
+    if (slides[i].querySelector('.journey')) requestAnimationFrame(layoutJourney);
   }
   function fromHash() {
     const h = parseInt(location.hash.replace('#', '').split('/')[0], 10);
@@ -967,8 +990,8 @@ https://&lt;workspace-hostname&gt;/api/2.0/mcp/genie/&lt;space-id&gt;</pre>
       const tiles = slides[i].querySelectorAll('.bigtile, .slimtile'); const t = tiles[parseInt(k, 10) - 1];
       if (t) { openDetail(t.dataset.open); e.preventDefault(); return; }
     }
-    if (openId && (k === 'ArrowRight' || k === 'ArrowDown' || k === 'PageDown' || k === ' ')) { e.preventDefault(); if (!modal.classList.contains('on')) nextSub(); return; }
-    if (openId && (k === 'ArrowLeft' || k === 'ArrowUp' || k === 'PageUp')) { e.preventDefault(); if (!modal.classList.contains('on')) prevSub(); return; }
+    if (openId && (k === 'ArrowRight' || k === 'ArrowDown' || k === 'PageDown' || k === ' ')) { e.preventDefault(); if (!overlayOpen()) nextSub(); return; }
+    if (openId && (k === 'ArrowLeft' || k === 'ArrowUp' || k === 'PageUp')) { e.preventDefault(); if (!overlayOpen()) prevSub(); return; }
     if (k === 'ArrowRight' || k === 'ArrowDown' || k === 'PageDown' || k === ' ') { e.preventDefault(); show(i + 1); }
     else if (k === 'ArrowLeft' || k === 'ArrowUp' || k === 'PageUp') { e.preventDefault(); show(i - 1); }
     else if (k === 'Home') { show(0); }
