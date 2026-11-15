@@ -154,7 +154,14 @@ window.DEMO_LINKS = {
         "detail": "/api/2.0/mcp/genie/01f1e0f847781c649c05ea5bbe7f29ed via the ucode mcp-proxy (CLI profile auth)"
       }
     ],
-    "note": "Registered in ~/kma-genie-demo/.mcp.json, start claude in that folder"
+    "note": "Registered in ~/kma-genie-demo/.mcp.json, start claude in that folder",
+    "links": [
+      { "name": "Unity Gateway MCPs (system.ai in Catalog Explorer)", "url": "https://fe-sandbox-korita-demo.cloud.databricks.com/explore/data/system/ai?o=7474650857654748" },
+      { "name": "Genie One MCP endpoint (Unity Gateway)", "url": "https://fe-sandbox-korita-demo.cloud.databricks.com/ai-gateway/mcp-services/system.ai.genie_one_mcp?o=7474650857654748" },
+      { "name": "UA Performance agent (Genie Agent MCP target)", "url": "https://fe-sandbox-korita-demo.cloud.databricks.com/genie/rooms/01f1e0f847781c649c05ea5bbe7f29ed" },
+      { "name": "Docs: find an MCP in Unity Gateway", "url": "https://learn.microsoft.com/en-us/azure/databricks/ai-gateway/mcp-service-reference#find-a-service" }
+    ],
+    "navHint": "In the workspace: left nav Unity Gateway > MCPs"
   },
   "tests": [
     {
