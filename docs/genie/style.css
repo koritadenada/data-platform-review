@@ -885,3 +885,27 @@ a.bubble.live:hover, a.scen.live:hover { border-color: var(--green) !important; 
 #s-bp .bpcards { flex: 0 0 auto; }
 #d-agents .cta { margin-top: 14px; align-self: stretch; }
 #d-bp .bpcards { flex: 1; }
+/* Your tools table: per-row docs */
+table.cmp.tools { font-size: 12.8px; }
+table.cmp.tools td, table.cmp.tools th { padding: 8px 11px; }
+table.cmp.tools td.docs-c { white-space: nowrap; }
+.tdoc { display: flex; align-items: center; gap: 4px; font-size: 12px; color: var(--blue); text-decoration: none; }
+.tdoc + .tdoc { margin-top: 3px; }
+.tdoc:hover { text-decoration: underline; }
+table.cmp.tools tr:nth-child(6) td:first-child { box-shadow: inset 4px 0 0 var(--navy); }
+.gc-mcp { margin-top: 10px; display: flex; gap: 10px; align-items: flex-start; font-size: 13px; color: var(--ink-2); background: var(--blue-soft);
+  border: 1px solid color-mix(in srgb, var(--blue) 25%, transparent); border-radius: 10px; padding: 8px 14px; }
+.gc-mcp .ic { color: var(--blue); margin-top: 2px; }
+.gc-mcp b { color: var(--ink); }
+.slide[data-title="Connecting your own tools"] .callout { padding: 10px 14px; font-size: 13px; }
+table.cmp.tools td, table.cmp.tools th { padding: 7px 11px; }
+.slide[data-title="Connecting your own tools"] .callout { padding: 8px 12px; font-size: 12.5px; }
+.slide[data-title="Connecting your own tools"] .lede { margin-bottom: 14px; }
+/* Intro Genie family tiles (static) */
+.bigtile.static { cursor: default; }
+.bigtile.static:hover { transform: none; border-color: var(--line); box-shadow: var(--shadow); }
+.bigtile[data-tile="d-code"] { --accent: var(--blue); --accent-soft: var(--blue-soft); }
+.bigtile[data-tile="d-agents"] { --accent: var(--red); --accent-soft: var(--red-soft); }
+.bigtile[data-tile="d-one"] { --accent: var(--green); --accent-soft: var(--green-soft); }
+.bigtile[data-tile="d-code"]::after { background: var(--blue); }
+.bigtile[data-tile="d-one"]::after { background: var(--green-fill); }
