@@ -931,3 +931,19 @@ table.cmp.tools td, table.cmp.tools th { padding: 7px 11px; }
 .uc-agent .who { display: inline-block; margin-top: 4px; font-size: 10.5px; font-weight: 650; color: var(--accent); background: var(--accent-soft); border-radius: 999px; padding: 1px 8px; }
 .uc-agent.one { border: 2px solid var(--accent); }
 .uc-arrow { display: flex; align-items: center; justify-content: center; gap: 6px; font-size: 11.5px; color: var(--ink-3); }
+/* Your tools: grouped table */
+table.cmp.grouped tr.tgroup td { background: var(--accent-soft); padding: 6px 11px; box-shadow: inset 4px 0 0 var(--accent) !important; }
+.tg-h { display: inline-flex; align-items: center; gap: 7px; font-size: 12.5px; color: var(--accent); white-space: nowrap; }
+.tg-h .ic { color: var(--accent); }
+.tg-h small { color: var(--ink-2); font-weight: 500; margin-left: 2px; }
+.tg-agents { display: inline-flex; align-items: center; gap: 6px; margin-left: 14px; vertical-align: middle; }
+.tg-agents .chip { font-size: 11px; padding: 2px 8px; font-weight: 600; }
+.tg-agents small { font-size: 11px; color: var(--ink-3); font-weight: 500; }
+table.cmp.grouped tr:not(.tgroup) td:first-child { box-shadow: none !important; padding-left: 22px; }
+table.cmp.grouped td, table.cmp.grouped th { padding-top: 6px; padding-bottom: 6px; }
+.tnotes { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 10px; }
+.callout.tn { padding: 8px 12px; font-size: 12px; line-height: 1.4; }
+.callout.tn code { font-size: 11px; }
+.callout.c-blue { background: var(--blue-soft); border: 1px solid color-mix(in srgb, var(--blue) 25%, transparent); }
+.callout.c-blue .ic { color: var(--blue); }
+table.cmp.grouped td { font-size: 12.5px; }

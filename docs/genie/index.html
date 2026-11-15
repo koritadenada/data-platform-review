@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Genie for marketing self-service</title>
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cg fill='none' stroke='%23FF3621' stroke-width='3.2' stroke-linejoin='round' stroke-linecap='round'%3E%3Cpath d='M16 4 28 10.5 16 17 4 10.5Z' fill='%23FF3621'/%3E%3Cpath d='M4 16 16 22.5 28 16'/%3E%3Cpath d='M4 21.5 16 28 28 21.5'/%3E%3C/g%3E%3C/svg%3E">
-<link rel="stylesheet" href="style.css?v=1794772317">
+<link rel="stylesheet" href="style.css?v=1794772476">
 </head>
 <body>
 
@@ -303,20 +303,23 @@
 <section class="slide" data-title="Connecting your own tools" data-rail="Your tools" data-color="c-blue">
   <span class="kicker">APIs and MCP</span>
   <h1>Connecting your own tools</h1>
-  <p class="lede">Five ways in for apps, gateways and coding agents.</p>
+  <p class="lede">Five ways in, grouped by what you ask: one Genie Agent, all of them through Genie One, or SQL directly.</p>
   <div class="body">
-    <table class="cmp tools">
+    <table class="cmp tools grouped">
       <tr><th>Option</th><th>Endpoint</th><th>Use it for</th><th>Status</th><th>Docs</th></tr>
+      <tr class="tgroup c-red"><td colspan="5"><span class="tg-h"><svg class="ic sm"><use href="#i-agent"/></svg><b>Scoped to one Genie Agent</b><small>curated answers for one domain</small></span><div class="tg-agents"><span class="chip tint c-red"><svg class="ic sm"><use href="#i-chart"/></svg>UA Performance</span><span class="chip tint c-orange"><svg class="ic sm"><use href="#i-loop"/></svg>Subscription Revenue</span><span class="chip tint c-blue"><svg class="ic sm"><use href="#i-file"/></svg>UA Playbook</span><small>one endpoint per agent, same API</small></div></td></tr>
+      <tr><td>Genie Agent MCP</td><td><code>/api/2.0/mcp/genie/{space_id}</code></td><td>Coding agents and MCP clients ask one agent. Uses agent and data permissions; bypasses Unity Gateway.</td><td><span class="pill pp">Public Preview</span></td><td class="docs-c"><a class="tdoc" href="https://learn.microsoft.com/en-us/azure/databricks/agents/mcp-tools/genie-agent" target="_blank" rel="noopener"><svg class="ic sm"><use href="#i-link"/></svg>Docs</a></td></tr>
+      <tr><td>Conversation API</td><td><code>/api/2.0/genie/spaces/{space_id}/...</code></td><td>Your own app, bot or gateway asks one agent, with follow-ups and history. Agent mode and management APIs sit alongside.</td><td><span class="pill soon">REST</span></td><td class="docs-c"><a class="tdoc" href="https://learn.microsoft.com/en-us/azure/databricks/genie-agents/conversation-api" target="_blank" rel="noopener"><svg class="ic sm"><use href="#i-link"/></svg>Docs</a><a class="tdoc" href="https://docs.databricks.com/api/genie/v1/conversation" target="_blank" rel="noopener"><svg class="ic sm"><use href="#i-link"/></svg>API reference</a></td></tr>
+      <tr class="tgroup c-green"><td colspan="5"><span class="tg-h"><svg class="ic sm"><use href="#i-one"/></svg><b>Across all agents: Genie One</b><small>routes to the right agent and cites sources</small></span></td></tr>
       <tr><td>Genie One MCP</td><td><code>system.ai.genie_one_mcp</code> via Unity Gateway</td><td>Natural-language analytics across the workspace, grounded in Genie Ontology. Recommended start for analytics.</td><td><span class="pill ga">GA</span></td><td class="docs-c"><a class="tdoc" href="https://learn.microsoft.com/en-us/azure/databricks/agents/mcp-tools/genie-mcp" target="_blank" rel="noopener"><svg class="ic sm"><use href="#i-link"/></svg>Docs</a></td></tr>
-      <tr><td>Genie Agent MCP</td><td><code>/api/2.0/mcp/genie/{space_id}</code></td><td>Questions scoped to one curated agent. Uses agent and data permissions; bypasses Unity Gateway.</td><td><span class="pill pp">Public Preview</span></td><td class="docs-c"><a class="tdoc" href="https://learn.microsoft.com/en-us/azure/databricks/agents/mcp-tools/genie-agent" target="_blank" rel="noopener"><svg class="ic sm"><use href="#i-link"/></svg>Docs</a></td></tr>
-      <tr><td>Conversation API</td><td><code>/api/2.0/genie/spaces/{space_id}/...</code></td><td>Your own app, bot or gateway asks one Genie Agent, with follow-ups and history (Chat mode). Agent mode and management APIs sit alongside.</td><td><span class="pill soon">REST</span></td><td class="docs-c"><a class="tdoc" href="https://learn.microsoft.com/en-us/azure/databricks/genie-agents/conversation-api" target="_blank" rel="noopener"><svg class="ic sm"><use href="#i-link"/></svg>Docs</a><a class="tdoc" href="https://docs.databricks.com/api/genie/v1/conversation" target="_blank" rel="noopener"><svg class="ic sm"><use href="#i-link"/></svg>API reference</a></td></tr>
       <tr><td>Genie One API</td><td>HTTP API, streams the answer</td><td>Your backend asks Genie One across all data the caller can access; no curated agent needed. A workspace admin turns on the preview.</td><td><span class="pill beta">Beta</span></td><td class="docs-c"><a class="tdoc" href="https://learn.microsoft.com/en-us/azure/databricks/genie-one/api" target="_blank" rel="noopener"><svg class="ic sm"><use href="#i-link"/></svg>Docs</a></td></tr>
+      <tr class="tgroup c-navy"><td colspan="5"><span class="tg-h"><svg class="ic sm"><use href="#i-db"/></svg><b>Direct SQL</b><small>no agent in between</small></span></td></tr>
       <tr><td>Databricks SQL MCP</td><td><code>system.ai.dbsql</code></td><td>Run a specific SQL query, for development and data engineering.</td><td><span class="pill beta">Beta</span></td><td class="docs-c"><a class="tdoc" href="https://learn.microsoft.com/en-us/azure/databricks/agents/mcp-tools/databricks-sql" target="_blank" rel="noopener"><svg class="ic sm"><use href="#i-link"/></svg>Docs</a></td></tr>
     </table>
-    <div class="gc-mcp"><svg class="ic sm"><use href="#i-code"/></svg><span><b>Genie Code is an MCP client, not an MCP server.</b> You add MCP servers to Genie Code (Genie Agents, UC functions, AI Search, custom apps, connectors). External tools reach Databricks through the options above.</span></div>
-    <div class="split" style="margin-top:10px">
-      <div class="callout ok"><svg class="ic"><use href="#i-users"/></svg><div><b>Run as the end user</b>On-behalf-of user OAuth is recommended: Unity Catalog permissions and row filters apply per request. "Genie One and Genie Agents usage by users is free through January 31, 2027. Service principals are excluded from the promotion, and their usage is billed."</div></div>
-      <div class="callout warn"><svg class="ic"><use href="#i-alert"/></svg><div><b>Check old MCP configs</b>"The Beta endpoint, <code>https://&lt;workspace-hostname&gt;/api/2.0/mcp/genie</code>, is deprecated and reaches end of life on November 30, 2026." Move clients to <code>system.ai.genie_one_mcp</code> and request the <code>ai-gateway</code> OAuth scope.</div></div>
+    <div class="tnotes">
+      <div class="callout c-blue tn"><svg class="ic"><use href="#i-code"/></svg><div><b>Genie Code is an MCP client</b>Not a server: you add MCP servers to it (Genie Agents, UC functions, AI Search, apps, connectors).</div></div>
+      <div class="callout ok tn"><svg class="ic"><use href="#i-users"/></svg><div><b>Run as the end user</b>On-behalf-of OAuth: UC permissions and row filters apply. User usage is free through January 31, 2027; service principals are billed.</div></div>
+      <div class="callout warn tn"><svg class="ic"><use href="#i-alert"/></svg><div><b>Check old MCP configs</b>The Beta endpoint <code>/api/2.0/mcp/genie</code> reaches end of life on November 30, 2026. Move to <code>system.ai.genie_one_mcp</code>.</div></div>
     </div>
   </div>
   <div class="foot"><div class="docs"><b>Docs</b>
