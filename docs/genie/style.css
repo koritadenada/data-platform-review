@@ -507,3 +507,201 @@ pre.mini .c { color: var(--ink-3); }
 .onto-c.ready .verbs b { color: var(--accent); font-weight: 650; margin-right: 4px; }
 .onto-c.ready .gh { display: inline-flex; align-items: center; gap: 5px; font-size: 11px; color: var(--ink-3); }
 .onto-c.ready .gh .ic { color: var(--accent); }
+
+/* ===== Brand color system (lava, blue, green, orange, navy) ===== */
+:root {
+  --red: #eb1600;   --red-soft: #fdece9;
+  --blue: #2272b4;  --blue-soft: #e6f0f9;
+  --green: #007a52; --green-fill: #00a972; --green-soft: #e3f5ee;
+  --orange: #b26b00; --orange-fill: #ffab00; --orange-soft: #fff4dc;
+  --navy: #1b3139;  --navy-soft: #e8ecee;
+  --ok: var(--green); --ok-soft: var(--green-soft);
+  --warn: var(--orange); --warn-soft: var(--orange-soft);
+  --info: var(--blue); --info-soft: var(--blue-soft);
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --red: #ff5f46;   --red-soft: #2e1b18;
+    --blue: #6aaee8;  --blue-soft: #152a3d;
+    --green: #3dd69e; --green-fill: #00a972; --green-soft: #12302a;
+    --orange: #ffc24d; --orange-fill: #ffab00; --orange-soft: #33280f;
+    --navy: #c9d6db;  --navy-soft: #1d2f36;
+  }
+}
+/* Status chips: GA green, Public Preview blue, Beta orange */
+.pill.ga { background: var(--green-soft); color: var(--green); }
+.pill.pp { background: var(--blue-soft); color: var(--blue); }
+.pill.beta { background: var(--orange-soft); color: var(--orange); }
+
+/* Per-product theme: Genie Code blue, Genie Agents lava, Genie One green, best practices orange, links navy */
+.t-blue, .bigtile[data-open="d-code"], #d-code, #d-own { --accent: var(--blue); --accent-soft: var(--blue-soft); }
+.t-red, .bigtile[data-open="d-agents"], #d-agents { --accent: var(--red); --accent-soft: var(--red-soft); }
+.t-green, .bigtile[data-open="d-one"], #d-one { --accent: var(--green); --accent-soft: var(--green-soft); }
+.t-orange, .slimtile[data-open="d-bp"], #d-bp { --accent: var(--orange); --accent-soft: var(--orange-soft); }
+#d-links { --accent: var(--navy); --accent-soft: var(--navy-soft); }
+.bigtile[data-open="d-one"]::after { background: var(--green-fill); }
+.bigtile[data-open="d-code"]::after { background: var(--blue); }
+.tabs button[data-open="d-code"].on { background: var(--blue); border-color: var(--blue); color: #fff; }
+.tabs button[data-open="d-agents"].on { background: var(--red); border-color: var(--red); color: #fff; }
+.tabs button[data-open="d-one"].on { background: var(--green); border-color: var(--green); color: #fff; }
+.tabs button[data-open="d-bp"].on { background: var(--orange); border-color: var(--orange); color: #fff; }
+.tabs button[data-open="d-links"].on { background: var(--navy); border-color: var(--navy); color: var(--bg); }
+.tabs button.on kbd { color: inherit; }
+/* Genie One diagram in green */
+#d-one .onemap .hub { fill: var(--green); }
+#d-one .onemap .node.agent rect { fill: var(--red-soft); stroke: color-mix(in srgb, var(--red) 35%, transparent); }
+#d-one .onemap .node.page rect { fill: var(--blue-soft); stroke: color-mix(in srgb, var(--blue) 35%, transparent); }
+#d-one .onto-c.mod .chip { background: var(--green-soft); border-color: color-mix(in srgb, var(--green) 25%, transparent); }
+#d-one .onto-c.ready { border-color: color-mix(in srgb, var(--orange) 50%, var(--line)); }
+#d-one .onto-c.ready .verbs b, #d-one .onto-c.ready .gh .ic { color: var(--orange); }
+/* Vary icon colors across card sets */
+.bpcards .bpc:nth-child(4n+1) { --accent: var(--blue); --accent-soft: var(--blue-soft); }
+.bpcards .bpc:nth-child(4n+2) { --accent: var(--red); --accent-soft: var(--red-soft); }
+.bpcards .bpc:nth-child(4n+3) { --accent: var(--green); --accent-soft: var(--green-soft); }
+.bpcards .bpc:nth-child(4n+4) { --accent: var(--orange); --accent-soft: var(--orange-soft); }
+.slide[data-title="Agent types and orchestration"] .g4 .card:nth-child(1) { --accent: var(--blue); --accent-soft: var(--blue-soft); }
+.slide[data-title="Agent types and orchestration"] .g4 .card:nth-child(2) { --accent: var(--green); --accent-soft: var(--green-soft); }
+.slide[data-title="Agent types and orchestration"] .g4 .card:nth-child(3) { --accent: var(--orange); --accent-soft: var(--orange-soft); }
+.slide[data-title="Agent types and orchestration"] .g4 .card:nth-child(4) { --accent: var(--red); --accent-soft: var(--red-soft); }
+.slide[data-title="Domains, Pages and certification"] .g3 .card:nth-child(1) { --accent: var(--blue); --accent-soft: var(--blue-soft); }
+.slide[data-title="Domains, Pages and certification"] .g3 .card:nth-child(2) { --accent: var(--green); --accent-soft: var(--green-soft); }
+.slide[data-title="Domains, Pages and certification"] .g3 .card:nth-child(3) { --accent: var(--orange); --accent-soft: var(--orange-soft); }
+.dl-card.c-red { --accent: var(--red); --accent-soft: var(--red-soft); }
+.dl-card.c-blue { --accent: var(--blue); --accent-soft: var(--blue-soft); }
+.dl-card.c-green { --accent: var(--green); --accent-soft: var(--green-soft); }
+.dl-card.c-orange { --accent: var(--orange); --accent-soft: var(--orange-soft); }
+.dl-card.c-navy { --accent: var(--navy); --accent-soft: var(--navy-soft); }
+
+/* Live answers */
+a.bubble.live, a.scen.live { text-decoration: none; color: var(--ink); display: flex; align-items: center; gap: 10px; cursor: pointer; transition: border-color .15s, transform .15s; }
+a.bubble.live:hover, a.scen.live:hover { border-color: var(--accent); transform: translateY(-1px); }
+.live-tag { margin-left: auto; display: inline-flex; align-items: center; gap: 4px; white-space: nowrap; font-size: 10.5px; font-weight: 650; letter-spacing: .03em;
+  color: var(--accent); background: var(--accent-soft); border-radius: 999px; padding: 2px 8px; }
+.live-tag .ic { width: 13px; height: 13px; }
+a.bubble.live { align-self: stretch; }
+.live-btn { display: inline-flex; align-items: center; gap: 6px; margin-top: 10px; font-size: 12.5px; font-weight: 650; text-decoration: none;
+  color: var(--green); background: var(--green-soft); border-radius: 8px; padding: 5px 10px; }
+.live-btn:hover { filter: brightness(.95); }
+
+/* Links view v2: scroll area, tests */
+#d-links .dl-scroll { flex: 1; min-height: 0; overflow-y: auto; padding-right: 6px; margin-right: -6px; }
+#d-links .dl-grid { align-content: start; }
+.dl-card.full { grid-column: 1 / -1; }
+.dl-card .chips a.chip { text-decoration: none; color: var(--ink); display: inline-flex; align-items: center; gap: 4px; }
+.dl-card .chips a.chip .ic { color: var(--accent); width: 12px; height: 12px; }
+.dl-card .chips a.chip:hover { border-color: var(--accent); }
+.dl-row.live .ic:first-child { color: var(--green); }
+.dl-mcp { display: grid; grid-template-columns: auto 1fr auto; gap: 2px 8px; align-items: center; border: 1px solid var(--line); border-radius: 8px; padding: 6px 10px; background: var(--quote-bg); font-size: 12.5px; }
+.dl-mcp code { font-size: 12px; font-weight: 650; }
+.dl-mcp small { grid-column: 1 / -1; color: var(--ink-3); font-size: 10.5px; word-break: break-all; }
+.dl-test { border: 1px solid var(--line); border-radius: 10px; padding: 8px 12px; background: var(--quote-bg); }
+.dl-test-h { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.dl-test-h b { font-size: 13.5px; margin-right: auto; }
+.num.sm { width: 22px; height: 22px; font-size: 12px; display: grid; place-items: center; border-radius: 50%; background: var(--accent); color: #fff; font-weight: 700; }
+.prompt-t { margin-top: 5px; font-family: var(--mono); font-size: 11.5px; }
+.copy { all: unset; cursor: pointer; display: inline-flex; align-items: center; gap: 5px; font-size: 11.5px; font-weight: 600; color: var(--ink-2);
+  border: 1px solid var(--line); background: var(--surface); border-radius: 7px; padding: 3px 9px; }
+.copy:hover { border-color: var(--accent); color: var(--accent); }
+.copy.ok { background: var(--green-soft); color: var(--green); border-color: transparent; }
+.dl-mcp { grid-template-columns: auto 1fr auto; }
+.dl-mcp span:not(.pill) { color: var(--ink-2); white-space: nowrap; }
+
+/* =====================================================================
+   REUSABLE PALETTE (Databricks brand). Copy this block into future decks.
+   Hues:  --red (lava), --blue, --green, --orange, --navy
+   Each hue has a text/stroke tone (AA on light bg), a -soft tint for
+   backgrounds, and (green/orange) a -fill tone for large solid shapes.
+   Apply a hue to any component with .c-red / .c-blue / .c-green /
+   .c-orange / .c-navy: it sets --accent and --accent-soft, which every
+   icon chip, bullet, number badge, border and tag below reads.
+   Rule of thumb: one hue per category, consistent within a slide;
+   status chips are fixed (GA green, Public Preview blue, Beta orange).
+   ===================================================================== */
+:root {
+  --bg: #f6f8f9; --surface: #ffffff; --line: #e1e7ea; --quote-bg: #f8fafb; --code-bg: #eef2f5;
+}
+@media (prefers-color-scheme: dark) {
+  :root { --bg: #0f1a1e; --surface: #152328; --line: #26383e; --quote-bg: #182a30; --code-bg: #1c2d33; }
+}
+.c-red    { --accent: var(--red);    --accent-soft: var(--red-soft); }
+.c-blue   { --accent: var(--blue);   --accent-soft: var(--blue-soft); }
+.c-green  { --accent: var(--green);  --accent-soft: var(--green-soft); }
+.c-orange { --accent: var(--orange); --accent-soft: var(--orange-soft); }
+.c-navy   { --accent: var(--navy);   --accent-soft: var(--navy-soft); }
+
+/* Persona flow */
+.persona .p-ic { background: var(--accent-soft); color: var(--accent); border-color: color-mix(in srgb, var(--accent) 25%, transparent); width: 44px; height: 44px; }
+.persona b { color: var(--accent); }
+.p-arrow span { color: var(--accent); font-weight: 650; }
+.p-arrow .arr { stroke: var(--accent); stroke-width: 2; }
+.personas { background: linear-gradient(90deg, var(--blue-soft), var(--surface) 30%, var(--surface) 70%, var(--green-soft)); }
+
+/* Slide 2 layers */
+.layer { border-top: 3px solid var(--accent) !important; }
+.layer .lname .ic { color: var(--accent); }
+.layer .chip { background: var(--accent-soft); border-color: color-mix(in srgb, var(--accent) 20%, transparent); }
+.layer .chip .ic { color: var(--accent); }
+.layer .chip.hot { background: var(--accent); color: #fff; border-color: var(--accent); }
+.layer .chip.hot .ic { color: #fff; }
+.side { border-color: var(--accent); background: var(--accent-soft); }
+.side h2 { color: var(--accent); }
+
+/* Tinted chips anywhere */
+.chip.tint { background: var(--accent-soft); border-color: color-mix(in srgb, var(--accent) 22%, transparent); }
+.chip.tint .ic { color: var(--accent); }
+
+/* Slide 3 checks: rotate hues */
+.checks li:nth-child(5n+1) .ic { color: var(--blue); }
+.checks li:nth-child(5n+2) .ic { color: var(--green); }
+.checks li:nth-child(5n+3) .ic { color: var(--orange); }
+.checks li:nth-child(5n+4) .ic { color: var(--red); }
+.checks li:nth-child(5n+5) .ic { color: var(--navy); }
+
+/* Slide 6 best-practice grid: rotate hues */
+.bp .card:nth-child(4n+1) { --accent: var(--blue); --accent-soft: var(--blue-soft); }
+.bp .card:nth-child(4n+2) { --accent: var(--red); --accent-soft: var(--red-soft); }
+.bp .card:nth-child(4n+3) { --accent: var(--green); --accent-soft: var(--green-soft); }
+.bp .card:nth-child(4n+4) { --accent: var(--orange); --accent-soft: var(--orange-soft); }
+.bp .card { border-top: 3px solid var(--accent); }
+
+/* Steps (slides 8, 9): number badge and top rule in the step hue */
+.step .num { background: var(--accent); color: #fff; }
+.step .card { border-top: 3px solid var(--accent); }
+.step .card li::before { background: var(--accent); }
+@media (prefers-color-scheme: dark) { .step .num, .num.sm { color: #0f1a1e; } }
+
+/* Slide 7 table: hue per option row */
+table.cmp tr:nth-child(2) td:first-child { box-shadow: inset 4px 0 0 var(--green); }
+table.cmp tr:nth-child(3) td:first-child { box-shadow: inset 4px 0 0 var(--blue); }
+table.cmp tr:nth-child(4) td:first-child { box-shadow: inset 4px 0 0 var(--red); }
+table.cmp tr:nth-child(5) td:first-child { box-shadow: inset 4px 0 0 var(--orange); }
+
+/* Slide 10 and generic cards with a hue */
+.card.c-red, .card.c-blue, .card.c-green, .card.c-orange, .card.c-navy { border-top: 3px solid var(--accent); }
+
+/* Slide 1 views: rotate chip and access icon hues */
+#d-code .chips .chip:nth-child(5n+1) { background: var(--blue-soft); }
+#d-code .chips .chip:nth-child(5n+2) { background: var(--green-soft); }
+#d-code .chips .chip:nth-child(5n+3) { background: var(--orange-soft); }
+#d-code .chips .chip:nth-child(5n+4) { background: var(--red-soft); }
+#d-code .chips .chip:nth-child(5n+5) { background: var(--navy-soft); }
+.access a:nth-child(4n+1) .ic { color: var(--blue); }
+.access a:nth-child(4n+2) .ic { color: var(--green); }
+.access a:nth-child(4n+3) .ic { color: var(--orange); }
+.access a:nth-child(4n+4) .ic { color: var(--red); }
+#d-one .scen:nth-of-type(4n+1) .ic:first-child, #d-one a.scen:nth-of-type(4n+1) > .ic { color: var(--blue); }
+.kicker { color: var(--accent); }
+
+/* Live answers: always green */
+.live-tag, .live-btn { color: var(--green) !important; background: var(--green-soft) !important; }
+.live-tag .ic, .live-btn .ic { color: var(--green) !important; }
+a.bubble.live:hover, a.scen.live:hover { border-color: var(--green) !important; }
+.live-btn:hover { background: color-mix(in srgb, var(--green-fill) 22%, var(--surface)) !important; filter: none; }
+.dl-row.live:hover { border-color: var(--green); }
+/* Genie Code prompts */
+.prompt.gc { display: grid; grid-template-columns: auto 1fr; gap: 4px 10px; align-items: start; padding: 8px 12px; }
+.gc-tag { font-size: 10.5px; font-weight: 700; text-transform: uppercase; letter-spacing: .05em; color: var(--accent); background: var(--accent-soft); border-radius: 6px; padding: 2px 7px; margin-top: 1px; }
+.gc-p { font-size: 12.8px; line-height: 1.4; }
+.gc-a { grid-column: 2; display: flex; gap: 8px; align-items: center; }
+.gc-a .live-btn { margin-top: 0; padding: 3px 9px; font-size: 11.5px; }
+.gc-open[hidden], .gc-hint[hidden] { display: none; }

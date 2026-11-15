@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Genie for marketing self-service</title>
-<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="style.css?v=1794767864">
 </head>
 <body>
 
@@ -12,7 +12,7 @@
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
   <symbol id="i-code" viewBox="0 0 24 24"><path d="M8 7l-5 5 5 5M16 7l5 5-5 5M14 4l-4 16"/></symbol>
   <symbol id="i-agent" viewBox="0 0 24 24"><rect x="4" y="7" width="16" height="12" rx="3"/><path d="M12 3v4M9 12h.01M15 12h.01M9 16h6"/></symbol>
-  <symbol id="i-one" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M15.5 8.5l-2 5-5 2 2-5z"/></symbol>
+  <symbol id="i-one" viewBox="0 0 24 24"><path d="M12 2.2l.75 1.85 1.85.75-1.85.75L12 7.4l-.75-1.85-1.85-.75 1.85-.75z"/><path d="M9.6 12.4c0-1.3 1.05-2.2 2.4-2.2s2.4.9 2.4 2.2"/><path d="M4.6 12.4h12.9c0 2.9-2.6 4.6-6.45 4.6S4.6 15.3 4.6 12.4z"/><path d="M17.5 12.4c1.6.1 2.9-.8 3.9-2.5"/><path d="M4.6 13.2c-1.5.1-2.4-.7-2.4-1.7 0-.9.8-1.6 1.9-1.5"/><path d="M8.9 17l-.6 2.2h7.4l-.6-2.2"/></symbol>
   <symbol id="i-layers" viewBox="0 0 24 24"><path d="M12 3l9 5-9 5-9-5z"/><path d="M3 13l9 5 9-5"/></symbol>
   <symbol id="i-db" viewBox="0 0 24 24"><ellipse cx="12" cy="6" rx="7" ry="3"/><path d="M5 6v12c0 1.7 3.1 3 7 3s7-1.3 7-3V6M5 12c0 1.7 3.1 3 7 3s7-1.3 7-3"/></symbol>
   <symbol id="i-tag" viewBox="0 0 24 24"><path d="M3 12V4h8l10 10-8 8z"/><circle cx="7.5" cy="8.5" r="1.3"/></symbol>
@@ -46,6 +46,8 @@
   <symbol id="i-hash" viewBox="0 0 24 24"><path d="M9 4L7 20M17 4l-2 16M4 9h16M3 15h16"/></symbol>
   <symbol id="i-frame" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><rect x="7" y="8" width="10" height="8" rx="1"/></symbol>
   <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></symbol>
+  <symbol id="i-live" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M10 8.5v7l6-3.5z"/></symbol>
+  <symbol id="i-copy" viewBox="0 0 24 24"><rect x="8" y="8" width="12" height="12" rx="2"/><path d="M16 8V5a1 1 0 00-1-1H5a1 1 0 00-1 1v10a1 1 0 001 1h3"/></symbol>
   <symbol id="i-left" viewBox="0 0 24 24"><path d="M15 6l-6 6 6 6"/></symbol>
   <symbol id="i-right" viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></symbol>
 </svg>
@@ -109,9 +111,13 @@
           <span class="chip">Notebooks</span><span class="chip">SQL editor</span><span class="chip">Lakeflow Pipelines Editor</span><span class="chip">AI/BI dashboards</span><span class="chip">MLflow</span><span class="chip">Full-page command center</span>
         </div>
         <h3 style="margin-top:14px">Ask it for a task, it plans and runs it</h3>
-        <div class="prompt"><svg class="ic sm"><use href="#i-chat"/></svg><span>"Build a metric view <code>mv_ua_performance</code> with ROAS D7 from <code>fact_ua_campaign_daily</code>, then add it to the UA Performance agent."</span></div>
-        <div class="prompt"><svg class="ic sm"><use href="#i-chat"/></svg><span>"The nightly pipeline update failed on the subscriptions table. Find the cause and propose a fix."</span></div>
-        <div class="prompt"><svg class="ic sm"><use href="#i-chat"/></svg><span>"The agent answers CPI with organic installs included. Update its context to use paid installs only."</span></div>
+        <div class="prompt gc c-blue"><span class="gc-tag">Analyze</span><span class="gc-p">"Write SQL on mv_ua_performance that shows weekly CPI, CTR and IPM for PixelMuse on TikTok Ads since September, run it, and explain what changed."</span>
+          <span class="gc-a"><button class="copy" data-copy="Write SQL on mv_ua_performance that shows weekly CPI, CTR and IPM for PixelMuse on TikTok Ads since September, run it, and explain what changed." data-label="Copy prompt"><svg class="ic sm"><use href="#i-copy"/></svg><span>Copy prompt</span></button><a class="live-btn gc-open" target="_blank" rel="noopener" hidden><svg class="ic sm"><use href="#i-live"/></svg>Open in Genie Code</a></span></div>
+        <div class="prompt gc c-orange"><span class="gc-tag">Build</span><span class="gc-p">"Draft a metric view YAML mv_ua_creative_health with IPM, CTR and CPI by app, channel and install week, with comments, display names and synonyms. Show the YAML only."</span>
+          <span class="gc-a"><button class="copy" data-copy="Draft a metric view YAML mv_ua_creative_health with IPM, CTR and CPI by app, channel and install week, with comments, display names and synonyms. Show the YAML only." data-label="Copy prompt"><svg class="ic sm"><use href="#i-copy"/></svg><span>Copy prompt</span></button><a class="live-btn gc-open" target="_blank" rel="noopener" hidden><svg class="ic sm"><use href="#i-live"/></svg>Open in Genie Code</a></span></div>
+        <div class="prompt gc c-green"><span class="gc-tag">Explain</span><span class="gc-p">"Explain how ROAS D7 is defined in mv_ua_performance, why immature cohorts are excluded, and how it differs from Blended ROAS."</span>
+          <span class="gc-a"><button class="copy" data-copy="Explain how ROAS D7 is defined in mv_ua_performance, why immature cohorts are excluded, and how it differs from Blended ROAS." data-label="Copy prompt"><svg class="ic sm"><use href="#i-copy"/></svg><span>Copy prompt</span></button><a class="live-btn gc-open" target="_blank" rel="noopener" hidden><svg class="ic sm"><use href="#i-live"/></svg>Open in Genie Code</a></span></div>
+        <p class="fine gc-hint" hidden>Opens the demo notebook: press Cmd+I and paste.</p>
         <p class="fine">Autonomous agent: plans, retrieves context, runs code and fixes errors. Governed by your Unity Catalog permissions.</p>
       </div>
       <div class="d-col">
@@ -138,7 +144,7 @@
     </div><span>1 / Genie Code</span></div>
     <aside class="n"><ul>
       <li>This is for the people who build: the data platform team and analytics engineers.</li>
-      <li>The first prompt is literally what we did for the demo: it writes the metric view YAML and wires it into the agent.</li>
+      <li>Three prompts, three jobs: analyze with SQL, build a metric view, explain a definition. Each runs on the demo data; open the notebook, press Cmd+I and paste.</li>
       <li>Skills are the lever for your standards: naming conventions, dbt patterns, PII handling, as a workspace skill everyone gets.</li>
       <li>If the team prefers Claude Code, Codex or Cursor, press C: same governance, same Genie, same skills.</li>
     </ul></aside>
@@ -152,14 +158,14 @@
       <span class="d-sub">Domain-specific environments where data teams configure trusted data, metrics and business rules</span></div>
     <div class="personas">
       <div class="p-group">
-        <div class="persona"><span class="p-ic"><svg class="ic"><use href="#i-dev"/></svg></span><b>Curator</b><small>data team</small></div>
+        <div class="persona c-blue"><span class="p-ic"><svg class="ic"><use href="#i-dev"/></svg></span><b>Curator</b><small>data team</small></div>
         <span class="plus">+</span>
-        <div class="persona"><span class="p-ic"><svg class="ic"><use href="#i-target"/></svg></span><b>Subject matter expert</b><small>e.g. UA lead</small></div>
+        <div class="persona c-orange"><span class="p-ic"><svg class="ic"><use href="#i-target"/></svg></span><b>Subject matter expert</b><small>e.g. UA lead</small></div>
       </div>
-      <div class="p-arrow"><span>build and tune</span><svg viewBox="0 0 120 16" class="arr"><path d="M2 8h112M106 2l8 6-8 6"/></svg><small>metric views, examples, benchmarks</small></div>
-      <div class="persona agent"><span class="p-ic"><svg class="ic"><use href="#i-agent"/></svg></span><b>UA Performance</b><small>Genie Agent</small></div>
-      <div class="p-arrow"><span>ask</span><svg viewBox="0 0 120 16" class="arr"><path d="M2 8h112M106 2l8 6-8 6"/></svg><small>in plain language</small></div>
-      <div class="persona"><span class="p-ic"><svg class="ic"><use href="#i-users"/></svg></span><b>End users</b><small>UA managers, marketing analysts</small></div>
+      <div class="p-arrow c-orange"><span>build and tune</span><svg viewBox="0 0 120 16" class="arr"><path d="M2 8h112M106 2l8 6-8 6"/></svg><small>metric views, examples, benchmarks</small></div>
+      <div class="persona agent c-red"><span class="p-ic"><svg class="ic"><use href="#i-agent"/></svg></span><b>UA Performance</b><small>Genie Agent</small></div>
+      <div class="p-arrow c-green"><span>ask</span><svg viewBox="0 0 120 16" class="arr"><path d="M2 8h112M106 2l8 6-8 6"/></svg><small>in plain language</small></div>
+      <div class="persona c-green"><span class="p-ic"><svg class="ic"><use href="#i-users"/></svg></span><b>End users</b><small>UA managers, marketing analysts</small></div>
     </div>
     <div class="d-grid" style="margin-top:14px">
       <div class="d-col">
@@ -439,7 +445,7 @@ https://&lt;workspace-hostname&gt;/api/2.0/mcp/genie/&lt;space-id&gt;</pre>
   <div class="body">
     <div class="layers">
       <div class="stack">
-        <div class="layer l-surface">
+        <div class="layer l-surface c-navy">
           <div class="lname"><svg class="ic"><use href="#i-chat"/></svg><div>Surfaces<small>where people ask</small></div></div>
           <div class="chips">
             <span class="chip hot"><svg class="ic sm"><use href="#i-one"/></svg>Genie One</span>
@@ -449,7 +455,7 @@ https://&lt;workspace-hostname&gt;/api/2.0/mcp/genie/&lt;space-id&gt;</pre>
             <span class="chip"><svg class="ic sm"><use href="#i-terminal"/></svg>MCP: Claude Code, Codex</span>
           </div>
         </div>
-        <div class="layer l-agents">
+        <div class="layer l-agents c-red">
           <div class="lname"><svg class="ic"><use href="#i-agent"/></svg><div>Genie Agents<small>curated per domain</small></div></div>
           <div class="chips">
             <span class="chip hot"><svg class="ic sm"><use href="#i-chart"/></svg>UA Performance</span>
@@ -457,7 +463,7 @@ https://&lt;workspace-hostname&gt;/api/2.0/mcp/genie/&lt;space-id&gt;</pre>
             <span class="chip"><svg class="ic sm"><use href="#i-file"/></svg>UA Playbook (files)</span>
           </div>
         </div>
-        <div class="layer l-sem">
+        <div class="layer l-sem c-green">
           <div class="lname"><svg class="ic"><use href="#i-layers"/></svg><div>Genie Ontology<small>semantic layer you model</small></div></div>
           <div class="chips">
             <span class="chip hot"><svg class="ic sm"><use href="#i-target"/></svg>Metric views</span>
@@ -467,7 +473,7 @@ https://&lt;workspace-hostname&gt;/api/2.0/mcp/genie/&lt;space-id&gt;</pre>
             <span class="chip"><svg class="ic sm"><use href="#i-text"/></svg>Synonyms</span>
           </div>
         </div>
-        <div class="layer l-data">
+        <div class="layer l-data c-blue">
           <div class="lname"><svg class="ic"><use href="#i-db"/></svg><div>Unity Catalog<small>data and governance</small></div></div>
           <div class="chips">
             <span class="chip">Gold tables from dbt</span>
@@ -477,7 +483,7 @@ https://&lt;workspace-hostname&gt;/api/2.0/mcp/genie/&lt;space-id&gt;</pre>
           </div>
         </div>
       </div>
-      <div class="side">
+      <div class="side c-blue">
         <div class="badge-ic"><svg class="ic lg"><use href="#i-code"/></svg></div>
         <h2 style="font-size:16px">Genie Code</h2>
         <p>Builds and tunes every layer: YAML, Pages, agent context, benchmark analysis.</p>
@@ -508,10 +514,10 @@ https://&lt;workspace-hostname&gt;/api/2.0/mcp/genie/&lt;space-id&gt;</pre>
     <div class="cols">
       <div>
         <div class="consumers">
-          <span class="chip"><svg class="ic sm"><use href="#i-agent"/></svg>Genie Agents</span>
-          <span class="chip"><svg class="ic sm"><use href="#i-one"/></svg>Genie One</span>
-          <span class="chip"><svg class="ic sm"><use href="#i-dash"/></svg>AI/BI dashboards</span>
-          <span class="chip"><svg class="ic sm"><use href="#i-server"/></svg>BI tools via SQL <code>MEASURE()</code></span>
+          <span class="chip tint c-red"><svg class="ic sm"><use href="#i-agent"/></svg>Genie Agents</span>
+          <span class="chip tint c-green"><svg class="ic sm"><use href="#i-one"/></svg>Genie One</span>
+          <span class="chip tint c-orange"><svg class="ic sm"><use href="#i-dash"/></svg>AI/BI dashboards</span>
+          <span class="chip tint c-blue"><svg class="ic sm"><use href="#i-server"/></svg>BI tools via SQL <code>MEASURE()</code></span>
         </div>
         <h3>What good looks like</h3>
         <ul class="checks">
@@ -737,12 +743,12 @@ https://&lt;workspace-hostname&gt;/api/2.0/mcp/genie/&lt;space-id&gt;</pre>
   <p class="lede">A marketing domain built end to end on synthetic app-studio data.</p>
   <div class="body">
     <div class="steps s6">
-      <div class="step"><div class="card"><div class="head"><span class="num">1</span><h2>Semantic layer in Discover</h2></div><p>Metric views for UA and subscriptions, the Marketing domain, Pages for ROAS and pLTV, certified vs deprecated assets.</p></div></div>
-      <div class="step"><div class="card"><div class="head"><span class="num">2</span><h2>UA Performance agent</h2></div><p>Configure tab tour of the best practices, then live questions and a benchmark run.</p></div></div>
-      <div class="step"><div class="card"><div class="head"><span class="num">3</span><h2>Genie One across agents</h2></div><p>One question, routed to the right agent, citing Pages and certified sources.</p></div></div>
-      <div class="step"><div class="card"><div class="head"><span class="num">4</span><h2>Playbook over files</h2></div><p>Agent mode over UA playbooks and naming conventions, with page-level citations.</p></div></div>
-      <div class="step"><div class="card"><div class="head"><span class="num">5</span><h2>Genie One orchestrates</h2></div><p>One question answered from UA Performance and UA Playbook: "Is PixelMuse on TikTok below target and what does the playbook say?"</p></div></div>
-      <div class="step"><div class="card"><div class="head"><span class="num">6</span><h2>Claude Code via MCP</h2></div><p>Same questions from a coding agent, with the same governed answers.</p></div></div>
+      <div class="step c-blue"><div class="card"><div class="head"><span class="num">1</span><h2>Semantic layer in Discover</h2></div><p>Metric views for UA and subscriptions, the Marketing domain, Pages for ROAS and pLTV, certified vs deprecated assets.</p></div></div>
+      <div class="step c-red"><div class="card"><div class="head"><span class="num">2</span><h2>UA Performance agent</h2></div><p>Configure tab tour of the best practices, then live questions and a benchmark run.</p></div></div>
+      <div class="step c-green"><div class="card"><div class="head"><span class="num">3</span><h2>Genie One across agents</h2></div><p>One question, routed to the right agent, citing Pages and certified sources.</p></div></div>
+      <div class="step c-orange"><div class="card"><div class="head"><span class="num">4</span><h2>Playbook over files</h2></div><p>Agent mode over UA playbooks and naming conventions, with page-level citations.</p></div></div>
+      <div class="step c-navy"><div class="card"><div class="head"><span class="num">5</span><h2>Genie One orchestrates</h2></div><p>One question answered from UA Performance and UA Playbook: "Is PixelMuse on TikTok below target and what does the playbook say?"</p></div></div>
+      <div class="step c-blue"><div class="card"><div class="head"><span class="num">6</span><h2>Claude Code via MCP</h2></div><p>Same questions from a coding agent, with the same governed answers.</p></div></div>
     </div>
   </div>
   <div class="foot"><div class="docs"><b>Docs</b>
@@ -763,13 +769,13 @@ https://&lt;workspace-hostname&gt;/api/2.0/mcp/genie/&lt;space-id&gt;</pre>
   <p class="lede">Small, measured, then wider.</p>
   <div class="body">
     <div class="flow">
-      <div class="step"><div class="card"><div class="head"><span class="num">1</span><h2>Semantic layer</h2></div><ul>
+      <div class="step c-blue"><div class="card"><div class="head"><span class="num">1</span><h2>Semantic layer</h2></div><ul>
         <li>Top KPIs as metric views</li><li>Marketing domain and subdomains</li><li>Pages for the key terms</li><li>Certify gold, deprecate legacy</li></ul></div></div>
-      <div class="step"><div class="card"><div class="head"><span class="num">2</span><h2>One focused agent</h2></div><ul>
+      <div class="step c-red"><div class="card"><div class="head"><span class="num">2</span><h2>One focused agent</h2></div><ul>
         <li>Five or fewer sources</li><li>Example SQL per question shape</li><li>Benchmark set from real questions</li><li>Agree an accuracy target</li></ul></div></div>
-      <div class="step"><div class="card"><div class="head"><span class="num">3</span><h2>Pilot group</h2></div><ul>
+      <div class="step c-green"><div class="card"><div class="head"><span class="num">3</span><h2>Pilot group</h2></div><ul>
         <li>A few UA managers and analysts</li><li>Feedback via "Is this correct?"</li><li>Weekly review of the Monitor tab</li><li>Rerun benchmarks after each fix</li></ul></div></div>
-      <div class="step"><div class="card"><div class="head"><span class="num">4</span><h2>Publish and grow</h2></div><ul>
+      <div class="step c-orange"><div class="card"><div class="head"><span class="num">4</span><h2>Publish and grow</h2></div><ul>
         <li>Genie One, Slack or Teams</li><li>Private replies in shared channels</li><li>Add agents one domain at a time</li><li>MCP for engineers and tools</li></ul></div></div>
     </div>
   </div>
@@ -792,13 +798,13 @@ https://&lt;workspace-hostname&gt;/api/2.0/mcp/genie/&lt;space-id&gt;</pre>
   <p class="lede">What we take away from today.</p>
   <div class="body">
     <div class="grid g2">
-      <div class="card"><div class="head"><div class="badge-ic"><svg class="ic"><use href="#i-flag"/></svg></div><h2>Your side</h2></div><ul>
+      <div class="card c-orange"><div class="head"><div class="badge-ic"><svg class="ic"><use href="#i-flag"/></svg></div><h2>Your side</h2></div><ul>
         <li class="placeholder">Pick 10 to 15 real pilot questions from marketing</li>
         <li class="placeholder">Confirm the KPI definitions to model first</li>
         <li class="placeholder">Name the pilot users and an agent owner</li>
         <li>Run the <a href="https://github.com/databricks-solutions/genie-ontology-readiness" target="_blank" rel="noopener">Genie Ontology Readiness</a> app on your workspace: a read-only score and a prioritized plan</li>
       </ul></div>
-      <div class="card"><div class="head"><div class="badge-ic"><svg class="ic"><use href="#i-agent"/></svg></div><h2>Our side</h2></div><ul>
+      <div class="card c-blue"><div class="head"><div class="badge-ic"><svg class="ic"><use href="#i-agent"/></svg></div><h2>Our side</h2></div><ul>
         <li class="placeholder">Share the demo repo and this deck</li>
         <li class="placeholder">Review the draft Genie architecture together</li>
         <li class="placeholder">Help set up benchmarks and the first agent</li>
@@ -847,26 +853,69 @@ https://&lt;workspace-hostname&gt;/api/2.0/mcp/genie/&lt;space-id&gt;</pre>
   // Presenter-only demo links (loaded from a local file that is not published)
   const DL = window.DEMO_LINKS;
   function esc(t) { return String(t).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
-  function lk(o, ic) { return '<a class="dl-row" target="_blank" rel="noopener" href="' + esc(o.url) + '"><svg class="ic sm"><use href="#' + ic + '"/></svg><span>' + esc(o.name || o.label) + '</span>' + (o.badge ? '<span class="pill beta">' + esc(o.badge) + '</span>' : '') + (o.note ? '<span class="pill pp">' + esc(o.note) + '</span>' : '') + '<svg class="ic sm ext"><use href="#i-right"/></svg></a>'; }
+  function lk(o, ic) {
+    return '<a class="dl-row' + (o.live ? ' live' : '') + '" target="_blank" rel="noopener" href="' + esc(o.url) + '"><svg class="ic sm"><use href="#' + (o.icon || ic) + '"/></svg><span>' + esc(o.name || o.label) + '</span>' +
+      (o.badge ? '<span class="pill beta">' + esc(o.badge) + '</span>' : '') + (o.note ? '<span class="pill pp">' + esc(o.note) + '</span>' : '') +
+      '<svg class="ic sm ext"><use href="#i-right"/></svg></a>';
+  }
   function card(ic, title, inner, cls) { return '<div class="dl-card ' + (cls || '') + '"><div class="dl-h"><span class="badge-ic"><svg class="ic"><use href="#' + ic + '"/></svg></span><b>' + title + '</b></div>' + inner + '</div>'; }
+  function pill(st) { const c = st === 'GA' ? 'ga' : (st === 'Beta' ? 'beta' : 'pp'); return '<span class="pill ' + c + '">' + esc(st) + '</span>'; }
+  function shq(t) { return '"' + String(t).replace(/(["\\$`])/g, '\\$1') + '"'; }
+  function copyText(t, btn) {
+    const done = () => { const o = btn.dataset.label; btn.classList.add('ok'); btn.lastChild.textContent = 'Copied'; setTimeout(() => { btn.classList.remove('ok'); btn.lastChild.textContent = o; }, 1400); };
+    const fallback = () => { const ta = document.createElement('textarea'); ta.value = t; document.body.appendChild(ta); ta.select(); try { document.execCommand('copy'); } catch (e) {} ta.remove(); done(); };
+    if (navigator.clipboard && window.isSecureContext) navigator.clipboard.writeText(t).then(done, fallback); else fallback();
+  }
+  deck.addEventListener('click', (e) => { const b = e.target.closest('[data-copy]'); if (b && !b.closest('#d-links')) copyText(b.dataset.copy, b); });
+  if (DL && DL.genieCodeNotebook) {
+    document.querySelectorAll('.gc-open').forEach(a => { a.href = DL.genieCodeNotebook; a.hidden = false; });
+    document.querySelectorAll('.gc-hint').forEach(h => h.hidden = false);
+  }
   if (DL) {
     const d = document.getElementById('d-links');
     d.hidden = false;
     const tabsHtml = document.querySelector('#d-code nav.tabs').outerHTML.replace(' class="on"', ' class=""');
+    const tests = (DL.tests || []).map((t, k) => '<div class="dl-test"><div class="dl-test-h"><span class="num sm">' + (k + 1) + '</span><b>' + esc(t.title) + '</b>' +
+      '<button class="copy" data-copy="' + esc(t.prompt) + '" data-label="Copy prompt"><svg class="ic sm"><use href="#i-copy"/></svg><span>Copy prompt</span></button>' +
+      '<button class="copy" data-copy="' + esc('cd ' + (DL.testsDir || '.') + ' && claude ' + shq(t.prompt)) + '" data-label="Copy terminal command"><svg class="ic sm"><use href="#i-terminal"/></svg><span>Copy terminal command</span></button></div>' +
+      '<p class="dl-t prompt-t">' + esc(t.prompt) + '</p></div>').join('');
+    const mcp = DL.mcp ? DL.mcp.servers.map(m => '<div class="dl-mcp"><code>' + esc(m.name) + '</code><span>' + esc(m.what) + '</span>' + pill(m.status) + '<small>' + esc(m.detail) + '</small></div>').join('') + '<p class="dl-t">' + esc(DL.mcp.note) + '</p>' : '';
+    const dom = DL.domains;
     d.innerHTML = '<div class="d-head"><button class="back" data-close><svg class="ic sm"><use href="#i-left"/></svg>Back <kbd>Esc</kbd></button>' + tabsHtml +
-      '<span class="d-title"><span class="badge-ic"><svg class="ic"><use href="#i-link"/></svg></span>Demo links</span><span class="d-sub">Presenter only. Links open in a new tab.</span></div>' +
-      '<div class="dl-grid">' +
-        card('i-play', 'Presentation and workspace', lk(DL.presentation, 'i-dash') + lk(DL.workspace, 'i-server')) +
-        card('i-agent', 'Genie Agents', DL.agents.map(a => lk(a, a.icon || 'i-agent')).join('')) +
-        card('i-layers', 'Metric views', DL.metricViews.map(m => lk(m, 'i-target')).join('')) +
-        card('i-tag', 'Domains and Pages', '<p class="dl-t">' + esc(DL.domains.text) + '</p><p class="dl-t">Subdomains: ' + DL.domains.subdomains.map(esc).join(', ') + '</p><div class="chips">' + DL.domains.pages.map(x => '<span class="chip">' + esc(x) + '</span>').join('') + '</div><span class="dl-warn"><svg class="ic sm"><use href="#i-alert"/></svg>' + esc(DL.domains.warning) + '</span>', 'wide') +
-        card('i-alert', 'Deprecated legacy table', DL.deprecated.map(m => lk(m, 'i-db')).join('')) +
-        card('i-file', 'Playbook Volume', lk({ name: DL.volume.path, url: DL.volume.url }, 'i-file') + '<p class="dl-t">' + esc(DL.volume.note) + '</p>') +
-      '</div><div class="foot"><div class="docs"><b>Presenter only</b><span class="fnote">Loaded from a local file; not part of the published deck.</span></div><span>Demo links</span></div>';
+      '<span class="d-title"><span class="badge-ic"><svg class="ic"><use href="#i-link"/></svg></span>Demo links</span><span class="d-sub">Presenter only. Links open in a new tab. Scroll for MCP tests.</span></div>' +
+      '<div class="dl-scroll"><div class="dl-grid">' +
+        card('i-play', 'Presentation and workspace', lk(DL.presentation, 'i-dash') + lk(DL.workspace, 'i-server') + (DL.genieCodeNotebook ? lk({ name: 'Genie Code demo notebook', url: DL.genieCodeNotebook }, 'i-dev') : ''), 'c-navy') +
+        card('i-agent', 'Genie Agents', DL.agents.map(a => lk(a, 'i-agent')).join(''), 'c-red') +
+        card('i-layers', 'Metric views', DL.metricViews.map(m => lk(m, 'i-target')).join(''), 'c-blue') +
+        card('i-tag', 'Domains and Pages', '<p class="dl-t">' + esc(dom.text) + '</p>' + dom.links.map(x => lk(x, 'i-tag')).join('') +
+          '<div class="chips">' + dom.pages.map(x => '<a class="chip" target="_blank" rel="noopener" href="' + esc(x.url) + '"><svg class="ic sm"><use href="#i-page"/></svg>' + esc(x.name) + '</a>').join('') + '</div>' +
+          '<span class="dl-warn"><svg class="ic sm"><use href="#i-alert"/></svg>' + esc(dom.warning) + '</span>', 'c-green wide') +
+        card('i-check', 'Benchmarks and evaluation', (DL.benchmarks || []).map(m => lk(m, 'i-check')).join(''), 'c-orange') +
+        card('i-terminal', 'MCP servers (Claude Code)', mcp, 'c-blue') +
+        card('i-alert', 'Deprecated legacy table', DL.deprecated.map(m => lk(m, 'i-db')).join(''), 'c-orange') +
+        card('i-file', 'Playbook Volume', lk({ name: DL.volume.path, url: DL.volume.url }, 'i-file') + '<p class="dl-t">' + esc(DL.volume.note) + '</p>', 'c-navy') +
+        card('i-play', 'Test MCPs', tests + '<p class="dl-t fine">' + esc(DL.testsNote || '') + '</p>', 'c-green full') +
+      '</div></div><div class="foot"><div class="docs"><b>Presenter only</b><span class="fnote">Loaded from a local file; not part of the published deck.</span></div><span>Demo links</span></div>';
+    d.addEventListener('click', (e) => { const b = e.target.closest('[data-copy]'); if (b) copyText(b.dataset.copy, b); });
     document.querySelectorAll('nav.tabs').forEach(n => { if (!n.querySelector('[data-open="d-links"]')) n.insertAdjacentHTML('beforeend', '<button data-open="d-links"><kbd>5</kbd>Demo links</button>'); });
     d.querySelector('nav.tabs [data-open="d-links"]').classList.add('on');
     const lb = document.getElementById('links-btn'); lb.hidden = false;
     lb.addEventListener('click', () => { show(0); openDetail('d-links'); });
+    // Live answers: turn matching deck text into links to pre-run conversations
+    const A = DL.answers || {};
+    function liveAnchor(el, key, keepTag) {
+      const ans = A[key]; if (!ans) return;
+      const a = document.createElement('a');
+      a.href = ans.url; a.target = '_blank'; a.rel = 'noopener'; a.className = el.className + ' live'; a.title = 'Live answer. Asked: ' + ans.asked;
+      a.innerHTML = el.innerHTML + '<span class="live-tag"><svg class="ic sm"><use href="#i-live"/></svg>live answer</span>';
+      el.replaceWith(a);
+    }
+    document.querySelectorAll('#d-agents .bubble').forEach(el => liveAnchor(el, el.textContent.trim()));
+    document.querySelectorAll('#d-one .scen').forEach(el => liveAnchor(el, el.querySelector('span').textContent.trim()));
+    document.querySelectorAll('.steps .step .card').forEach(c => {
+      const h = c.querySelector('h2'); const ans = h && A[h.textContent.trim()]; if (!ans) return;
+      c.insertAdjacentHTML('beforeend', '<a class="live-btn" target="_blank" rel="noopener" title="Asked: ' + esc(ans.asked) + '" href="' + esc(ans.url) + '"><svg class="ic sm"><use href="#i-live"/></svg>Open live answer</a>');
+    });
   }
 
   let openId = null;
