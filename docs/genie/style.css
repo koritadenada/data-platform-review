@@ -1007,3 +1007,35 @@ table.cmp.rt td:first-child { white-space: nowrap; width: 150px; }
 .rt-rec .ic { color: var(--green); }
 .qa-d .more-btn { margin-left: auto; }
 table.cmp.rt tr td:first-child { box-shadow: none !important; font-weight: 650; }
+/* Value matching worked example */
+.vm-box { width: 1180px; padding: 16px 20px; }
+.vm-grid { display: grid; grid-template-columns: 1.05fr 1.15fr 0.95fr; gap: 14px; }
+.vm-col { display: flex; flex-direction: column; gap: 7px; min-width: 0; }
+.vm-step { display: flex; align-items: center; gap: 7px; font-size: 12px; font-weight: 700; color: var(--ink); text-transform: uppercase; letter-spacing: .03em; }
+.vm-step .qa-n { background: var(--navy); }
+.vm-ask { display: flex; gap: 8px; align-items: flex-start; background: var(--surface); border: 1px solid var(--line); border-radius: 14px 14px 14px 4px; padding: 9px 12px; font-size: 13.5px; box-shadow: var(--shadow); }
+.vm-ask .ic { color: var(--blue); margin-top: 2px; }
+.vm-box mark { background: var(--orange-soft); color: var(--orange); border-radius: 4px; padding: 0 3px; font-weight: 650; }
+.vm-map { display: flex; flex-direction: column; gap: 4px; }
+.vm-map div { display: flex; align-items: center; gap: 6px; font-size: 12px; }
+.vm-map .ic { color: var(--ink-3); }
+.vm-map code { font-size: 11.5px; background: var(--green-soft); color: var(--green); padding: 1px 6px; border-radius: 5px; font-weight: 650; }
+.vm-map small { color: var(--ink-3); font-size: 10.5px; }
+pre.vm-sql, pre.vm-yaml { margin: 0; padding: 8px 10px; border-radius: 8px; background: var(--code-bg); border: 1px solid var(--line); font-size: 10.8px; line-height: 1.45; white-space: pre; overflow: hidden; color: var(--ink); }
+pre.vm-sql .k, pre.vm-yaml .k { color: var(--red); } pre.vm-sql .s, pre.vm-yaml .s { color: var(--blue); } pre.vm-sql .c, pre.vm-yaml .c { color: var(--ink-3); }
+.vm-out { display: flex; gap: 7px; align-items: flex-start; font-size: 11.5px; color: var(--ink-2); background: var(--green-soft); border-radius: 8px; padding: 6px 9px; }
+.vm-out .ic { color: var(--green); margin-top: 1px; }
+.vm-t { border: 1px solid var(--line); border-left: 4px solid var(--vmc); border-radius: 8px; padding: 5px 8px; background: var(--surface); }
+.vm-t.bad { --vmc: var(--red); } .vm-t.good { --vmc: var(--green); } .vm-t.warn { --vmc: var(--orange); }
+.vm-th { display: flex; align-items: center; gap: 6px; margin-bottom: 3px; }
+.vm-th .ic { color: var(--vmc); }
+.vm-th code { font-size: 11.5px; font-weight: 700; }
+.vm-b { margin-left: auto; font-size: 9.5px; font-weight: 700; border-radius: 999px; padding: 1px 7px; }
+.vm-b.red { background: var(--red-soft); color: var(--red); } .vm-b.green { background: var(--green-soft); color: var(--green); } .vm-b.orange { background: var(--orange-soft); color: var(--orange); }
+.vm-t table { width: 100%; border-collapse: collapse; font-family: var(--mono); font-size: 10px; }
+.vm-t th { text-align: left; color: var(--ink-3); font-weight: 600; padding: 1px 4px; border-bottom: 1px solid var(--line); }
+.vm-t td { padding: 1px 4px; color: var(--ink); }
+.vm-t small { display: block; margin-top: 3px; font-size: 10.5px; color: var(--ink-2); }
+.vm-t i.mask { color: var(--ink-3); }
+.vm-rule { display: flex; flex-direction: column; gap: 4px; font-size: 11.5px; color: var(--ink-2); background: var(--blue-soft); border-radius: 8px; padding: 7px 10px; }
+.vm-rule > b { color: var(--blue); font-size: 12px; }
