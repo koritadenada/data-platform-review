@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Genie for marketing self-service</title>
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cg fill='none' stroke='%23FF3621' stroke-width='3.2' stroke-linejoin='round' stroke-linecap='round'%3E%3Cpath d='M16 4 28 10.5 16 17 4 10.5Z' fill='%23FF3621'/%3E%3Cpath d='M4 16 16 22.5 28 16'/%3E%3Cpath d='M4 21.5 16 28 28 21.5'/%3E%3C/g%3E%3C/svg%3E">
-<link rel="stylesheet" href="style.css?v=1794828176">
+<link rel="stylesheet" href="style.css?v=1794838720">
 </head>
 <body>
 
@@ -949,6 +949,12 @@ https://&lt;workspace-hostname&gt;/api/2.0/mcp/genie/&lt;space-id&gt;</pre>
     if (navigator.clipboard && window.isSecureContext) navigator.clipboard.writeText(t).then(done, fallback); else fallback();
   }
   deck.addEventListener('click', (e) => { const b = e.target.closest('[data-copy]'); if (b && !b.closest('#s-links')) copyText(b.dataset.copy, b); });
+  if (DL && DL.valueMatchingChat) {
+    const live = document.querySelector('#vm-modal .vm-live');
+    if (live) live.insertAdjacentHTML('beforeend', '<a class="live-btn vm-open" target="_blank" rel="noopener" href="' + DL.valueMatchingChat.replace(/"/g, '&quot;') + '"><svg class="ic sm"><use href="#i-live"/></svg>Open live answer</a>');
+    const btn = document.querySelector('[data-vm]');
+    if (btn) btn.insertAdjacentHTML('beforebegin', '<a class="live-btn vm-open" target="_blank" rel="noopener" href="' + DL.valueMatchingChat.replace(/"/g, '&quot;') + '"><svg class="ic sm"><use href="#i-live"/></svg>Live answer</a>');
+  }
   if (DL && DL.genieCodeNotebook) {
     document.querySelectorAll('.gc-open').forEach(a => { a.href = DL.genieCodeNotebook; a.hidden = false; });
     document.querySelectorAll('.gc-hint').forEach(h => h.hidden = false);

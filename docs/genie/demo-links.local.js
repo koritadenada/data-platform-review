@@ -202,6 +202,7 @@ window.DEMO_LINKS = {
       }
     ]
   },
+  "valueMatchingChat": "https://fe-sandbox-korita-demo.cloud.databricks.com/genie/rooms/01f1e0f847781c649c05ea5bbe7f29ed/chats/01f1e1c8211e167fa6f147214234c5c6?o=7474650857654748&m=01f1e1c821791f5b8090378ff8749a58",
   "testsDir": "~/kma-genie-demo",
   "testsNote": "Or double-click scripts/mcp-tests/<n>.command in Finder to open Terminal and run it.",
   "answers": {
