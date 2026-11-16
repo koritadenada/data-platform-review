@@ -180,6 +180,28 @@ window.DEMO_LINKS = {
       "prompt": "Use genie-ua-performance to get PixelMuse CPI and IPM on TikTok Ads for September and October 2026. Then use genie-one to ask what the UA playbook says about creative fatigue. Combine both into a one-paragraph recommendation."
     }
   ],
+  "rowFilter": {
+    "note": "fact_ua_campaign_daily is row-filtered by business unit (kma_governance.ua_bu_filter). dim_app and dim_channel are unfiltered lookups with entity matching in the UA Performance agent. Run the commands in a terminal, then ask in a new chat.",
+    "steps": [
+      {
+        "title": "See only AI Creativity",
+        "cmd": "cd ~/kma-genie-demo/scripts && python3 switch_bu.py \"AI Creativity\""
+      },
+      {
+        "title": "Ask UA Performance (new chat): numbers for PixelMuse",
+        "prompt": "What was our ad spend and CPI for pixel muse on tik tok in October 2026?",
+        "url": "https://fe-sandbox-korita-demo.cloud.databricks.com/genie/rooms/01f1e0f847781c649c05ea5bbe7f29ed"
+      },
+      {
+        "title": "Switch to Wellness, ask again: no rows",
+        "cmd": "cd ~/kma-genie-demo/scripts && python3 switch_bu.py Wellness"
+      },
+      {
+        "title": "Back to all units (before benchmarks)",
+        "cmd": "cd ~/kma-genie-demo/scripts && python3 switch_bu.py ALL"
+      }
+    ]
+  },
   "testsDir": "~/kma-genie-demo",
   "testsNote": "Or double-click scripts/mcp-tests/<n>.command in Finder to open Terminal and run it.",
   "answers": {

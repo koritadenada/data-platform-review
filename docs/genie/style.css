@@ -1039,3 +1039,10 @@ pre.vm-sql .k, pre.vm-yaml .k { color: var(--red); } pre.vm-sql .s, pre.vm-yaml 
 .vm-t i.mask { color: var(--ink-3); }
 .vm-rule { display: flex; flex-direction: column; gap: 4px; font-size: 11.5px; color: var(--ink-2); background: var(--blue-soft); border-radius: 8px; padding: 7px 10px; }
 .vm-rule > b { color: var(--blue); font-size: 12px; }
+.vm-live { display: flex; gap: 7px; align-items: flex-start; font-size: 11.5px; color: var(--ink); background: var(--green-soft); border: 1px solid color-mix(in srgb, var(--green) 30%, transparent); border-radius: 8px; padding: 6px 9px; }
+.vm-live .ic { color: var(--green); margin-top: 1px; }
+a.copy { text-decoration: none; }
+.rt-box { padding: 14px 20px; }
+table.cmp.rt { font-size: 12px; }
+table.cmp.rt td, table.cmp.rt th { padding: 4px 10px; }
+.rt-rec { margin: 8px 0 4px; padding: 5px 10px; font-size: 12.5px; }
